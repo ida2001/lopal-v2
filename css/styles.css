@@ -189,8 +189,8 @@ main { display: block; }
 .site-nav ul { display: flex; gap: 2px; }
 .site-nav a {
   display: inline-block;
-  padding: 9px 12px;
-  font-size: .93rem;
+  padding: 9px 10px;
+  font-size: .9rem;
   font-weight: 500;
   color: var(--white);
   white-space: nowrap;
@@ -255,8 +255,8 @@ body.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate
     radial-gradient(900px 460px at 88% -12%, rgba(14, 154, 76, .38), transparent 62%),
     radial-gradient(760px 520px at -8% 112%, rgba(0, 132, 61, .30), transparent 62%),
     linear-gradient(135deg, var(--green-900), var(--green-800) 55%, #0E5A38);
-  padding-top: calc(var(--header-h) + clamp(48px, 9vh, 96px));
-  padding-bottom: clamp(64px, 9vw, 104px);
+  padding-top: calc(var(--header-h) + clamp(16px, 3vh, 36px));
+  padding-bottom: clamp(48px, 6vw, 80px);
 }
 .hero::before {
   content: "";
@@ -270,7 +270,20 @@ body.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate
   mask-image: radial-gradient(1100px 620px at 72% 18%, #000 25%, transparent 74%);
   pointer-events: none;
 }
-.hero-inner { position: relative; z-index: 1; }
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+.hero-art { margin: 0; }
+.hero-art img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 28px 44px rgba(0, 0, 0, .38));
+}
 
 .hero-kicker {
   display: inline-block;
@@ -312,8 +325,8 @@ body.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 28px;
-  margin-top: clamp(48px, 7vw, 76px);
-  padding-top: 32px;
+  margin-top: clamp(40px, 6vw, 64px);
+  padding-top: 28px;
   border-top: 1px solid rgba(255, 255, 255, .16);
 }
 .hero-stats dt {
@@ -759,6 +772,49 @@ a.product-card:hover { color: inherit; }
 .cert-list h3 { font-size: 1rem; font-weight: 700; }
 .cert-list p { margin-top: 4px; font-size: .86rem; color: var(--grey-500); }
 
+/* ---------- Точки обслуживания ---------- */
+
+.map-stub {
+  margin: 0 0 clamp(40px, 6vw, 64px);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--grey-100);
+  box-shadow: var(--shadow-sm);
+  background: #EDF2EE;
+}
+.map-stub svg { display: block; width: 100%; height: auto; }
+.map-stub figcaption {
+  padding: 12px 18px;
+  font-size: .85rem;
+  color: var(--grey-500);
+  background: var(--white);
+  border-top: 1px solid var(--grey-100);
+}
+
+.points-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.point-city {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green-800);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.point-card h3 { margin-top: 12px; font-size: 1.05rem; }
+.point-address { margin-top: 8px; font-size: .92rem; color: var(--grey-600); }
+.point-type { margin-top: 6px; font-size: .85rem; color: var(--grey-500); }
+.point-phone { display: inline-block; margin-top: 14px; font-weight: 700; }
+
+@media (max-width: 1080px) {
+  .points-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .points-grid { grid-template-columns: 1fr; }
+}
+
 /* ---------- Контакты ---------- */
 
 .contact-grid {
@@ -942,6 +998,11 @@ a.product-card:hover { color: inherit; }
   .contact-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .about-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 920px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 36px; }
+  .hero-art { max-width: 460px; justify-self: center; }
 }
 
 @media (max-width: 640px) {
