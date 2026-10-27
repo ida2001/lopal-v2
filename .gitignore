@@ -1,0 +1,13 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Logs
+*.log
+
+# Local preview / tooling
+.chrome-profile-*/
+node_modules/

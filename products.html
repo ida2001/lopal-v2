@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Продукция — автомобильные масла и жидкости — Lopal Kazakhstan</title>
+  <meta name="description" content="Каталог продукции Lopal в Казахстане: моторные масла, трансмиссионные масла, антифризы, тормозные жидкости. Каталог наполняется на основе материалов lopal.cn.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2300843D' d='M12 2C12 2 5 10.4 5 14.9a7 7 0 0 0 14 0C19 10.4 12 2 12 2Z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Lopal — на главную">
+        <img class="brand-logo" src="assets/logo-wht.png" alt="Lopal 龙蟠科技" width="229" height="36">
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="Основная навигация">
+        <ul>
+          <li><a href="about.html">О бренде</a></li>
+          <li><a href="products.html" aria-current="page">Продукция</a></li>
+          <li><a href="technologies.html">Технологии</a></li>
+          <li><a href="certificates.html">Сертификаты</a></li>
+          <li><a href="media.html">Медиацентр</a></li>
+          <li><a href="partners.html">Партнёрам</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" aria-label="Выбор языка сайта">
+          <a href="#" class="is-active" aria-current="true">RU</a>
+          <a href="#" data-stub="Казахская версия сайта будет доступна после наполнения контента.">KZ</a>
+          <a href="#" data-stub="Английская версия — опционально, по согласованию с заказчиком (ТЗ п.1).">EN</a>
+        </div>
+        <a href="contacts.html" class="btn btn-light btn-sm header-cta">Контакты</a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Открыть меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Хлебные крошки">
+          <ol>
+            <li><a href="index.html">Главная</a></li>
+            <li aria-current="page">Продукция</li>
+          </ol>
+        </nav>
+        <h1>Продукция</h1>
+        <p class="page-hero-lead">Автомобильные масла и технические жидкости Lopal: карточки продуктов, спецификации и справочные материалы будут добавлены из каталога lopal.cn.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 48px;">
+      <div class="container">
+
+        <div class="catalog-note reveal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 11.5V16"/></svg>
+          <p><strong>Продуктовая линейка сайта — только автомобильные масла и технические жидкости:</strong> моторные масла, трансмиссионные масла, антифризы, тормозные жидкости. Промышленные масла, AdBlue и автохимия в каталог не включены (по требованию заказчика).</p>
+        </div>
+
+        <div class="filter-bar reveal" role="group" aria-label="Фильтр каталога">
+          <label class="filter-field">
+            <span>Категория</span>
+            <select id="filterCategory">
+              <option value="all">Все категории</option>
+              <option value="motor">Моторные масла</option>
+              <option value="transmission">Трансмиссионные масла</option>
+              <option value="coolant">Антифризы</option>
+              <option value="brake">Тормозные жидкости</option>
+            </select>
+          </label>
+          <label class="filter-field is-disabled">
+            <span>Вязкость</span>
+            <select disabled title="Активируется после наполнения каталога">
+              <option>—</option>
+            </select>
+          </label>
+          <label class="filter-field is-disabled">
+            <span>Спецификация</span>
+            <select disabled title="Активируется после наполнения каталога">
+              <option>—</option>
+            </select>
+          </label>
+          <button class="btn btn-ghost btn-sm" id="filterReset" type="button">Сбросить</button>
+        </div>
+        <p class="filter-note">Фильтры по вязкости и спецификации будут активированы после наполнения каталога. Сейчас доступен фильтр по категории.</p>
+
+        <section class="catalog-group" id="motor" data-category-group="motor" aria-labelledby="motor-title">
+          <div class="catalog-group-head">
+            <h2 id="motor-title">Моторные масла</h2>
+            <p>Линейки Lopal 1, Advanced, Ultra и другие. Пример наполнения — полная карточка Lopal 1 SONIC 9688; остальные продукты будут добавлены из каталога lopal.cn.</p>
+          </div>
+          <div class="product-grid">
+            <a class="card product-card reveal" href="product-sonic-9688.html">
+              <div class="product-media has-photo">
+                <img src="assets/products/lopal-1-sonic-9688.jpg" alt="Моторное масло Lopal 1 SONIC 9688 SAE 0W-20" width="800" height="800" loading="lazy">
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Моторные масла · Lopal 1</p>
+                <h3 class="product-name">Lopal 1 SONIC 9688</h3>
+                <p class="product-meta">Артикул: 9688 · Фасовка: 1 л / 4 л</p>
+                <p class="product-specs">SAE 0W-20 · API SP · ILSAC GF-6A · ACEA C5</p>
+                <span class="card-link">Подробнее →</span>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section class="catalog-group" id="transmission" data-category-group="transmission" aria-labelledby="transmission-title">
+          <div class="catalog-group-head">
+            <h2 id="transmission-title">Трансмиссионные масла</h2>
+            <p>Масла для механических и автоматических трансмиссий — материалы будут добавлены.</p>
+          </div>
+          <div class="product-grid">
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Трансмиссионные масла</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Трансмиссионные масла</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Трансмиссионные масла</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="catalog-group" id="coolant" data-category-group="coolant" aria-labelledby="coolant-title">
+          <div class="catalog-group-head">
+            <h2 id="coolant-title">Антифризы</h2>
+            <p>Охлаждающие жидкости для систем охлаждения — материалы будут добавлены.</p>
+          </div>
+          <div class="product-grid">
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Антифризы</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Антифризы</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Антифризы</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Спецификации: будут добавлены</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="catalog-group" id="brake" data-category-group="brake" aria-labelledby="brake-title">
+          <div class="catalog-group-head">
+            <h2 id="brake-title">Тормозные жидкости</h2>
+            <p>Тормозные жидкости DOT — материалы будут добавлены.</p>
+          </div>
+          <div class="product-grid">
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Тормозные жидкости</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Стандарты: DOT —</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Тормозные жидкости</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Стандарты: DOT —</p>
+              </div>
+            </article>
+            <article class="card product-card reveal">
+              <div class="product-media" aria-hidden="true">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg>
+              </div>
+              <div class="product-body">
+                <p class="product-tag">Тормозные жидкости</p>
+                <h3 class="product-name">Наименование продукта</h3>
+                <p class="product-meta">Артикул: — · Фасовка: —</p>
+                <p class="product-specs">Стандарты: DOT —</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <p class="filter-note" id="catalogEmpty" hidden>В выбранной категории пока нет карточек.</p>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <a href="index.html" class="brand">
+          <img class="brand-logo" src="assets/logo-wht.png" alt="Lopal 龙蟠科技" width="229" height="36">
+        </a>
+        <p>Официальный витринный сайт бренда Lopal в Казахстане. Автомобильные масла и технические жидкости. Сайт находится в разработке.</p>
+      </div>
+      <nav class="footer-col" aria-label="Разделы сайта">
+        <h3>Разделы</h3>
+        <ul>
+          <li><a href="about.html">О бренде</a></li>
+          <li><a href="products.html">Продукция</a></li>
+          <li><a href="technologies.html">Технологии</a></li>
+          <li><a href="certificates.html">Сертификаты</a></li>
+          <li><a href="media.html">Медиацентр</a></li>
+          <li><a href="partners.html">Партнёрам</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Продукция">
+        <h3>Продукция</h3>
+        <ul>
+          <li><a href="products.html#motor">Моторные масла</a></li>
+          <li><a href="products.html#transmission">Трансмиссионные масла</a></li>
+          <li><a href="products.html#coolant">Антифризы</a></li>
+          <li><a href="products.html#brake">Тормозные жидкости</a></li>
+        </ul>
+      </nav>
+      <div class="footer-col">
+        <h3>Контакты</h3>
+        <ul class="footer-contacts">
+          <li>Представительство Lopal в Казахстане</li>
+          <li>Адрес: будет добавлен</li>
+          <li>Телефон: будет добавлен</li>
+          <li>E-mail: будет добавлен</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>© <span id="year">2026</span> Lopal Kazakhstan. Все права защищены.</p>
+        <p>Контент переносится с корпоративного сайта lopal.cn</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
