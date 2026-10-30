@@ -153,8 +153,12 @@
       .floating-dealers-btn {
         bottom: 16px;
         right: 16px;
-        left: 16px;
-        justify-content: center;
+        left: auto;
+        padding: 10px 18px;
+        font-size: 13px;
+        border-radius: 9999px;
+        max-width: calc(100vw - 32px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.4);
       }
     }
   </style>
@@ -223,28 +227,7 @@
     <span>Где купить подобранное масло · Карта дилеров</span>
   </button>
 
-  <script>
-    (function() {
-      var frame = document.getElementById('selectorFullFrame');
-      if (!frame) return;
-      var loaded = false;
-      frame.addEventListener('load', function() {
-        loaded = true;
-      });
-      // Safety fallback: if proxied route fails to load within 4s, load upstream directly
-      setTimeout(function() {
-        if (!loaded) {
-          try {
-            if (!frame.contentDocument || !frame.contentDocument.body || frame.contentDocument.body.children.length === 0) {
-              frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
-            }
-          } catch(e) {
-            // Cross-origin means upstream is already loaded
-          }
-        }
-      }, 4000);
-    })();
-  </script>
+  
   <script src="js/main.js?v=10"></script>
 </body>
 </html>

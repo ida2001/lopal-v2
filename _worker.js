@@ -50,15 +50,52 @@ export default {
             '/* stay in responsive wrapper */'
           );
 
+          // Neuter disclaimer and tips modals completely so bootstrap cannot show them
+          text = text.replace(/id=["']vehicleTipsModal["']/gi, 'id="vehicleTipsModal_disabled" style="display:none!important;"');
+          text = text.replace(/\$\(["']#vehicleTipsModal["']\)/g, '$("#vehicleTipsModal_disabled")');
+          text = text.replace(/id=["']oilTipsArea["']/gi, 'id="oilTipsArea_disabled" style="display:none!important;"');
+          text = text.replace(/\$\(["']#oilTipsArea["']\)/g, '$("#oilTipsArea_disabled")');
+
           const injectHead = `
 <style id="lopal-cf-suppress">
-  #vehicleTipsModal, #oilTipsArea { display: none !important; }
+  #vehicleTipsModal,
+  #vehicleTipsModal_disabled,
+  #oilTipsArea,
+  #oilTipsArea_disabled,
+  .modal-backdrop,
+  .modal-backdrop.in {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    z-index: -9999 !important;
+  }
+  body.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+    position: static !important;
+  }
+  .chanpinnojiyou,
+  .chanpinno,
+  [onclick*="openProductDetailPage"] {
+    cursor: pointer !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease !important;
+  }
+  .chanpinnojiyou:hover,
+  .chanpinno:hover,
+  [onclick*="openProductDetailPage"]:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(33, 146, 94, 0.38) !important;
+    background-color: #197a4d !important;
+  }
 </style>
 <script>
   window.alert = function(){};
   try {
     localStorage.setItem("lopalenAppRemember", "lopalenAppRemember");
-    localStorage.setItem("lopalenAppRememberTime", String(Date.now()));
+    localStorage.setItem("lopalenAppRememberTime", String(Date.now() + 365*24*3600*1000));
   } catch(e){}
 </script>`;
 
@@ -68,21 +105,26 @@ export default {
   function dismiss() {
     try {
       localStorage.setItem("lopalenAppRemember", "lopalenAppRemember");
-      localStorage.setItem("lopalenAppRememberTime", String(Date.now()));
+      localStorage.setItem("lopalenAppRememberTime", String(Date.now() + 365*24*3600*1000));
     } catch(e){}
-    if (window.jQuery) {
-      var $ = window.jQuery;
-      try { $("#consentTips").trigger("click"); } catch(e){}
-      try { $("#vehicleTipsModal, #oilTipsArea").modal("hide").hide().removeClass("in"); } catch(e){}
-      $(".modal-backdrop").remove();
-      $("body").removeClass("modal-open").css({ overflow: "auto", paddingRight: "0" });
-    }
+    var m1 = document.getElementById("vehicleTipsModal");
+    if (m1) m1.remove();
+    var m2 = document.getElementById("vehicleTipsModal_disabled");
+    if (m2) m2.remove();
+    var m3 = document.getElementById("oilTipsArea");
+    if (m3) m3.remove();
+    var m4 = document.getElementById("oilTipsArea_disabled");
+    if (m4) m4.remove();
+    var drops = document.querySelectorAll(".modal-backdrop");
+    for (var i = 0; i < drops.length; i++) drops[i].remove();
+    document.body.classList.remove("modal-open");
+    document.body.style.overflow = "auto";
   }
   dismiss();
   document.addEventListener("DOMContentLoaded", dismiss);
   window.addEventListener("load", dismiss);
-  setTimeout(dismiss, 100);
-  setTimeout(dismiss, 500);
+  var killTimer = setInterval(dismiss, 150);
+  setTimeout(function() { clearInterval(killTimer); }, 5000);
 
   window.openProductDetailPage_VEHICLE = function(p, u, c, no) {
     window.parent.postMessage({ type: "OPEN_DEALERS_MAP", productNo: no || "" }, "*");
@@ -121,4 +163,3 @@ export default {
     return env.ASSETS.fetch(request);
   },
 };
-
