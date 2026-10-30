@@ -189,12 +189,10 @@
     openBtns.forEach(function (btn) {
       if (btn.tagName === 'A') {
         btn.setAttribute('href', SELECTOR_URL);
-        btn.setAttribute('target', '_blank');
-        btn.setAttribute('rel', 'noopener noreferrer');
       } else {
         btn.addEventListener('click', function (e) {
           e.preventDefault();
-          window.open(SELECTOR_URL, '_blank', 'noopener,noreferrer');
+          window.location.href = SELECTOR_URL;
         });
       }
     });

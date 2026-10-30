@@ -15,15 +15,20 @@
   <style>
     html, body {
       height: 100%;
+      height: 100dvh;
       margin: 0;
+      padding: 0;
       overflow: hidden;
       background: #F4F6F9;
+      -webkit-overflow-scrolling: touch;
     }
     .selector-page-wrap {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100%;
+      height: 100dvh;
       width: 100vw;
+      overflow: hidden;
     }
     .selector-topbar {
       height: 68px;
@@ -91,11 +96,14 @@
       box-shadow: 0 6px 22px rgba(0, 132, 61, 0.36);
     }
     .selector-frame-wrap {
-      flex-grow: 1;
+      flex: 1 1 auto;
       position: relative;
       width: 100%;
-      height: calc(100vh - 68px);
+      height: calc(100% - 68px);
+      height: calc(100dvh - 68px);
       background: #FFFFFF;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .selector-full-iframe {
       width: 100%;
@@ -203,7 +211,6 @@
         class="selector-full-iframe"
         id="selectorFullFrame"
         src="/intell/dir40pc/lopalenApp"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         title="Интеллектуальный каталог подбора масла Lopal"
         allow="fullscreen"
       ></iframe>
@@ -220,15 +227,22 @@
     (function() {
       var frame = document.getElementById('selectorFullFrame');
       if (!frame) return;
-      fetch('/intell/dir40pc/lopalenApp', { method: 'HEAD' })
-        .then(function(res) {
-          if (!res.ok && res.status === 404) {
-            frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
+      var loaded = false;
+      frame.addEventListener('load', function() {
+        loaded = true;
+      });
+      // Safety fallback: if proxied route fails to load within 4s, load upstream directly
+      setTimeout(function() {
+        if (!loaded) {
+          try {
+            if (!frame.contentDocument || !frame.contentDocument.body || frame.contentDocument.body.children.length === 0) {
+              frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
+            }
+          } catch(e) {
+            // Cross-origin means upstream is already loaded
           }
-        })
-        .catch(function() {
-          frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
-        });
+        }
+      }, 4000);
     })();
   </script>
   <script src="js/main.js?v=10"></script>
