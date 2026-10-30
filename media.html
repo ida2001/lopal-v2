@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,40 +11,61 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=9">
+
+  <!-- SEO, OpenGraph & Schema.org -->
+  <meta name="robots" content="index, follow">
+  <meta name="geo.region" content="KZ-ALA">
+  <meta name="geo.placename" content="Алматы, Казахстан">
+  <link rel="canonical" href="https://lopal.kz/media.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_KZ">
+  <meta property="og:site_name" content="LOPAL Казахстан · ТОО «ТопМакОйл»">
+  <meta property="og:title" content="Медиацентр — Lopal Kazakhstan">
+  <meta property="og:description" content="Медиацентр Lopal Kazakhstan: корпоративные новости, пресс-релизы, публикации и медиагалерея. Раздел наполняется материалами lopal.cn.">
+  <meta property="og:url" content="https://lopal.kz/media.html">
+  <meta property="og:image" content="https://lopal.kz/assets/branding/topmaq-hero-dark.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Медиацентр — Lopal Kazakhstan">
+  <meta name="twitter:description" content="Медиацентр Lopal Kazakhstan: корпоративные новости, пресс-релизы, публикации и медиагалерея. Раздел наполняется материалами lopal.cn.">
+  <meta name="twitter:image" content="https://lopal.kz/assets/branding/topmaq-hero-dark.jpg">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AutoPartsStore", "name": "LOPAL Казахстан — ТОО «ТопМакОйл» (TOPMAQ OIL)", "description": "Официальный эксклюзивный дистрибьютор смазочных материалов, моторных и трансмиссионных масел Jiangsu Lopal Tech в Республике Казахстан.", "url": "https://lopal.kz/", "logo": "https://lopal.kz/assets/branding/lopal-logo.png", "image": "https://lopal.kz/assets/branding/topmaq-hero-dark.jpg", "telephone": "+7-707-523-65-25", "address": {"@type": "PostalAddress", "streetAddress": "ул. Сокпакбаева, 67а", "addressLocality": "Алматы", "addressCountry": "KZ"}, "geo": {"@type": "GeoCoordinates", "latitude": 43.2685, "longitude": 76.9125}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "18:00"}], "sameAs": ["https://instagram.com/lopal.kz"]}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
 
   <header class="site-header" id="siteHeader">
     <div class="container header-inner">
-      <a href="index.html" class="brand" aria-label="Lopal — на главную">
-        <img class="brand-logo" src="assets/logo-wht.png" alt="Lopal 龙蟠科技" width="229" height="36">
+      
+      <!-- Ко-брендинг: LOPAL + TOPMAQ OIL -->
+      <a href="index.html" class="brand-combo" aria-label="Lopal Kazakhstan — На главную">
+        <img class="brand-lopal-img" src="assets/branding/lopal-logo.png" alt="Lopal Tech 龙蟠科技" height="34">
+        <span class="brand-divider"></span>
+        <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО ТопМакОйл Тёмный" height="32">
       </a>
 
-      <nav class="site-nav" id="siteNav" aria-label="Основная навигация">
+      <!-- Современное капсульное меню единого стиля без цифр -->
+      <nav class="site-nav" id="siteNav" aria-label="Главное меню">
         <ul>
-          <li><a href="about.html">О бренде</a></li>
-          <li><a href="products.html">Продукция</a></li>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="products.html">Каталог</a></li>
+          <li><a href="selector.html" target="_blank" rel="noopener">Подбор масла</a></li>
           <li><a href="technologies.html">Технологии</a></li>
-          <li><a href="certificates.html">Сертификаты</a></li>
-          <li><a href="service-points.html">Точки обслуживания</a></li>
-          <li><a href="media.html" aria-current="page">Медиацентр</a></li>
+          <li><a href="certificates.html">Допуски OEM</a></li>
+          <li><a href="service-points.html">Точки продаж</a></li>
           <li><a href="partners.html">Партнёрам</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
         </ul>
       </nav>
 
+      <!-- Действия шапки: Подбор масла и переключатель темы -->
       <div class="header-actions">
-        <div class="lang-switch" aria-label="Выбор языка сайта">
-          <a href="#" class="is-active" aria-current="true">RU</a>
-          <a href="#" data-stub="Казахская версия сайта будет доступна после наполнения контента.">KZ</a>
-          <a href="#" data-stub="Английская версия — опционально, по согласованию с заказчиком (ТЗ п.1).">EN</a>
-        </div>
-        <a href="contacts.html" class="btn btn-light btn-sm header-cta">Контакты</a>
-        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Открыть меню">
+
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
           <span></span><span></span><span></span>
         </button>
       </div>
+
     </div>
   </header>
 
@@ -184,14 +205,23 @@
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="container footer-bottom-inner">
-        <p>© <span id="year">2026</span> Lopal Kazakhstan. Все права защищены.</p>
-        <p>Контент переносится с корпоративного сайта lopal.cn</p>
+          <div class="container">
+      <div class="footer-bottom">
+        <div>
+          © 2026 Lopal Kazakhstan · ТОО «ТопМакОйл». Все права защищены.
+        </div>
+        <div class="footer-developer">
+          Разработано в <a href="https://ai-studio-api-nz5z.onrender.com/" target="_blank" rel="noopener">AI-Studio-Mark</a>
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <a href="contacts.html">Контакты</a>
+          <a href="partners.html">Сотрудничество</a>
+          <a href="selector.html" target="_blank" rel="noopener">Lopal Oil Selector</a>
+        </div>
       </div>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=9"></script>
 </body>
 </html>

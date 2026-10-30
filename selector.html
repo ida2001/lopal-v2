@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Подбор масла по автомобилю — LOPAL Казахстан | ТОО «ТопМакОйл»</title>
+  <meta name="description" content="Официальный интеллектуальный каталог подбора моторных, трансмиссионных масел и технических жидкостей LOPAL по марке и модели автомобиля с картой дилеров в Казахстане.">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=9">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #F4F6F9;
+    }
+    .selector-page-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+    .selector-topbar {
+      height: 68px;
+      min-height: 68px;
+      background: #FFFFFF;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.10);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-inline: clamp(16px, 3vw, 32px);
+      gap: 16px;
+      z-index: 20;
+    }
+    .selector-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+    .selector-topbar-titles {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .selector-topbar-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0F172A;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .selector-topbar-sub {
+      font-size: 12px;
+      color: #475569;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .selector-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .btn-where-to-buy-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--lopal-green);
+      color: #FFFFFF !important;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 16px rgba(0, 132, 61, 0.28);
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .btn-where-to-buy-top:hover {
+      background: var(--lopal-green-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(0, 132, 61, 0.36);
+    }
+    .selector-frame-wrap {
+      flex-grow: 1;
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 68px);
+      background: #FFFFFF;
+    }
+    .selector-full-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    /* Плавающая кнопка "Где купить" поверх правого нижнего угла каталога подбора */
+    .floating-dealers-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #0F172A;
+      color: #FFFFFF !important;
+      border: 2px solid var(--lopal-green);
+      padding: 14px 24px;
+      border-radius: 9999px;
+      font-size: 14.5px;
+      font-weight: 800;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.32);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .floating-dealers-btn:hover {
+      background: var(--lopal-green);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(0, 132, 61, 0.4);
+    }
+    .floating-dealers-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4ADE80;
+      box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.25);
+    }
+    @media (max-width: 820px) {
+      .selector-topbar-titles {
+        display: none;
+      }
+      .hide-mobile {
+        display: none !important;
+      }
+      .floating-dealers-btn {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <!-- SEO, OpenGraph & Schema.org -->
+  <meta name="robots" content="index, follow">
+  <meta name="geo.region" content="KZ-ALA">
+  <meta name="geo.placename" content="Алматы, Казахстан">
+  <link rel="canonical" href="https://lopal.kz/selector.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_KZ">
+  <meta property="og:site_name" content="LOPAL Казахстан · ТОО «ТопМакОйл»">
+  <meta property="og:title" content="Подбор масла по автомобилю — LOPAL Казахстан | ТОО «ТопМакОйл»">
+  <meta property="og:description" content="Официальный интеллектуальный каталог подбора моторных, трансмиссионных масел и технических жидкостей LOPAL по марке и модели автомобиля с картой дилеров в Казахстане.">
+  <meta property="og:url" content="https://lopal.kz/selector.html">
+  <meta property="og:image" content="https://lopal.kz/assets/branding/topmaq-hero-dark.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Подбор масла по автомобилю — LOPAL Казахстан | ТОО «ТопМакОйл»">
+  <meta name="twitter:description" content="Официальный интеллектуальный каталог подбора моторных, трансмиссионных масел и технических жидкостей LOPAL по марке и модели автомобиля с картой дилеров в Казахстане.">
+  <meta name="twitter:image" content="https://lopal.kz/assets/branding/topmaq-hero-dark.jpg">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AutoPartsStore", "name": "LOPAL Казахстан — ТОО «ТопМакОйл» (TOPMAQ OIL)", "description": "Официальный эксклюзивный дистрибьютор смазочных материалов, моторных и трансмиссионных масел Jiangsu Lopal Tech в Республике Казахстан.", "url": "https://lopal.kz/", "logo": "https://lopal.kz/assets/branding/lopal-logo.png", "image": "https://lopal.kz/assets/branding/topmaq-hero-dark.jpg", "telephone": "+7-707-523-65-25", "address": {"@type": "PostalAddress", "streetAddress": "ул. Сокпакбаева, 67а", "addressLocality": "Алматы", "addressCountry": "KZ"}, "geo": {"@type": "GeoCoordinates", "latitude": 43.2685, "longitude": 76.9125}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "18:00"}], "sameAs": ["https://instagram.com/lopal.kz"]}</script>
+</head>
+<body>
+
+  <div class="selector-page-wrap">
+    <!-- Фирменная верхняя панель с кнопкой открытия карты дилеров -->
+    <header class="selector-topbar">
+      <div class="selector-topbar-left">
+        <a href="index.html" class="brand-combo" aria-label="Lopal Kazakhstan — На главную">
+          <img class="brand-lopal-img" src="assets/branding/lopal-logo.png" alt="Lopal Tech" height="32">
+          <span class="brand-divider"></span>
+          <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО ТопМакОйл" height="30">
+        </a>
+        <div class="selector-topbar-titles">
+          <div class="selector-topbar-title">Официальный подбор смазочных материалов LOPAL</div>
+          <div class="selector-topbar-sub">Подберите продукт для вашего авто и нажмите «Где купить», чтобы открыть карту дилеров</div>
+        </div>
+      </div>
+
+      <div class="selector-topbar-actions">
+        <button class="btn-where-to-buy-top" type="button" data-open-dealers>
+          <span>📍 Где купить (Карта дилеров)</span>
+        </button>
+        <a href="products.html" class="btn btn-outline btn-sm hide-mobile">Каталог на сайте</a>
+        <a href="https://wa.me/77075236525?text=Здравствуйте,%20подобрал%20масло%20в%20каталоге%20Lopal,%20подскажите%20наличие" target="_blank" rel="noopener" class="btn btn-outline btn-sm hide-mobile">
+          WhatsApp
+        </a>
+      </div>
+    </header>
+
+    <!-- Полноэкранный официальный каталог подбора Lopal -->
+    <main class="selector-frame-wrap">
+      <iframe
+        class="selector-full-iframe"
+        id="selectorFullFrame"
+        src="/intell/dir40pc/lopalenApp"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        title="Интеллектуальный каталог подбора масла Lopal"
+        allow="fullscreen"
+      ></iframe>
+    </main>
+  </div>
+
+  <!-- Плавающая кнопка поверх каталога (всегда под рукой на финальном шаге выбора продукта) -->
+  <button class="floating-dealers-btn" type="button" data-open-dealers>
+    <span class="floating-dealers-dot"></span>
+    <span>Где купить подобранное масло · Карта дилеров</span>
+  </button>
+
+  <script>
+    (function() {
+      var frame = document.getElementById('selectorFullFrame');
+      if (!frame) return;
+      fetch('/intell/dir40pc/lopalenApp', { method: 'HEAD' })
+        .then(function(res) {
+          if (!res.ok && res.status === 404) {
+            frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
+          }
+        })
+        .catch(function() {
+          frame.src = 'https://lopal.dat881.com/intell/dir40pc/lopalenApp';
+        });
+    })();
+  </script>
+  <script src="js/main.js?v=10"></script>
+</body>
+</html>
+
