@@ -143,10 +143,52 @@
       background: #4ADE80;
       box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.25);
     }
-    @media (max-width: 820px) {
+            @media (max-width: 820px) {
+      .selector-topbar {
+        height: 60px;
+        min-height: 60px;
+        padding-inline: 14px;
+      }
       .selector-topbar-titles {
         display: none;
       }
+      .hide-mobile {
+        display: none !important;
+      }
+      .btn-where-to-buy-top {
+        padding: 8px 14px;
+        font-size: 12.5px;
+      }
+      .selector-frame-wrap {
+        height: calc(100% - 60px);
+        height: calc(100dvh - 60px);
+      }
+      .floating-dealers-btn {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+    }
+      .selector-topbar-titles {
+        display: none;
+      }
+      .hide-mobile {
+        display: none !important;
+      }
+      .btn-where-to-buy-top {
+        padding: 8px 14px;
+        font-size: 12.5px;
+      }
+      .selector-frame-wrap {
+        height: calc(100% - 60px);
+        height: calc(100dvh - 60px);
+      }
+      .floating-dealers-btn {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+    }
       .hide-mobile {
         display: none !important;
       }
@@ -214,7 +256,7 @@
       <iframe
         class="selector-full-iframe"
         id="selectorFullFrame"
-        src="/intell/dir40pc/lopalenApp"
+        src="/intell/dir40pc/lopalenApp?v=20261030_v4"
         title="Интеллектуальный каталог подбора масла Lopal"
         allow="fullscreen"
       ></iframe>

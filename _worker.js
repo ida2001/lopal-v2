@@ -107,6 +107,10 @@ export default {
       localStorage.setItem("lopalenAppRemember", "lopalenAppRemember");
       localStorage.setItem("lopalenAppRememberTime", String(Date.now() + 365*24*3600*1000));
     } catch(e){}
+    try {
+      var btn = document.getElementById("consentTips");
+      if (btn) btn.click();
+    } catch(e){}
     var m1 = document.getElementById("vehicleTipsModal");
     if (m1) m1.remove();
     var m2 = document.getElementById("vehicleTipsModal_disabled");
@@ -142,6 +146,7 @@ export default {
           newHeaders.delete('x-frame-options');
           newHeaders.delete('content-security-policy');
           newHeaders.set('content-type', 'text/html; charset=utf-8');
+          newHeaders.set('cache-control', 'no-cache, no-store, must-revalidate');
           return new Response(text, {
             status: resp.status,
             headers: newHeaders,
