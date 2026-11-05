@@ -25,7 +25,7 @@ function lopal_build_news_page(): bool {
     $newsList = lopal_read_json('news');
     $settings = lopal_read_json('settings');
 
-    $company = htmlspecialchars($settings['company_name'] ?? 'ТОО «ТопМакОйл» (TOPMAQ OIL)', ENT_QUOTES, 'UTF-8');
+    $company = htmlspecialchars($settings['company_name'] ?? 'ТОО «Topmaq oil» (TOPMAQ OIL)', ENT_QUOTES, 'UTF-8');
     $address = htmlspecialchars($settings['address'] ?? 'Казахстан, г. Алматы, ул. Сокпакбаева, 67а', ENT_QUOTES, 'UTF-8');
     $phoneMain = htmlspecialchars($settings['phone_main'] ?? '+7 (707) 523-65-25', ENT_QUOTES, 'UTF-8');
     $phoneMainHref = htmlspecialchars($settings['phone_main_href'] ?? '+77075236525', ENT_QUOTES, 'UTF-8');
@@ -132,7 +132,7 @@ HTML;
       <a href="index.html" class="brand-combo" aria-label="Lopal Kazakhstan — На главную">
         <img class="brand-lopal-img" src="assets/branding/lopal-logo.png" alt="Lopal Tech 龙蟠科技" height="34">
         <span class="brand-divider"></span>
-        <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО ТопМакОйл" height="32">
+        <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="32">
       </a>
 
       <nav class="site-nav" id="siteNav" aria-label="Главное меню">
@@ -167,7 +167,7 @@ HTML;
           <span class="kicker kicker-gold">Пресс-центр официального представительства</span>
           <h1 class="section-title">Новости LOPAL в Казахстане</h1>
           <p class="section-subtitle">
-            Актуальные события ТОО «ТопМакОйл» и корпорации Jiangsu Lopal New Material Tech. Co., Ltd.: поступление новых партий на склад в Алматы, 
+            Актуальные события ТОО «Topmaq oil» и корпорации Jiangsu Lopal New Material Tech. Co., Ltd.: поступление новых партий на склад в Алматы, 
             обзоры стандартов <strong>API SQ / ILSAC GF-7</strong>, решения для гибридов <strong>NEV</strong> и развитие сети партнерских ПЗМ.
           </p>
         </div>
@@ -228,7 +228,7 @@ HTML;
           <div class="brand-combo" style="margin-bottom: 16px;">
             <img class="brand-lopal-img" src="assets/branding/lopal-logo-white.png" alt="Lopal" height="34">
             <span class="brand-divider"></span>
-            <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО ТопМакОйл" height="30">
+            <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="30">
           </div>
           <p class="footer-desc">
             {$company} — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан.
