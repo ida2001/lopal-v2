@@ -29,12 +29,18 @@ function lopal_build_news_page(): bool {
     $address = htmlspecialchars($settings['address'] ?? 'Казахстан, г. Алматы, ул. Сокпакбаева, 67а', ENT_QUOTES, 'UTF-8');
     $phoneMain = htmlspecialchars($settings['phone_main'] ?? '+7 (707) 523-65-25', ENT_QUOTES, 'UTF-8');
     $phoneMainHref = htmlspecialchars($settings['phone_main_href'] ?? '+77075236525', ENT_QUOTES, 'UTF-8');
-    $phoneService = htmlspecialchars($settings['phone_service'] ?? '+7 (707) 138-30-26', ENT_QUOTES, 'UTF-8');
-    $phoneServiceHref = htmlspecialchars($settings['phone_service_href'] ?? '+77071383026', ENT_QUOTES, 'UTF-8');
+    $phoneService = !empty($settings['phone_service']) ? htmlspecialchars($settings['phone_service'], ENT_QUOTES, 'UTF-8') : '';
+    $phoneServiceHref = (!empty($settings['phone_service_href']) && $settings['phone_service_href'] !== '+') ? htmlspecialchars($settings['phone_service_href'], ENT_QUOTES, 'UTF-8') : '';
     $email = htmlspecialchars($settings['email'] ?? 'info@lopal.kz', ENT_QUOTES, 'UTF-8');
     $insta = htmlspecialchars($settings['instagram'] ?? '@lopal.kz', ENT_QUOTES, 'UTF-8');
     $instaUrl = htmlspecialchars($settings['instagram_url'] ?? 'https://instagram.com/lopal.kz', ENT_QUOTES, 'UTF-8');
     $wa = htmlspecialchars($settings['whatsapp'] ?? '77075236525', ENT_QUOTES, 'UTF-8');
+
+        $phoneHtml = '<div>📞 <strong>Телефон:</strong> <a href="tel:' . $phoneMainHref . '" style="color:var(--topmaq-gold);">' . $phoneMain . '</a>';
+    if (!empty($phoneService) && !empty($phoneServiceHref)) {
+        $phoneHtml .= ', <a href="tel:' . $phoneServiceHref . '" style="color:var(--topmaq-gold);">' . $phoneService . '</a>';
+    }
+    $phoneHtml .= '</div>';
 
     $cardsHtml = '';
     foreach ($newsList as $idx => $item) {
@@ -230,7 +236,7 @@ HTML;
           <div style="font-size: 13.5px; color: #CBD5E1; line-height: 1.8;">
             <div>🏢 <strong>Юр. лицо:</strong> {$company}</div>
             <div>📍 <strong>Адрес:</strong> {$address}</div>
-            <div>📞 <strong>Телефон:</strong> <a href="tel:{$phoneMainHref}" style="color:var(--topmaq-gold);">{$phoneMain}</a>, <a href="tel:{$phoneServiceHref}" style="color:var(--topmaq-gold);">{$phoneService}</a></div>
+            {$phoneHtml}
             <div>✉️ <strong>Email:</strong> <a href="mailto:{$email}" style="color:var(--topmaq-gold);">{$email}</a></div>
             <div>📸 <strong>Instagram:</strong> <a href="{$instaUrl}" target="_blank" rel="noopener" style="color:#38BDF8;">{$insta}</a></div>
           </div>
