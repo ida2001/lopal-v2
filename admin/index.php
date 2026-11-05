@@ -352,6 +352,7 @@ if ($activeTab === 'mcp') {
     <?php endif; ?>
 
     <nav class="tabs">
+      <a href="?tab=ai" class="tab-btn <?= $activeTab === 'ai' ? 'active' : '' ?>">🤖 AI-Ассистент (DeepSeek)</a>
       <a href="?tab=news" class="tab-btn <?= $activeTab === 'news' ? 'active' : '' ?>">📰 Новости (<?= count($newsList) ?>)</a>
       <a href="?tab=products" class="tab-btn <?= $activeTab === 'products' ? 'active' : '' ?>">🛢️ Каталог масел (<?= count($productsList) ?>)</a>
       <a href="?tab=dealers" class="tab-btn <?= $activeTab === 'dealers' ? 'active' : '' ?>">📍 Точки продаж и СТО (<?= count($dealersList) ?>)</a>
@@ -736,7 +737,111 @@ if ($activeTab === 'mcp') {
       </div>
     <?php endif; ?>
 
+    <?php if ($activeTab === 'ai'): ?>
+      <?php
+        $dsKey = trim($settings['deepseek_api_key'] ?? '');
+        $hasDsKey = ($dsKey !== '');
+        $maskedDsKey = $hasDsKey ? (substr($dsKey, 0, 5) . '...' . substr($dsKey, -4)) : '';
+      ?>
+      <div class="card" style="padding: 20px 24px; margin-bottom: 18px; border-left: 4px solid var(--green);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+              🤖 AI-Ассистент управления сайтом (DeepSeek)
+              <span id="aiKeyStatusBadge" style="font-size:12px; padding:3px 10px; border-radius:99px; font-weight:700; background:<?= $hasDsKey ? '#DCFCE7' : '#FEF3C7' ?>; color:<?= $hasDsKey ? '#166534' : '#92400E' ?>;">
+                <?= $hasDsKey ? ('🟢 Подключен (' . htmlspecialchars($maskedDsKey) . ')') : '🔑 Требуется API-ключ DeepSeek' ?>
+              </span>
+            </h2>
+            <p class="sub" style="margin-bottom:0;">Управляйте новостями, каталогом масел, точками продаж на карте, контактами и текстами всех 25 страниц голосом (🎤) или текстом.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="btn btn-outline" style="padding:7px 13px; font-size:12.5px;" onclick="toggleAiKeyBox()">🔑 API-ключ DeepSeek</button>
+            <button type="button" class="btn btn-outline" style="padding:7px 13px; font-size:12.5px;" onclick="clearAiHistory()">🗑️ Очистить диалог</button>
+          </div>
+        </div>
+
+        <div id="aiKeyConfigBox" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:<?= $hasDsKey ? 'none' : 'block' ?>;">
+          <label style="margin-bottom:6px;">DeepSeek API Key (<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" style="color:var(--green);">platform.deepseek.com</a>)</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="password" id="deepseek_api_key_input" placeholder="sk-..." value="<?= htmlspecialchars($dsKey) ?>" style="flex:1; min-width:240px; margin-bottom:0;">
+            <button type="button" class="btn btn-green" onclick="saveDeepSeekKey()">💾 Сохранить ключ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Быстрые команды-шаблоны -->
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="sendQuickAiPrompt('Покажи полную сводку по сайту: сколько сейчас новостей, товаров, дилеров и какие контакты установлены.')">📊 Сводка по сайту</button>
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Опубликуй новую новость: Заголовок — ')">📰 Опубликовать новость</button>
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Добавь нового дилера на карту: Название — , Город и адрес — , Телефон — ')">📍 Добавить дилера на карту</button>
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Измени график работы на сайте: ')">🕒 Изменить график работы</button>
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('На странице partners.html измени текст: ')">✏️ Исправить текст на странице</button>
+      </div>
+
+      <!-- Основное окно чата -->
+      <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; height: min(640px, 72vh);">
+        <div id="aiMainChatMessages" style="flex:1; overflow-y:auto; padding:20px; background:#F8FAFC; display:flex; flex-direction:column; gap:14px;"></div>
+
+        <div id="aiVoiceListeningBanner" style="display:none; background:#FEF2F2; color:#DC2626; padding:8px 18px; font-size:13px; font-weight:700; border-top:1px solid #FECACA; align-items:center; justify-content:space-between;">
+          <span>🔴 Идёт запись голоса (говорите по-русски)...</span>
+          <button type="button" onclick="stopAiVoice()" style="background:#DC2626; color:#fff; border:none; border-radius:6px; padding:3px 10px; font-size:11.5px; cursor:pointer; font-weight:700;">Остановить ⏹</button>
+        </div>
+
+        <div style="padding:14px 18px; background:#fff; border-top:1px solid var(--border);">
+          <div style="display:flex; gap:10px; align-items:flex-end;">
+            <button type="button" id="aiMainMicBtn" onclick="toggleAiVoice('main')" title="Голосовой ввод (русский язык)" style="width:46px; height:46px; border-radius:12px; border:1px solid var(--border); background:#F1F5F9; color:#0F172A; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s;">
+              🎤
+            </button>
+            <textarea id="aiMainInput" rows="2" placeholder="Напишите команду или нажмите 🎤 и скажите голосом (например: Добавь дилера в Караганде по адресу пр. Бухар-Жырау 50, телефон +7 701 111 22 33)..." style="flex:1; margin-bottom:0; resize:none; font-size:14px; line-height:1.45;" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendAiMessage('main');}"></textarea>
+            <button type="button" id="aiMainSendBtn" class="btn btn-green" onclick="sendAiMessage('main')" style="height:46px; padding:0 22px; flex-shrink:0;">
+              Отправить ➤
+            </button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:12px; color:var(--muted);">
+            <label style="display:inline-flex; align-items:center; gap:6px; font-weight:500; margin:0; cursor:pointer; color:var(--muted);">
+              <input type="checkbox" id="aiAutoSendAfterVoice" checked style="width:auto; margin:0;">
+              Автоматически отправлять сообщение после завершения голосовой фразы
+            </label>
+            <span>Enter — отправить · Shift+Enter — новая строка</span>
+          </div>
+        </div>
+      </div>
+    <?php endif; ?>
+
   </div>
+
+  <?php if ($activeTab !== 'ai'): ?>
+    <!-- Плавающий виджет AI-ассистента и микрофона на всех вкладках админки -->
+    <div id="aiFloatingWidget" style="position:fixed; right:22px; bottom:22px; z-index:9999;">
+      <div id="aiDrawerBox" style="display:none; width:min(420px, calc(100vw - 32px)); height:min(560px, 78vh); background:#fff; border-radius:16px; box-shadow:0 16px 48px rgba(15,23,42,0.28); border:1px solid #CBD5E1; flex-direction:column; overflow:hidden; margin-bottom:12px;">
+        <div style="background:#0F172A; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:800; font-size:14px;">
+            <span>🤖 DeepSeek AI-Ассистент</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <a href="?tab=ai" style="color:#94A3B8; font-size:11.5px; text-decoration:none;">Развернуть ↗</a>
+            <button type="button" onclick="toggleAiDrawer(false)" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer; line-height:1;">✕</button>
+          </div>
+        </div>
+        <div id="aiReloadNotice" style="display:none; background:#DCFCE7; color:#166534; padding:8px 12px; font-size:12px; font-weight:700; justify-content:space-between; align-items:center; border-bottom:1px solid #BBF7D0;">
+          <span>✅ Данные сайта обновлены!</span>
+          <button type="button" onclick="window.location.reload()" style="background:#00843D; color:#fff; border:none; border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; cursor:pointer;">🔄 Обновить страницу</button>
+        </div>
+        <div id="aiDrawerChatMessages" style="flex:1; overflow-y:auto; padding:14px; background:#F8FAFC; display:flex; flex-direction:column; gap:10px;"></div>
+        <div style="padding:10px; background:#fff; border-top:1px solid #E2E8F0; display:flex; gap:8px; align-items:center;">
+          <button type="button" id="aiDrawerMicBtn" onclick="toggleAiVoice('drawer')" title="Голосовой ввод" style="width:40px; height:40px; border-radius:10px; border:1px solid #CBD5E1; background:#F1F5F9; font-size:18px; cursor:pointer; flex-shrink:0;">🎤</button>
+          <input type="text" id="aiDrawerInput" placeholder="Скажите в 🎤 или напишите..." style="flex:1; margin-bottom:0; padding:9px 12px; font-size:13px;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiMessage('drawer');}">
+          <button type="button" id="aiDrawerSendBtn" class="btn btn-green" onclick="sendAiMessage('drawer')" style="padding:9px 14px; font-size:13px; flex-shrink:0;">➤</button>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" onclick="toggleAiDrawer()" style="background:linear-gradient(135deg,#00843D,#059669); color:#fff; border:2px solid #fff; border-radius:99px; padding:12px 20px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 8px 25px rgba(0,132,61,0.45); display:flex; align-items:center; gap:8px;">
+          <span>🤖 AI-Управление</span>
+          <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:99px; font-size:12px;">🎤 Голос</span>
+        </button>
+      </div>
+    </div>
+  <?php endif; ?>
 
   <script>
   function editNews(n) {
@@ -1050,6 +1155,334 @@ if ($activeTab === 'mcp') {
     document.addEventListener('DOMContentLoaded', initDealerMap);
   } else {
     initDealerMap();
+  }
+
+  // =================== DEEPSEEK AI-АССИСТЕНТ + ГОЛОСОВОЕ УПРАВЛЕНИЕ (🎤) ===================
+  const AI_STORAGE_KEY = 'lopal_deepseek_chat_v1';
+  let aiChatHistory = [];
+  let aiIsSending = false;
+  let aiRecognition = null;
+  let aiIsRecording = false;
+  let aiActiveVoiceTarget = 'main';
+
+  try {
+    const saved = sessionStorage.getItem(AI_STORAGE_KEY);
+    if (saved) aiChatHistory = JSON.parse(saved);
+  } catch (e) {}
+
+  if (!Array.isArray(aiChatHistory) || aiChatHistory.length === 0) {
+    aiChatHistory = [
+      {
+        role: 'assistant',
+        content: 'Здравствуйте! Я ваш AI-ассистент на базе **DeepSeek**.\n\nВы можете писать команды текстом или нажать на **🎤 микрофон** и сказать голосом, что нужно сделать на сайте:\n• добавить или изменить новость;\n• добавить дилера или СТО на карту Казахстана;\n• обновить телефоны, контакты или график работы;\n• исправить любой текст на любой из 25 страниц сайта.',
+        actions: []
+      }
+    ];
+  }
+
+  function saveAiHistory() {
+    try {
+      sessionStorage.setItem(AI_STORAGE_KEY, JSON.stringify(aiChatHistory.slice(-24)));
+    } catch (e) {}
+  }
+
+  function clearAiHistory() {
+    aiChatHistory = [
+      {
+        role: 'assistant',
+        content: 'Диалог очищен. Чем могу помочь по управлению сайтом lopal.kz?',
+        actions: []
+      }
+    ];
+    saveAiHistory();
+    renderAiMessages();
+  }
+
+  function formatAiText(text) {
+    let safe = escapeHtml(text || '');
+    safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    safe = safe.replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.07);padding:2px 5px;border-radius:4px;font-size:12px;">$1</code>');
+    safe = safe.replace(/\n/g, '<br>');
+    return safe;
+  }
+
+  const TOOL_LABELS = {
+    get_site_overview: '📊 Сводка по сайту',
+    list_news: '📰 Чтение списка новостей',
+    upsert_news: '📰 Публикация/обновление новости',
+    delete_news: '🗑️ Удаление новости',
+    list_products: '🛢️ Чтение каталога масел',
+    upsert_product: '🛢️ Обновление товара в каталоге',
+    delete_product: '🗑️ Удаление товара',
+    list_dealers: '📍 Чтение базы дилеров',
+    upsert_dealer: '📍 Добавление/обновление дилера на карте',
+    delete_dealer: '🗑️ Удаление точки продаж',
+    update_site_settings: '⚙️ Обновление глобальных контактов и графика',
+    list_html_pages: '📄 Список страниц сайта',
+    read_page_text: '🔍 Чтение текста страницы',
+    replace_page_text: '✏️ Замена текста на странице',
+    list_backups: '📦 Проверка резервных копий',
+    rollback_site: '⏪ Откат версии сайта'
+  };
+
+  function renderAiContainer(containerEl) {
+    if (!containerEl) return;
+    let html = '';
+    aiChatHistory.forEach(msg => {
+      const isUser = msg.role === 'user';
+      const align = isUser ? 'flex-end' : 'flex-start';
+      const bg = isUser ? '#00843D' : '#FFFFFF';
+      const color = isUser ? '#FFFFFF' : '#0F172A';
+      const border = isUser ? 'none' : '1px solid #E2E8F0';
+
+      let actionsHtml = '';
+      if (!isUser && Array.isArray(msg.actions) && msg.actions.length > 0) {
+        actionsHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">' +
+          msg.actions.map(a => {
+            const label = TOOL_LABELS[a.tool] || a.tool;
+            return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;background:#DCFCE7;color:#166534;padding:3px 9px;border-radius:99px;border:1px solid #BBF7D0;">✅ ${escapeHtml(label)}</span>`;
+          }).join('') +
+        '</div>';
+      }
+
+      html += `
+        <div style="display:flex; flex-direction:column; align-items:${align};">
+          <div style="max-width:85%; background:${bg}; color:${color}; border:${border}; padding:11px 15px; border-radius:14px; font-size:13.5px; line-height:1.5; box-shadow:0 2px 5px rgba(15,23,42,0.04);">
+            ${actionsHtml}
+            <div>${formatAiText(msg.content)}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    if (aiIsSending) {
+      html += `
+        <div style="display:flex; align-items:flex-start;">
+          <div style="background:#FFFFFF; color:#475569; border:1px solid #E2E8F0; padding:10px 15px; border-radius:14px; font-size:13px; font-weight:600;">
+            ⏳ DeepSeek анализирует запрос и выполняет изменения на сайте...
+          </div>
+        </div>
+      `;
+    }
+
+    containerEl.innerHTML = html;
+    containerEl.scrollTop = containerEl.scrollHeight;
+  }
+
+  function renderAiMessages() {
+    renderAiContainer(document.getElementById('aiMainChatMessages'));
+    renderAiContainer(document.getElementById('aiDrawerChatMessages'));
+  }
+
+  function toggleAiKeyBox() {
+    const box = document.getElementById('aiKeyConfigBox');
+    if (box) {
+      box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+    }
+  }
+
+  async function saveDeepSeekKey() {
+    const input = document.getElementById('deepseek_api_key_input');
+    if (!input) return;
+    const key = input.value.trim();
+    try {
+      const resp = await fetch('../api/ai_agent.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save_key', api_key: key })
+      });
+      const data = await resp.json();
+      if (data.ok) {
+        const badge = document.getElementById('aiKeyStatusBadge');
+        if (badge) {
+          if (data.hasKey) {
+            badge.style.background = '#DCFCE7';
+            badge.style.color = '#166534';
+            badge.textContent = '🟢 Подключен (' + data.maskedKey + ')';
+            const box = document.getElementById('aiKeyConfigBox');
+            if (box) box.style.display = 'none';
+          } else {
+            badge.style.background = '#FEF3C7';
+            badge.style.color = '#92400E';
+            badge.textContent = '🔑 Требуется API-ключ DeepSeek';
+          }
+        }
+        alert(data.hasKey ? '✅ API-ключ DeepSeek успешно сохранен!' : 'Ключ очищен.');
+      }
+    } catch (e) {
+      alert('Ошибка сохранения ключа: ' + e.message);
+    }
+  }
+
+  function fillAiPrompt(text) {
+    const input = document.getElementById('aiMainInput') || document.getElementById('aiDrawerInput');
+    if (input) {
+      input.value = text;
+      input.focus();
+    }
+  }
+
+  function sendQuickAiPrompt(text) {
+    const input = document.getElementById('aiMainInput') || document.getElementById('aiDrawerInput');
+    if (input) {
+      input.value = text;
+      sendAiMessage(document.getElementById('aiMainInput') ? 'main' : 'drawer');
+    }
+  }
+
+  async function sendAiMessage(source = 'main') {
+    if (aiIsSending) return;
+    const inputEl = document.getElementById(source === 'main' ? 'aiMainInput' : 'aiDrawerInput');
+    if (!inputEl) return;
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    if (aiIsRecording) stopAiVoice();
+
+    inputEl.value = '';
+    aiChatHistory.push({ role: 'user', content: text });
+    aiIsSending = true;
+    saveAiHistory();
+    renderAiMessages();
+
+    try {
+      const resp = await fetch('../api/ai_agent.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'chat',
+          messages: aiChatHistory.map(m => ({ role: m.role, content: m.content }))
+        })
+      });
+      const data = await resp.json();
+      aiIsSending = false;
+
+      if (!data.ok) {
+        if (data.needKey) {
+          const box = document.getElementById('aiKeyConfigBox');
+          if (box) box.style.display = 'block';
+        }
+        aiChatHistory.push({
+          role: 'assistant',
+          content: '⚠️ ' + (data.error || 'Произошла ошибка при обращении к DeepSeek.'),
+          actions: data.actions || []
+        });
+      } else {
+        aiChatHistory.push({
+          role: 'assistant',
+          content: data.reply || 'Выполнено!',
+          actions: data.actions || []
+        });
+        if (data.siteChanged) {
+          const reloadNotice = document.getElementById('aiReloadNotice');
+          if (reloadNotice) reloadNotice.style.display = 'flex';
+        }
+      }
+    } catch (err) {
+      aiIsSending = false;
+      aiChatHistory.push({
+        role: 'assistant',
+        content: '⚠️ Ошибка сети: ' + err.message,
+        actions: []
+      });
+    }
+
+    saveAiHistory();
+    renderAiMessages();
+  }
+
+  function toggleAiDrawer(forceState) {
+    const drawer = document.getElementById('aiDrawerBox');
+    if (!drawer) return;
+    const show = (typeof forceState === 'boolean') ? forceState : (drawer.style.display === 'none');
+    drawer.style.display = show ? 'flex' : 'none';
+    if (show) renderAiMessages();
+  }
+
+  // Голосовой ввод через браузерный Web Speech API (ru-RU)
+  function toggleAiVoice(target = 'main') {
+    if (aiIsRecording) {
+      stopAiVoice();
+      return;
+    }
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      alert('Ваш браузер не поддерживает голосовой ввод Web Speech API. Пожалуйста, используйте Chrome, Edge или Safari.');
+      return;
+    }
+
+    aiActiveVoiceTarget = target;
+    aiRecognition = new SpeechRec();
+    aiRecognition.lang = 'ru-RU';
+    aiRecognition.interimResults = true;
+    aiRecognition.continuous = false;
+
+    const inputEl = document.getElementById(target === 'main' ? 'aiMainInput' : 'aiDrawerInput');
+    const baseText = inputEl ? (inputEl.value ? inputEl.value + ' ' : '') : '';
+
+    aiRecognition.onstart = function () {
+      aiIsRecording = true;
+      updateVoiceUi(true);
+    };
+
+    aiRecognition.onresult = function (event) {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (inputEl) {
+        inputEl.value = baseText + transcript;
+      }
+    };
+
+    aiRecognition.onerror = function () {
+      aiIsRecording = false;
+      updateVoiceUi(false);
+    };
+
+    aiRecognition.onend = function () {
+      const wasRec = aiIsRecording;
+      aiIsRecording = false;
+      updateVoiceUi(false);
+      const autoSendEl = document.getElementById('aiAutoSendAfterVoice');
+      const shouldAutoSend = !autoSendEl || autoSendEl.checked;
+      if (wasRec && shouldAutoSend && inputEl && inputEl.value.trim().length > 1) {
+        sendAiMessage(aiActiveVoiceTarget);
+      }
+    };
+
+    aiRecognition.start();
+  }
+
+  function stopAiVoice() {
+    if (aiRecognition && aiIsRecording) {
+      aiIsRecording = false;
+      try { aiRecognition.stop(); } catch (e) {}
+    }
+    updateVoiceUi(false);
+  }
+
+  function updateVoiceUi(recording) {
+    const mainBtn = document.getElementById('aiMainMicBtn');
+    const drawerBtn = document.getElementById('aiDrawerMicBtn');
+    const banner = document.getElementById('aiVoiceListeningBanner');
+    [mainBtn, drawerBtn].forEach(btn => {
+      if (!btn) return;
+      btn.style.background = recording ? '#DC2626' : '#F1F5F9';
+      btn.style.color = recording ? '#FFFFFF' : '#0F172A';
+      btn.style.borderColor = recording ? '#DC2626' : '#CBD5E1';
+      btn.textContent = recording ? '⏹' : '🎤';
+    });
+    if (banner) {
+      banner.style.display = recording ? 'flex' : 'none';
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderAiMessages);
+  } else {
+    renderAiMessages();
   }
   </script>
 <?php endif; ?>
