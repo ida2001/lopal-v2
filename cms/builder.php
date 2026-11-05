@@ -514,7 +514,6 @@ function lopal_apply_global_settings(array $oldSettings, array $newSettings): in
             <div>✉️ <strong>Email:</strong> <a href="mailto:{$email}" style="color:var(--topmaq-gold);">{$email}</a></div>
             <div>📸 <strong>Instagram:</strong> <a href="{$instaUrl}" target="_blank" rel="noopener" style="color:#38BDF8;">{$insta}</a></div>
           </div>
-        </div>
 HTML;
 
     $htmlFiles = glob(LOPAL_ROOT_DIR . '/*.html');
@@ -526,7 +525,7 @@ HTML;
         $fname = basename($file);
 
         // 1. Блок контактов в подвале
-        $patternFb = '/<div style="font-size: 13\.5px; color: #CBD5E1; line-height: 1\.8;">[\s\S]*?<\/div>\s*<\/div>/';
+        $patternFb = '/<div style="font-size: 13\.5px; color: #CBD5E1; line-height: 1\.8;">[\s\S]*?<\/div>(?=\s*<\/div>\s*<div class="footer-col">)/';
         if (preg_match($patternFb, $content)) {
             $content = preg_replace($patternFb, $footerBlock, $content, 1);
         }
