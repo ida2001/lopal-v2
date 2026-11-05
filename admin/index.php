@@ -175,7 +175,7 @@ if ($isLogged && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['cms_act
             'phone' => $phone,
             'phoneHref' => $phoneHref,
             'coords' => [$lat, $lng],
-            'dgis' => trim($_POST['dgis'] ?: ('https://2gis.kz/almaty/search/' . rawurlencode($_POST['address'] ?? '')))
+            'dgis' => trim($_POST['dgis'] ?: ('https://2gis.kz/search/' . rawurlencode($_POST['address'] ?? '')))
         ];
         $found = false;
         foreach ($dealers as $k => $d) {

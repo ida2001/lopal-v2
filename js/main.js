@@ -18,106 +18,273 @@
      2. База дилеров и точек продаж LOPAL в Казахстане
      ------------------------------------------------------------ */
   var DEALERS_DATA = [
-    {
-      id: 'hq',
-      isHq: true,
-      badge: 'Центральный склад и сервис',
-      name: 'ТОО «Topmaq oil» / Topmaqoil Service',
-      address: 'г. Алматы, ул. Сокпакбаева, 67а',
-      phone: '+7 (707) 523-65-25',
-      phoneHref: '+77075236525',
-      coords: [43.2685, 76.9125],
-      dgis: 'https://2gis.kz/almaty/search/%D0%A1%D0%BE%D0%BA%D0%BF%D0%B0%D0%BA%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%2067%D0%B0'
-    },
-    {
-      id: 'maslenka',
-      isHq: false,
-      badge: 'Точка продаж',
-      name: '@Maslenka.kz (ТЦ Car City)',
-      address: 'г. Алматы, ул. Яссауи, 57а, ТЦ Car City, 4 ярус, бутик 44',
-      phone: '+7 (707) 523-65-25',
-      phoneHref: '+77075236525',
-      coords: [43.2288, 76.8431],
-      dgis: 'https://2gis.kz/almaty/search/Car%20City%20%D0%AF%D1%81%D1%81%D0%B0%D1%83%D0%B8%2057%D0%B0'
-    },
-    {
-      id: 'yerkin',
-      isHq: false,
-      badge: 'Пункт замены масла',
-      name: 'ПЗМ «Yerkin Oil Service»',
-      address: 'г. Алматы, Медеуский р-н, ул. Халиуллина, 160/1, боксы 15–16',
-      phone: '+7 (707) 138-30-26',
-      phoneHref: '+77071383026',
-      coords: [43.2795, 76.9792],
-      dgis: 'https://2gis.kz/almaty/search/%D0%A5%D0%B0%D0%BB%D0%B8%D1%83%D0%BB%D0%BB%D0%B8%D0%BD%D0%B0%20160%2F1'
-    },
-    {
-      id: 'azrem',
-      isHq: false,
-      badge: 'Автосервис и ПЗМ',
-      name: 'AzRemService',
-      address: 'г. Алматы, ул. Казыбаева, 1/1',
-      phone: '+7 (747) 489-03-07',
-      phoneHref: '+77474890307',
-      coords: [43.2842, 76.9168],
-      dgis: 'https://2gis.kz/almaty/search/%D0%9A%D0%B0%D0%B7%D1%8B%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%201%2F1'
-    },
-    {
-      id: 'suleon',
-      isHq: false,
-      badge: 'Магазин автозапчастей',
-      name: 'ИП SULEON PARTS',
-      address: 'г. Алматы, ул. Прокофьева, 244',
-      phone: '+7 (777) 801-12-49',
-      phoneHref: '+77778011249',
-      coords: [43.2554, 76.8829],
-      dgis: 'https://2gis.kz/almaty/search/%D0%9F%D1%80%D0%BE%D0%BA%D0%BE%D1%84%D1%8C%D0%B5%D0%B2%D0%B0%20244'
-    },
-    {
-      id: 'oilbt',
-      isHq: false,
-      badge: 'Продажа и замена',
-      name: 'ИП Oilbt.kz',
-      address: 'г. Алматы, ул. Ораза Жандосова, 94а/1',
-      phone: '+7 (701) 707-00-72',
-      phoneHref: '+77017070072',
-      coords: [43.2185, 76.8794],
-      dgis: 'https://2gis.kz/almaty/search/%D0%96%D0%B0%D0%BD%D0%B4%D0%BE%D1%81%D0%BE%D0%B2%D0%B0%2094%D0%B0%2F1'
-    },
-    {
-      id: 'remzona',
-      isHq: false,
-      badge: 'Автосервис',
-      name: 'Ремзона такси',
-      address: 'г. Алматы, ул. Толе би, 285/4',
-      phone: '+7 (747) 202-43-43',
-      phoneHref: '+77472024343',
-      coords: [43.2462, 76.8615],
-      dgis: 'https://2gis.kz/almaty/search/%D0%A2%D0%BE%D0%BB%D0%B5%20%D0%B1%D0%B8%20285%2F4'
-    },
-    {
-      id: 'alex',
-      isHq: false,
-      badge: 'СТО и замена масла',
-      name: 'СТО «Alex»',
-      address: 'г. Алматы, ул. Островского, 23',
-      phone: '+7 (705) 169-10-10',
-      phoneHref: '+77051691010',
-      coords: [43.2912, 76.9410],
-      dgis: 'https://2gis.kz/almaty/search/%D0%9E%D1%81%D1%82%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2023'
-    },
-    {
-      id: 'erudit',
-      isHq: false,
-      badge: 'Автомагазин',
-      name: 'ИП Эрудит',
-      address: 'г. Алматы, мкр. Тастыбулак, ул. Алмалы, 2/66',
-      phone: '+7 (707) 523-65-25',
-      phoneHref: '+77075236525',
-      coords: [43.2045, 76.8140],
-      dgis: 'https://2gis.kz/almaty/search/%D0%A2%D0%B0%D1%81%D1%82%D1%8B%D0%B1%D1%83%D0%BB%D0%B0%D0%BA%20%D0%90%D0%BB%D0%BC%D0%B0%D0%BB%D1%8B%202%2F66'
-    }
-  ];
+  {
+    "id": "hq",
+    "isHq": true,
+    "badge": "Центральный склад и клубный сервис GEELY",
+    "name": "Topmaq oil service (@topmaqoil_service)",
+    "address": "г. Алматы, ул. Сокпакбаева, 67а (по 2ГИС)",
+    "phone": "+7 (707) 138-30-26",
+    "phoneHref": "+77071383026",
+    "coords": [
+      43.2685,
+      76.9125
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A1%D0%BE%D0%BA%D0%BF%D0%B0%D0%BA%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%2067%D0%B0"
+  },
+  {
+    "id": "astana-oilbt-1",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ИП OILBT",
+    "address": "г. Астана, Проспект Абылай хана, 50а",
+    "phone": "+7 (701) 037-07-04",
+    "phoneHref": "+77010370704",
+    "coords": [
+      51.152367,
+      71.49176
+    ],
+    "dgis": "https://2gis.kz/astana/search/%D0%90%D0%B1%D1%8B%D0%BB%D0%B0%D0%B9%20%D1%85%D0%B0%D0%BD%D0%B0%2050%D0%B0"
+  },
+  {
+    "id": "astana-oilbt-2",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ИП OILBT (WhatsApp)",
+    "address": "г. Астана, Улица Динмухамеда Конаева, 12/1",
+    "phone": "+7 701 707 00 72, +7 702 483 60 49, +7 701 037 07 05",
+    "phoneHref": "+77017070072",
+    "coords": [
+      51.1278,
+      71.4312
+    ],
+    "dgis": "https://2gis.kz/astana/search/%D0%9A%D0%BE%D0%BD%D0%B0%D0%B5%D0%B2%D0%B0%2012%2F1"
+  },
+  {
+    "id": "astana-evgroup",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ТОО EVGROUP KAZAKHSTAN (@Dacarkz, @Dacar_astana01)",
+    "address": "г. Астана",
+    "phone": "+7 (707) 105-00-71",
+    "phoneHref": "+77071050071",
+    "coords": [
+      51.12828,
+      71.430471
+    ],
+    "dgis": "https://2gis.kz/astana/search/EVGROUP"
+  },
+  {
+    "id": "almaty-azrem",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ТОО AZ РемСервис (@AzRemService)",
+    "address": "г. Алматы, ул. Казыбаева, 1/2",
+    "phone": "+7 (747) 489-03-07",
+    "phoneHref": "+77474890307",
+    "coords": [
+      43.279986,
+      76.922394
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9A%D0%B0%D0%B7%D1%8B%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%201%2F2"
+  },
+  {
+    "id": "almaty-maslenka",
+    "isHq": false,
+    "badge": "Магазин, оптовая и розничная торговля",
+    "name": "ИП Maslenka (@Maslenka.kz)",
+    "address": "г. Алматы, ул. Яссауи, 57а, ТЦ Car City, 4 ярус, 44 бутик",
+    "phone": "+7 (777) 422-33-06",
+    "phoneHref": "+77774223306",
+    "coords": [
+      43.238785,
+      76.822319
+    ],
+    "dgis": "https://2gis.kz/almaty/search/Car%20City%20%D0%AF%D1%81%D1%81%D0%B0%D1%83%D0%B8%2057%D0%B0"
+  },
+  {
+    "id": "almaty-suleon",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ИП SULEON PARTS",
+    "address": "г. Алматы, ул. Прокофьева, 244",
+    "phone": "+7 (777) 801-12-49",
+    "phoneHref": "+77778011249",
+    "coords": [
+      43.236009,
+      76.876902
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9F%D1%80%D0%BE%D0%BA%D0%BE%D1%84%D1%8C%D0%B5%D0%B2%D0%B0%20244"
+  },
+  {
+    "id": "almaty-oilbt",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "ИП Oilbt.kz",
+    "address": "г. Алматы, ул. Ораза Жандосова, 94а/1",
+    "phone": "+7 (701) 218-26-75",
+    "phoneHref": "+77012182675",
+    "coords": [
+      43.218883,
+      76.878453
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%96%D0%B0%D0%BD%D0%B4%D0%BE%D1%81%D0%BE%D0%B2%D0%B0%2094%D0%B0%2F1"
+  },
+  {
+    "id": "almaty-yerkin",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "ПЗМ «Yerkin Oil Service»",
+    "address": "г. Алматы, Медеуский район, ул. Халиуллина, 160/1, боксы 15 и 16",
+    "phone": "+7 (708) 374-12-32, +7 (777) 799-99-84",
+    "phoneHref": "+77083741232",
+    "coords": [
+      43.2795,
+      76.9792
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A5%D0%B0%D0%BB%D0%B8%D1%83%D0%BB%D0%BB%D0%B8%D0%BD%D0%B0%20160%2F1"
+  },
+  {
+    "id": "almaty-remzona",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Ремзона такси",
+    "address": "г. Алматы, ул. Толе би, 285/4",
+    "phone": "+7 (747) 202-43-43",
+    "phoneHref": "+77472024343",
+    "coords": [
+      43.2512,
+      76.8615
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A2%D0%BE%D0%BB%D0%B5%20%D0%B1%D0%B8%20285%2F4"
+  },
+  {
+    "id": "almaty-erudit",
+    "isHq": false,
+    "badge": "Интернет магазин",
+    "name": "ИП Эрудит",
+    "address": "г. Алматы, мкр. Тастыбулак, ул. Алмалы, 2/66",
+    "phone": "+7 (701) 593-50-25",
+    "phoneHref": "+77015935025",
+    "coords": [
+      43.1874,
+      76.8123
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A2%D0%B0%D1%81%D1%82%D1%8B%D0%B1%D1%83%D0%BB%D0%B0%D0%BA%20%D0%90%D0%BB%D0%BC%D0%B0%D0%BB%D1%8B%202%2F66"
+  },
+  {
+    "id": "almaty-alex",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Автосервис ALEX (@CTO_alex_)",
+    "address": "г. Алматы, ул. Островского, 23",
+    "phone": "+7 (705) 169-10-10",
+    "phoneHref": "+77051691010",
+    "coords": [
+      43.279116,
+      76.935492
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9E%D1%81%D1%82%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2023"
+  },
+  {
+    "id": "aktau-eneos",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Eneos oil bar",
+    "address": "г. Актау, Мангистауская область, мкр. 1, здание 1/7, 1/8 напротив теннисного корта",
+    "phone": "+7 (701) 174-51-54",
+    "phoneHref": "+77011745154",
+    "coords": [
+      43.6375,
+      51.159
+    ],
+    "dgis": "https://2gis.kz/aktau/search/%D0%BC%D0%BA%D1%80%201%20%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%201%2F7"
+  },
+  {
+    "id": "aktau-grm",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Авто комплекс GRM",
+    "address": "г. Актау, Мангистауская область, Промышленная зона 1, здание 67",
+    "phone": "+7 (777) 200-77-78",
+    "phoneHref": "+77772007778",
+    "coords": [
+      43.680101,
+      51.195298
+    ],
+    "dgis": "https://2gis.kz/aktau/search/%D0%9F%D1%80%D0%BE%D0%BC%D1%8B%D1%88%D0%BB%D0%B5%D0%BD%D0%BD%D0%B0%D1%8F%20%D0%B7%D0%BE%D0%BD%D0%B0%201%20%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%2067"
+  },
+  {
+    "id": "altay-partner",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "ИП Partner Auto",
+    "address": "г. Алтай, ВКО, ул. Астана, 69",
+    "phone": "+7 (776) 437-73-33",
+    "phoneHref": "+77764377333",
+    "coords": [
+      49.73001,
+      84.267875
+    ],
+    "dgis": "https://2gis.kz/search/%D0%90%D0%BB%D1%82%D0%B0%D0%B9%20%D0%90%D1%81%D1%82%D0%B0%D0%BD%D0%B0%2069"
+  },
+  {
+    "id": "taldykorgan-west",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "West oil",
+    "address": "г. Талдыкорган, ул. Гагарина, 103",
+    "phone": "+7 (708) 070-24-24",
+    "phoneHref": "+77080702424",
+    "coords": [
+      45.021577,
+      78.426515
+    ],
+    "dgis": "https://2gis.kz/taldykorgan/search/%D0%93%D0%B0%D0%B3%D0%B0%D1%80%D0%B8%D0%BD%D0%B0%20103"
+  },
+  {
+    "id": "shymkent-ysoil",
+    "isHq": false,
+    "badge": "Автосервис, Магазин, оптовая и розничная торговля",
+    "name": "Y.S.OIL service",
+    "address": "г. Шымкент, район Туран, ул. Кожанова, 31",
+    "phone": "+7 (701) 990-85-44",
+    "phoneHref": "+77019908544",
+    "coords": [
+      42.33251,
+      69.582119
+    ],
+    "dgis": "https://2gis.kz/shymkent/search/%D0%9A%D0%BE%D0%B6%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0%2031"
+  },
+  {
+    "id": "shymkent-china",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Автосервис CHINA + (@china_plus_17)",
+    "address": "г. Шымкент, ул. Сырым батыра, 173/1",
+    "phone": "+7 (707) 722-01-03",
+    "phoneHref": "+77077220103",
+    "coords": [
+      42.380752,
+      69.611793
+    ],
+    "dgis": "https://2gis.kz/shymkent/search/%D0%A1%D1%8B%D1%80%D1%8B%D0%BC%20%D0%B1%D0%B0%D1%82%D1%8B%D1%80%D0%B0%20173%2F1"
+  },
+  {
+    "id": "arys-china",
+    "isHq": false,
+    "badge": "Магазин и автосервис",
+    "name": "Автосервис CHINA + (@china_plus_17)",
+    "address": "г. Арысь, Туркестанская область, ул. Алаш, дом 20",
+    "phone": "+7 (777) 577-03-13",
+    "phoneHref": "+77775770313",
+    "coords": [
+      42.428,
+      68.802
+    ],
+    "dgis": "https://2gis.kz/search/%D0%90%D1%80%D1%8B%D1%81%D1%8C%20%D0%90%D0%BB%D0%B0%D1%88%2020"
+  }
+];
 
   var leafletLoaded = false;
   var leafletLoadingCallbacks = [];
@@ -276,12 +443,21 @@
 
       loadLeaflet(function () {
         if (!dealersMap) {
-          dealersMap = window.L.map('dealersModalMapCanvas').setView([43.2565, 76.9050], 12);
+          dealersMap = window.L.map('dealersModalMapCanvas');
           window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
           }).addTo(dealersMap);
           dealersMarkers = createMapMarkers(dealersMap);
+          var pts = [];
+          DEALERS_DATA.forEach(function(d) {
+            if (d.coords && d.coords[0] && d.coords[1]) pts.push(d.coords);
+          });
+          if (pts.length > 0) {
+            dealersMap.fitBounds(pts, { padding: [30, 30] });
+          } else {
+            dealersMap.setView([48.0196, 66.9237], 5);
+          }
           if (dealersMarkers['hq']) dealersMarkers['hq'].openPopup();
         }
         setTimeout(function () {
@@ -317,12 +493,21 @@
     var pageMapEl = document.getElementById('dealersPageMap');
     if (pageMapEl) {
       loadLeaflet(function () {
-        var pMap = window.L.map('dealersPageMap').setView([43.2565, 76.9050], 12);
+        var pMap = window.L.map('dealersPageMap');
         window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '© OpenStreetMap'
         }).addTo(pMap);
         var pMarkers = createMapMarkers(pMap);
+        var pts = [];
+        DEALERS_DATA.forEach(function(d) {
+          if (d.coords && d.coords[0] && d.coords[1]) pts.push(d.coords);
+        });
+        if (pts.length > 0) {
+          pMap.fitBounds(pts, { padding: [40, 40] });
+        } else {
+          pMap.setView([48.0196, 66.9237], 5);
+        }
         if (pMarkers['hq']) pMarkers['hq'].openPopup();
       });
     }
