@@ -22,7 +22,7 @@
       id: 'hq',
       isHq: true,
       badge: 'Центральный склад и сервис',
-      name: 'ТОО «ТопМакОйл» / Topmaqoil Service',
+      name: 'ТОО «Topmaq oil» / Topmaqoil Service',
       address: 'г. Алматы, ул. Сокпакбаева, 67а',
       phone: '+7 (707) 523-65-25',
       phoneHref: '+77075236525',
@@ -422,7 +422,7 @@
     document.querySelectorAll('form[data-demo-form]').forEach(function (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        showToast('Спасибо за обращение! Представитель ТОО «ТопМакОйл» свяжется с вами в ближайшее время.');
+        showToast('Спасибо за обращение! Представитель ТОО «Topmaq oil» свяжется с вами в ближайшее время.');
         form.reset();
       });
     });
