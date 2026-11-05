@@ -254,6 +254,8 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
   <meta name="robots" content="noindex, nofollow">
   <title>Панель управления — LOPAL Казахстан (Headless CMS & MCP)</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
       --green: #00843D;
@@ -531,23 +533,60 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
               <input type="text" name="phone" id="dealer_phone" required value="+7 (707) 523-65-25">
             </div>
           </div>
+
+          <!-- Интерактивная карта для ручного выбора точки -->
+          <div style="margin: 16px 0; background: #F8FAFC; border: 1px solid var(--border); border-radius: 14px; padding: 18px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 12px;">
+              <div>
+                <strong style="font-size:14.5px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+                  🗺️ Указание точки на интерактивной карте:
+                </strong>
+                <span style="font-size:12.5px; color:var(--muted);">Кликните в любое место на карте или перетащите зеленый маркер 📌</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(43.2550, 76.9120, 13)">🏙️ Алматы</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(51.1694, 71.4491, 13)">🏙️ Астана</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(42.3417, 69.5901, 13)">🏙️ Шымкент</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="locateUserPosition()">🎯 Моё положение</button>
+              </div>
+            </div>
+
+            <!-- Поиск адреса на карте -->
+            <div style="display:flex; gap:8px; margin-bottom: 10px;">
+              <input type="text" id="map_search_query" placeholder="Поиск адреса на карте (например: Алматы, пр. Райымбека 115 или Абая 100)..." style="margin-bottom:0;" onkeydown="if(event.key==='Enter'){event.preventDefault();searchAddressOnMap();}">
+              <button type="button" class="btn btn-outline" style="white-space:nowrap; padding:8px 16px;" onclick="searchAddressOnMap()">🔍 Найти на карте</button>
+            </div>
+            <div id="map_search_status" style="font-size:12.5px; margin-bottom:8px; display:none; padding:8px 12px; border-radius:8px;"></div>
+
+            <!-- Контейнер карты Leaflet -->
+            <div id="dealer_map_picker" style="height: 380px; width: 100%; border-radius: 10px; border: 1px solid #CBD5E1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); z-index: 1;"></div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12.5px; color:var(--muted); flex-wrap:wrap; gap:8px;">
+              <span>Координаты выбранной точки: <strong id="coords_preview" style="color:var(--green); font-family:monospace; font-size:13.5px; background:#E8F5E9; padding:3px 10px; border-radius:6px; font-weight:700;">43.255000, 76.912000</strong></span>
+              <span>🟢 Зеленый маркер — редактируемая точка · ⚫ Темные — остальные дилеры</span>
+            </div>
+          </div>
+
           <div class="grid-2">
             <div class="grid-2">
               <div>
-                <label>Широта (Latitude)</label>
-                <input type="text" name="lat" id="dealer_lat" value="43.2550">
+                <label>Широта (Latitude) *</label>
+                <input type="text" name="lat" id="dealer_lat" value="43.2550" required oninput="onCoordsInputManual()">
               </div>
               <div>
-                <label>Долгота (Longitude)</label>
-                <input type="text" name="lng" id="dealer_lng" value="76.9120">
+                <label>Долгота (Longitude) *</label>
+                <input type="text" name="lng" id="dealer_lng" value="76.9120" required oninput="onCoordsInputManual()">
               </div>
             </div>
             <div>
               <label>Ссылка на 2ГИС (опционально)</label>
-              <input type="text" name="dgis" id="dealer_dgis" placeholder="Автоматически сгенерируется по адресу">
+              <input type="text" name="dgis" id="dealer_dgis" placeholder="Автоматически сформируется по адресу">
             </div>
           </div>
-          <button type="submit" class="btn btn-green">💾 Сохранить точку на карте</button>
+          <div style="display:flex; gap:12px;">
+            <button type="submit" class="btn btn-green">💾 Сохранить точку на карте</button>
+            <button type="button" class="btn btn-outline" onclick="resetDealerForm()">Очистить форму</button>
+          </div>
         </form>
       </div>
 
@@ -707,19 +746,276 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
     document.getElementById('prod_url').value = p.detail_url || 'products.html';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  // =================== Интерактивная карта выбора точки дилера (Leaflet) ===================
+  let dealerMap = null;
+  let currentMarker = null;
+  let otherMarkersLayer = null;
+  const existingDealersData = <?= json_encode($dealersList, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+
+  function initDealerMap() {
+    const mapContainer = document.getElementById('dealer_map_picker');
+    if (!mapContainer || typeof L === 'undefined') return;
+
+    let initLat = parseFloat(document.getElementById('dealer_lat').value) || 43.2550;
+    let initLng = parseFloat(document.getElementById('dealer_lng').value) || 76.9120;
+
+    dealerMap = L.map('dealer_map_picker', {
+      center: [initLat, initLng],
+      zoom: 13,
+      zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+    }).addTo(dealerMap);
+
+    // Стильный зеленый маркер LOPAL для выбранной точки (Draggable)
+    const activePinIcon = L.divIcon({
+      className: 'lopal-active-pin',
+      html: '<div style="background:#00843D;color:#FFF;width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,132,61,0.55);border:3px solid #FFF;cursor:grab;"><span style="transform:rotate(45deg);font-size:18px;">📍</span></div>',
+      iconSize: [38, 38],
+      iconAnchor: [19, 38],
+      popupAnchor: [0, -38]
+    });
+
+    currentMarker = L.marker([initLat, initLng], {
+      icon: activePinIcon,
+      draggable: true,
+      title: 'Перетащите в нужное место'
+    }).addTo(dealerMap);
+
+    currentMarker.bindPopup('<b>Выбранная точка дилера</b><br>Перетащите маркер мышью или кликните в любое место на карте');
+
+    currentMarker.on('dragend', function (e) {
+      const pos = e.target.getLatLng();
+      setPointCoordinates(pos.lat, pos.lng, false);
+    });
+
+    dealerMap.on('click', function (e) {
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+      setPointCoordinates(lat, lng, true);
+    });
+
+    otherMarkersLayer = L.layerGroup().addTo(dealerMap);
+    renderOtherDealersMarkers();
+    updateCoordsPreview(initLat, initLng);
+
+    setTimeout(() => {
+      if (dealerMap) dealerMap.invalidateSize();
+    }, 250);
+  }
+
+  function renderOtherDealersMarkers(excludeId = null) {
+    if (!otherMarkersLayer) return;
+    otherMarkersLayer.clearLayers();
+
+    const otherPinIcon = L.divIcon({
+      className: 'lopal-other-pin',
+      html: '<div style="background:#0F172A;color:#FFF;width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.35);border:2px solid #FFF;opacity:0.88;cursor:pointer;"><span style="transform:rotate(45deg);font-size:11px;">🛢️</span></div>',
+      iconSize: [26, 26],
+      iconAnchor: [13, 26],
+      popupAnchor: [0, -26]
+    });
+
+    existingDealersData.forEach(d => {
+      if (excludeId && d.id === excludeId) return;
+      if (d.coords && d.coords[0] && d.coords[1]) {
+        const m = L.marker([d.coords[0], d.coords[1]], { icon: otherPinIcon });
+        const popupHtml = `
+          <div style="font-size:13px;line-height:1.45;min-width:180px;">
+            <strong style="color:#0F172A;">${escapeHtml(d.name || '')}</strong><br>
+            <span style="color:#64748B;font-size:12px;">${escapeHtml(d.address || '')}</span><br>
+            <span style="color:#00843D;font-weight:600;font-size:12px;">📞 ${escapeHtml(d.phone || '')}</span><br>
+            <button type="button" style="margin-top:6px;padding:4px 10px;font-size:11.5px;background:#00843D;color:#FFF;border:none;border-radius:6px;cursor:pointer;font-weight:600;" onclick='editDealerById("${d.id}")'>✏️ Редактировать эту точку</button>
+          </div>
+        `;
+        m.bindPopup(popupHtml);
+        otherMarkersLayer.addLayer(m);
+      }
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, function(m) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+  }
+
+  function setPointCoordinates(lat, lng, moveMarker = true) {
+    lat = parseFloat(lat);
+    lng = parseFloat(lng);
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    document.getElementById('dealer_lat').value = lat.toFixed(6);
+    document.getElementById('dealer_lng').value = lng.toFixed(6);
+    updateCoordsPreview(lat, lng);
+
+    if (moveMarker && currentMarker) {
+      currentMarker.setLatLng([lat, lng]);
+    }
+  }
+
+  function updateCoordsPreview(lat, lng) {
+    const el = document.getElementById('coords_preview');
+    if (el) {
+      el.textContent = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lng).toFixed(6)}`;
+    }
+  }
+
+  function onCoordsInputManual() {
+    const lat = parseFloat(document.getElementById('dealer_lat').value);
+    const lng = parseFloat(document.getElementById('dealer_lng').value);
+    if (!isNaN(lat) && !isNaN(lng) && currentMarker && dealerMap) {
+      currentMarker.setLatLng([lat, lng]);
+      dealerMap.panTo([lat, lng]);
+      updateCoordsPreview(lat, lng);
+    }
+  }
+
+  function centerMapOnCoords(lat, lng, zoom = 14) {
+    if (!dealerMap) return;
+    setPointCoordinates(lat, lng, true);
+    dealerMap.flyTo([lat, lng], zoom);
+  }
+
+  function locateUserPosition() {
+    if (!navigator.geolocation) {
+      alert('Геолокация не поддерживается вашим браузером');
+      return;
+    }
+    const statusEl = document.getElementById('map_search_status');
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.style.background = '#EFF6FF';
+      statusEl.style.color = '#1D4ED8';
+      statusEl.textContent = 'Определение вашего местоположения...';
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        centerMapOnCoords(lat, lng, 16);
+        if (statusEl) {
+          statusEl.style.background = '#DCFCE7';
+          statusEl.style.color = '#166534';
+          statusEl.textContent = `Точка определена: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        }
+      },
+      err => {
+        if (statusEl) {
+          statusEl.style.background = '#FEE2E2';
+          statusEl.style.color = '#B91C1C';
+          statusEl.textContent = 'Не удалось определить геолокацию: ' + err.message;
+        }
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  function searchAddressOnMap() {
+    const query = (document.getElementById('map_search_query').value || '').trim();
+    const statusEl = document.getElementById('map_search_status');
+    if (!query) {
+      alert('Введите адрес для поиска (например: Алматы, пр. Райымбека 115)');
+      return;
+    }
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.style.background = '#EFF6FF';
+      statusEl.style.color = '#1D4ED8';
+      statusEl.textContent = 'Поиск адреса на карте...';
+    }
+
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&countrycodes=kz&limit=1';
+    fetch(url, { headers: { 'Accept-Language': 'ru,kz' } })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const item = data[0];
+          const lat = parseFloat(item.lat);
+          const lon = parseFloat(item.lon);
+          centerMapOnCoords(lat, lon, 16);
+          if (statusEl) {
+            statusEl.style.background = '#DCFCE7';
+            statusEl.style.color = '#166534';
+            statusEl.textContent = `Найдено: ${item.display_name}`;
+          }
+          const addrInput = document.getElementById('dealer_address');
+          if (addrInput && !addrInput.value) {
+            addrInput.value = item.display_name;
+          }
+        } else {
+          if (statusEl) {
+            statusEl.style.background = '#FEF3C7';
+            statusEl.style.color = '#92400E';
+            statusEl.textContent = 'По запросу ничего не найдено в Казахстане. Попробуйте уточнить название города и улицы.';
+          }
+        }
+      })
+      .catch(err => {
+        if (statusEl) {
+          statusEl.style.background = '#FEE2E2';
+          statusEl.style.color = '#B91C1C';
+          statusEl.textContent = 'Ошибка поиска: ' + err.message;
+        }
+      });
+  }
+
+  function editDealerById(id) {
+    const d = existingDealersData.find(x => x.id === id);
+    if (d) editDealer(d);
+  }
+
   function editDealer(d) {
     document.getElementById('dealer_id').value = d.id || '';
     document.getElementById('dealer_name').value = d.name || '';
-    document.getElementById('dealer_badge').value = d.badge || '';
+    document.getElementById('dealer_badge').value = d.badge || 'Автосервис и замена масла';
     document.getElementById('dealer_address').value = d.address || '';
     document.getElementById('dealer_phone').value = d.phone || '';
-    document.getElementById('dealer_lat').value = (d.coords && d.coords[0]) ? d.coords[0] : 43.255;
-    document.getElementById('dealer_lng').value = (d.coords && d.coords[1]) ? d.coords[1] : 76.912;
+    const lat = (d.coords && d.coords[0]) ? parseFloat(d.coords[0]) : 43.2550;
+    const lng = (d.coords && d.coords[1]) ? parseFloat(d.coords[1]) : 76.9120;
+    document.getElementById('dealer_lat').value = lat.toFixed(6);
+    document.getElementById('dealer_lng').value = lng.toFixed(6);
     document.getElementById('dealer_dgis').value = d.dgis || '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (dealerMap && currentMarker) {
+      currentMarker.setLatLng([lat, lng]);
+      dealerMap.flyTo([lat, lng], 15);
+      updateCoordsPreview(lat, lng);
+      renderOtherDealersMarkers(d.id);
+    }
+
+    const formEl = document.getElementById('dealer_name');
+    if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetDealerForm() {
+    document.getElementById('dealer_id').value = '';
+    document.getElementById('dealer_name').value = '';
+    document.getElementById('dealer_badge').value = 'Автосервис и замена масла';
+    document.getElementById('dealer_address').value = '';
+    document.getElementById('dealer_phone').value = '+7 (707) 523-65-25';
+    document.getElementById('dealer_lat').value = '43.255000';
+    document.getElementById('dealer_lng').value = '76.912000';
+    document.getElementById('dealer_dgis').value = '';
+    if (dealerMap && currentMarker) {
+      currentMarker.setLatLng([43.2550, 76.9120]);
+      dealerMap.flyTo([43.2550, 76.9120], 12);
+      updateCoordsPreview(43.2550, 76.9120);
+      renderOtherDealersMarkers();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDealerMap);
+  } else {
+    initDealerMap();
   }
   </script>
 <?php endif; ?>
 
 </body>
 </html>
+
