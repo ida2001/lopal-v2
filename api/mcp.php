@@ -447,7 +447,11 @@ function lopal_execute_mcp_tool(string $toolName, array $args): array {
                 $new['phone_main_href'] = '+' . preg_replace('/\D+/', '', $args['phone_main']);
             }
             if (!empty($args['phone_service'])) {
-                $new['phone_service_href'] = '+' . preg_replace('/\D+/', '', $args['phone_service']);
+                $cleanServ = preg_replace('/\D+/', '', $args['phone_service']);
+                $new['phone_service_href'] = !empty($cleanServ) ? ('+' . $cleanServ) : '';
+            } else if (array_key_exists('phone_service', $args)) {
+                $new['phone_service'] = '';
+                $new['phone_service_href'] = '';
             }
             $new['updated_at'] = date('c');
             lopal_write_json('settings', $new, 'mcp_settings');

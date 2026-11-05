@@ -480,23 +480,95 @@ HTML;
  * Обновление глобальных контактов во всех HTML-файлах при изменении settings.json
  */
 function lopal_apply_global_settings(array $oldSettings, array $newSettings): int {
+    $company = htmlspecialchars($newSettings['company_name'] ?? 'ТОО «Topmaq oil» (TOPMAQ OIL)', ENT_QUOTES, 'UTF-8');
+    $address = htmlspecialchars($newSettings['address'] ?? 'Казахстан, г. Алматы, ул. Сокпакбаева, 67а', ENT_QUOTES, 'UTF-8');
+    $phoneMain = htmlspecialchars($newSettings['phone_main'] ?? '+7 (707) 523-65-25', ENT_QUOTES, 'UTF-8');
+    $phoneMainHref = htmlspecialchars($newSettings['phone_main_href'] ?? '+77075236525', ENT_QUOTES, 'UTF-8');
+    $phoneService = htmlspecialchars($newSettings['phone_service'] ?? '', ENT_QUOTES, 'UTF-8');
+    $phoneServiceHref = htmlspecialchars($newSettings['phone_service_href'] ?? '', ENT_QUOTES, 'UTF-8');
+    $email = htmlspecialchars($newSettings['email'] ?? 'info@lopal.kz', ENT_QUOTES, 'UTF-8');
+    $whatsapp = preg_replace('/\D+/', '', $newSettings['whatsapp'] ?? '77075236525');
+    $insta = htmlspecialchars($newSettings['instagram'] ?? '@lopal.kz', ENT_QUOTES, 'UTF-8');
+    $instaUrl = htmlspecialchars($newSettings['instagram_url'] ?? 'https://instagram.com/lopal.kz', ENT_QUOTES, 'UTF-8');
+
+    $phoneHtml = '<div>📞 <strong>Телефон:</strong> <a href="tel:' . $phoneMainHref . '" style="color:var(--topmaq-gold);">' . $phoneMain . '</a>';
+    if (!empty($phoneService) && $phoneServiceHref !== '+' && $phoneServiceHref !== '') {
+        $phoneHtml .= ', <a href="tel:' . $phoneServiceHref . '" style="color:var(--topmaq-gold);">' . $phoneService . '</a>';
+    }
+    $phoneHtml .= '</div>';
+
+    $footerBlock = <<<HTML
+<div style="font-size: 13.5px; color: #CBD5E1; line-height: 1.8;">
+            <div>🏢 <strong>Юр. лицо:</strong> {$company}</div>
+            <div>📍 <strong>Адрес:</strong> {$address}</div>
+            {$phoneHtml}
+            <div>✉️ <strong>Email:</strong> <a href="mailto:{$email}" style="color:var(--topmaq-gold);">{$email}</a></div>
+            <div>📸 <strong>Instagram:</strong> <a href="{$instaUrl}" target="_blank" rel="noopener" style="color:#38BDF8;">{$insta}</a></div>
+          </div>
+        </div>
+HTML;
+
     $htmlFiles = glob(LOPAL_ROOT_DIR . '/*.html');
     $updatedCount = 0;
+
     foreach ($htmlFiles as $file) {
         $content = file_get_contents($file);
         $orig = $content;
+        $fname = basename($file);
 
-        foreach (['phone_main', 'phone_main_href', 'phone_service', 'phone_service_href', 'email', 'address', 'whatsapp'] as $key) {
-            if (!empty($oldSettings[$key]) && !empty($newSettings[$key]) && $oldSettings[$key] !== $newSettings[$key]) {
-                $content = str_replace($oldSettings[$key], $newSettings[$key], $content);
-            }
+        // 1. Блок контактов в подвале
+        $patternFb = '/<div style="font-size: 13\.5px; color: #CBD5E1; line-height: 1\.8;">[\s\S]*?<\/div>\s*<\/div>/';
+        if (preg_match($patternFb, $content)) {
+            $content = preg_replace($patternFb, $footerBlock, $content, 1);
         }
+
+        // 2. Описание компании в подвале
+        $patternDesc = '/<p class="footer-desc">\s*.*? — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech\. Co\., Ltd\. в Республике Казахстан\.\s*<\/p>/';
+        $content = preg_replace(
+            $patternDesc,
+            "<p class=\"footer-desc\">\n            {$company} — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан.\n          </p>",
+            $content
+        );
+
+        // 3. Копирайт в подвале
+        $patternCopy = '/© 2026 Lopal Kazakhstan · .*?\. Все права защищены\./';
+        $content = preg_replace($patternCopy, "© 2026 Lopal Kazakhstan · {$company}. Все права защищены.", $content);
+
+        // 4. Ссылки на WhatsApp
+        if (!empty($whatsapp)) {
+            $content = preg_replace('/wa\.me\/7\d{10}/', 'wa.me/' . $whatsapp, $content);
+        }
+
+        // 5. Специальные карточки на странице контактов (contacts.html)
+        if ($fname === 'contacts.html') {
+            $content = preg_replace(
+                '/(<h3>Юридическое лицо<\/h3>\s*<p style="[^"]*font-weight: 700;[^"]*">)(.*?)(<\/p>)/',
+                '${1}' . $company . '${3}',
+                $content
+            );
+            $content = preg_replace(
+                '/(<h3>Адрес офиса и склада<\/h3>\s*<p style="[^"]*font-weight: 700;[^"]*">)(.*?)(<\/p>)/',
+                '${1}' . $address . '${3}',
+                $content
+            );
+            $content = preg_replace(
+                '/<a href="mailto:[^"]*" style="[^"]*">✉️ [^<]*<\/a>/',
+                '<a href="mailto:' . $email . '" style="font-size: 15px; font-weight: 700; color: var(--topmaq-gold);">✉️ ' . $email . '</a>',
+                $content
+            );
+        }
+
+        // 6. Микроразметка Schema.org JSON-LD
+        $content = preg_replace('/"email":\s*"[^"]*"/', '"email": "' . $email . '"', $content);
+        $content = preg_replace('/"streetAddress":\s*"[^"]*"/', '"streetAddress": "' . $address . '"', $content);
+        $content = preg_replace('/"telephone":\s*"[^"]*"/', '"telephone": "' . $phoneMain . '"', $content);
 
         if ($content !== $orig) {
             file_put_contents($file, $content, LOCK_EX);
             $updatedCount++;
         }
     }
+
     return $updatedCount;
 }
 

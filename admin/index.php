@@ -207,15 +207,16 @@ if ($isLogged && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['cms_act
     if ($act === 'save_settings') {
         $old = lopal_read_json('settings');
         $new = $old;
-        $new['company_name'] = trim($_POST['company_name'] ?? $old['company_name']);
-        $new['address'] = trim($_POST['address'] ?? $old['address']);
-        $new['phone_main'] = trim($_POST['phone_main'] ?? $old['phone_main']);
+        $new['company_name'] = trim($_POST['company_name'] ?? ($old['company_name'] ?? 'ТОО «Topmaq oil» (TOPMAQ OIL)'));
+        $new['address'] = trim($_POST['address'] ?? ($old['address'] ?? 'Казахстан, г. Алматы, ул. Сокпакбаева, 67а'));
+        $new['phone_main'] = trim($_POST['phone_main'] ?? ($old['phone_main'] ?? '+7 (707) 523-65-25'));
         $new['phone_main_href'] = '+' . preg_replace('/\D+/', '', $new['phone_main']);
-        $new['phone_service'] = trim($_POST['phone_service'] ?? $old['phone_service']);
-        $new['phone_service_href'] = '+' . preg_replace('/\D+/', '', $new['phone_service']);
-        $new['email'] = trim($_POST['email'] ?? $old['email']);
-        $new['whatsapp'] = preg_replace('/\D+/', '', $_POST['whatsapp'] ?? $old['whatsapp']);
-        $new['instagram'] = trim($_POST['instagram'] ?? $old['instagram']);
+        $new['phone_service'] = trim($_POST['phone_service'] ?? '');
+        $cleanService = preg_replace('/\D+/', '', $new['phone_service']);
+        $new['phone_service_href'] = !empty($cleanService) ? ('+' . $cleanService) : '';
+        $new['email'] = trim($_POST['email'] ?? ($old['email'] ?? 'info@lopal.kz'));
+        $new['whatsapp'] = preg_replace('/\D+/', '', $_POST['whatsapp'] ?? ($old['whatsapp'] ?? '77075236525'));
+        $new['instagram'] = trim($_POST['instagram'] ?? ($old['instagram'] ?? '@lopal.kz'));
         $new['updated_at'] = date('c');
 
         lopal_write_json('settings', $new, 'admin_save_settings');
