@@ -53,13 +53,33 @@ if ($action === 'save_key') {
     echo json_encode([
         'ok' => true,
         'hasKey' => ($apiKey !== ''),
-        'maskedKey' => $apiKey !== '' ? (substr($apiKey, 0, 5) . '...' . substr($apiKey, -4)) : ''
+        'maskedKey' => $apiKey !== '' ? (substr($apiKey, 0, 5) . '...' . substr($apiKey, -4)) : '',
+        'model' => $settings['deepseek_model'] ?? 'deepseek-chat'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 /**
- * 2. Проверка статуса ключа
+ * 2. Сохранение выбранной модели DeepSeek
+ */
+if ($action === 'save_model') {
+    $model = trim($payload['model'] ?? 'deepseek-chat');
+    if (!in_array($model, ['deepseek-chat', 'deepseek-flash'])) {
+        $model = 'deepseek-chat';
+    }
+    $settings = lopal_read_json('settings');
+    $settings['deepseek_model'] = $model;
+    lopal_write_json('settings', $settings, 'save_deepseek_model');
+    echo json_encode([
+        'ok' => true,
+        'model' => $model,
+        'message' => 'Модель успешно переключена на ' . $model
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/**
+ * 3. Проверка статуса ключа и модели
  */
 if ($action === 'status') {
     $settings = lopal_read_json('settings');
@@ -67,7 +87,8 @@ if ($action === 'status') {
     echo json_encode([
         'ok' => true,
         'hasKey' => ($apiKey !== ''),
-        'maskedKey' => $apiKey !== '' ? (substr($apiKey, 0, 5) . '...' . substr($apiKey, -4)) : ''
+        'maskedKey' => $apiKey !== '' ? (substr($apiKey, 0, 5) . '...' . substr($apiKey, -4)) : '',
+        'model' => $settings['deepseek_model'] ?? 'deepseek-chat'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -664,10 +685,14 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
 /**
  * Вызов DeepSeek Chat Completions API
  */
-function lopal_call_deepseek(string $apiKey, array $messages, array $tools): array {
+function lopal_call_deepseek(string $apiKey, array $messages, array $tools, string $model = 'deepseek-chat'): array {
     $url = 'https://api.deepseek.com/chat/completions';
+    $validModels = ['deepseek-chat', 'deepseek-flash'];
+    if (!in_array($model, $validModels)) {
+        $model = 'deepseek-chat';
+    }
     $body = json_encode([
-        'model' => 'deepseek-chat',
+        'model' => $model,
         'messages' => $messages,
         'tools' => $tools,
         'tool_choice' => 'auto',
@@ -782,6 +807,11 @@ if ($action === 'chat') {
         }
     }
 
+    $chosenModel = trim($payload['model'] ?? ($settings['deepseek_model'] ?? 'deepseek-chat'));
+    if (!in_array($chosenModel, ['deepseek-chat', 'deepseek-flash'])) {
+        $chosenModel = 'deepseek-chat';
+    }
+
     $tools = lopal_get_ai_tools_schema();
     $executedActions = [];
     $siteChanged = false;
@@ -789,7 +819,7 @@ if ($action === 'chat') {
 
     // Цикл вызова инструментов (до 5 шагов за один запрос)
     for ($step = 0; $step < 5; $step++) {
-        $res = lopal_call_deepseek($apiKey, $messages, $tools);
+        $res = lopal_call_deepseek($apiKey, $messages, $tools, $chosenModel);
         if (!$res['ok']) {
             echo json_encode([
                 'ok' => false,
