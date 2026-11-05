@@ -496,6 +496,9 @@ function lopal_apply_global_settings(array $oldSettings, array $newSettings): in
     $whatsapp = preg_replace('/\D+/', '', $newSettings['whatsapp'] ?? '77075236525');
     $insta = htmlspecialchars($newSettings['instagram'] ?? '@lopal.kz', ENT_QUOTES, 'UTF-8');
     $instaUrl = htmlspecialchars($newSettings['instagram_url'] ?? 'https://instagram.com/lopal.kz', ENT_QUOTES, 'UTF-8');
+    $schedWeekdays = htmlspecialchars($newSettings['schedule_weekdays'] ?? '09:00 — 18:00', ENT_QUOTES, 'UTF-8');
+    $schedSat = htmlspecialchars($newSettings['schedule_sat'] ?? 'Выходной', ENT_QUOTES, 'UTF-8');
+    $schedSun = htmlspecialchars($newSettings['schedule_sun'] ?? 'Выходной', ENT_QUOTES, 'UTF-8');
 
     $phoneHtml = '<div>📞 <strong>Телефон:</strong> <a href="tel:' . $phoneMainHref . '" style="color:var(--topmaq-gold);">' . $phoneMain . '</a>';
     if (!empty($phoneService) && $phoneServiceHref !== '+' && $phoneServiceHref !== '') {
@@ -562,12 +565,47 @@ HTML;
                 '<a href="mailto:' . $email . '" style="font-size: 15px; font-weight: 700; color: var(--topmaq-gold);">✉️ ' . $email . '</a>',
                 $content
             );
+
+            // Обновление графика работы на странице contacts.html
+            $schedUl = '<ul style="font-size: 14px; line-height: 2; color: var(--ink-secondary);">' . "\n" .
+                       '                <li>🕒 <strong>Понедельник — Пятница:</strong> ' . $schedWeekdays . '</li>' . "\n" .
+                       '                <li>🕒 <strong>Суббота:</strong> ' . $schedSat . '</li>' . "\n" .
+                       '                <li>⛔ <strong>Воскресенье:</strong> ' . $schedSun . '</li>' . "\n" .
+                       '              </ul>';
+            $content = preg_replace(
+                '/<h4 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var\(--ink-primary\);">График работы склада и офиса:<\/h4>\s*<ul[\s\S]*?<\/ul>/',
+                '<h4 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--ink-primary);">График работы склада и офиса:</h4>' . "\n              " . $schedUl,
+                $content
+            );
+        }
+
+        // Обновление режима работы сервиса на service-points.html
+        if ($fname === 'service-points.html') {
+            $satSunText = ($schedSat === 'Выходной' && $schedSun === 'Выходной') ? ' (Сб–Вс: Выходной)' : " (Сб: {$schedSat}, Вс: {$schedSun})";
+            $content = preg_replace(
+                '/<div>🕒 <strong>Режим работы:<\/strong>[^<]*<\/div>/',
+                "<div>🕒 <strong>Режим работы:</strong> Пн–Пт: {$schedWeekdays}{$satSunText}</div>",
+                $content
+            );
         }
 
         // 6. Микроразметка Schema.org JSON-LD
         $content = preg_replace('/"email":\s*"[^"]*"/', '"email": "' . $email . '"', $content);
         $content = preg_replace('/"streetAddress":\s*"[^"]*"/', '"streetAddress": "' . $address . '"', $content);
         $content = preg_replace('/"telephone":\s*"[^"]*"/', '"telephone": "' . $phoneMain . '"', $content);
+        if ($schedSat === 'Выходной') {
+            $content = str_replace(
+                '"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]',
+                '"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]',
+                $content
+            );
+        } else {
+            $content = str_replace(
+                '"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]',
+                '"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]',
+                $content
+            );
+        }
 
         if ($content !== $orig) {
             file_put_contents($file, $content, LOCK_EX);

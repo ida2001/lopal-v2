@@ -217,6 +217,9 @@ if ($isLogged && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['cms_act
         $new['email'] = trim($_POST['email'] ?? ($old['email'] ?? 'info@lopal.kz'));
         $new['whatsapp'] = preg_replace('/\D+/', '', $_POST['whatsapp'] ?? ($old['whatsapp'] ?? '77075236525'));
         $new['instagram'] = trim($_POST['instagram'] ?? ($old['instagram'] ?? '@lopal.kz'));
+        $new['schedule_weekdays'] = trim($_POST['schedule_weekdays'] ?? ($old['schedule_weekdays'] ?? '09:00 — 18:00'));
+        $new['schedule_sat'] = trim($_POST['schedule_sat'] ?? ($old['schedule_sat'] ?? 'Выходной'));
+        $new['schedule_sun'] = trim($_POST['schedule_sun'] ?? ($old['schedule_sun'] ?? 'Выходной'));
         $new['updated_at'] = date('c');
 
         lopal_write_json('settings', $new, 'admin_save_settings');
@@ -653,6 +656,25 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
               <input type="text" name="whatsapp" value="<?= htmlspecialchars($settings['whatsapp'] ?? '77075236525') ?>">
             </div>
           </div>
+
+          <div style="margin: 20px 0 16px; padding: 18px; background: #F8FAFC; border: 1px solid var(--border); border-radius: 12px;">
+            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--ink);">🕒 График работы склада и офиса (отображается на странице Контакты и в сервисах)</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+              <div>
+                <label>Понедельник — Пятница *</label>
+                <input type="text" name="schedule_weekdays" value="<?= htmlspecialchars($settings['schedule_weekdays'] ?? '09:00 — 18:00') ?>" required placeholder="09:00 — 18:00">
+              </div>
+              <div>
+                <label>Суббота *</label>
+                <input type="text" name="schedule_sat" value="<?= htmlspecialchars($settings['schedule_sat'] ?? 'Выходной') ?>" required placeholder="Выходной">
+              </div>
+              <div>
+                <label>Воскресенье *</label>
+                <input type="text" name="schedule_sun" value="<?= htmlspecialchars($settings['schedule_sun'] ?? 'Выходной') ?>" required placeholder="Выходной">
+              </div>
+            </div>
+          </div>
+
           <button type="submit" class="btn btn-green">💾 Применить ко всем страницам сайта</button>
         </form>
       </div>

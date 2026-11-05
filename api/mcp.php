@@ -255,10 +255,13 @@ function lopal_get_mcp_tools_definitions(): array {
                 'type' => 'object',
                 'properties' => [
                     'phone_main' => ['type' => 'string', 'description' => 'Основной телефон (например +7 (707) 523-65-25)'],
-                    'phone_service' => ['type' => 'string', 'description' => 'Телефон сервиса (например +7 (707) 138-30-26)'],
+                    'phone_service' => ['type' => 'string', 'description' => 'Телефон сервиса (оставьте пустым для скрытия)'],
                     'email' => ['type' => 'string', 'description' => 'Электронная почта (например info@lopal.kz)'],
                     'address' => ['type' => 'string', 'description' => 'Физический адрес в Алматы'],
-                    'whatsapp' => ['type' => 'string', 'description' => 'Номер WhatsApp только цифрами (например 77075236525)']
+                    'whatsapp' => ['type' => 'string', 'description' => 'Номер WhatsApp только цифрами (например 77075236525)'],
+                    'schedule_weekdays' => ['type' => 'string', 'description' => 'График работы Пн–Пт (например: 09:00 — 18:00)'],
+                    'schedule_sat' => ['type' => 'string', 'description' => 'График в субботу (например: Выходной или 10:00 — 16:00)'],
+                    'schedule_sun' => ['type' => 'string', 'description' => 'График в воскресенье (например: Выходной)']
                 ]
             ]
         ],
@@ -438,7 +441,7 @@ function lopal_execute_mcp_tool(string $toolName, array $args): array {
         case 'update_site_settings':
             $old = lopal_read_json('settings');
             $new = $old;
-            foreach (['company_name', 'address', 'phone_main', 'phone_service', 'email', 'whatsapp', 'instagram', 'instagram_url'] as $field) {
+            foreach (['company_name', 'address', 'phone_main', 'phone_service', 'email', 'whatsapp', 'instagram', 'instagram_url', 'schedule_weekdays', 'schedule_sat', 'schedule_sun'] as $field) {
                 if (!empty($args[$field])) {
                     $new[$field] = trim($args[$field]);
                 }
