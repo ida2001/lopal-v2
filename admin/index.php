@@ -249,6 +249,9 @@ $settings = $isLogged ? lopal_read_json('settings') : [];
 $snapshots = $isLogged ? array_map('basename', glob(LOPAL_BACKUPS_DIR . '/snap_*', GLOB_ONLYDIR) ?: []) : [];
 rsort($snapshots);
 $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
+if ($activeTab === 'mcp') {
+    $activeTab = 'news';
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -256,7 +259,7 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Панель управления — LOPAL Казахстан (Headless CMS & MCP)</title>
+  <title>Панель управления — LOPAL Казахстан (Headless CMS)</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -311,7 +314,7 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
     <div class="card" style="max-width: 420px; width: 100%; text-align: center;">
       <img src="../assets/branding/lopal-logo.png" alt="Lopal" style="height: 46px; margin-bottom: 16px;">
       <h2>Вход в панель управления</h2>
-      <p class="sub">LOPAL Казахстан · Headless CMS & MCP</p>
+      <p class="sub">LOPAL Казахстан · Headless CMS</p>
       <?php if ($loginError): ?>
         <div style="background:#FEE2E2;color:#B91C1C;padding:10px;border-radius:8px;margin-bottom:14px;font-size:13px;font-weight:600;"><?= htmlspecialchars($loginError) ?></div>
       <?php endif; ?>
@@ -333,7 +336,7 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
   <header class="topbar">
     <div class="topbar-left">
       <img src="../assets/branding/lopal-logo.png" alt="Lopal">
-      <span class="badge-cms">Headless CMS + ChatGPT MCP</span>
+      <span class="badge-cms">Headless CMS</span>
     </div>
     <div style="display: flex; align-items: center; gap: 12px;">
       <a href="../index.html" target="_blank" class="btn btn-outline">Открыть сайт ↗</a>
@@ -352,7 +355,6 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
       <a href="?tab=products" class="tab-btn <?= $activeTab === 'products' ? 'active' : '' ?>">🛢️ Каталог масел (<?= count($productsList) ?>)</a>
       <a href="?tab=dealers" class="tab-btn <?= $activeTab === 'dealers' ? 'active' : '' ?>">📍 Точки продаж и СТО (<?= count($dealersList) ?>)</a>
       <a href="?tab=settings" class="tab-btn <?= $activeTab === 'settings' ? 'active' : '' ?>">⚙️ Контакты и Настройки</a>
-      <a href="?tab=mcp" class="tab-btn <?= $activeTab === 'mcp' ? 'active' : '' ?>">🤖 Подключение ChatGPT (MCP)</a>
       <a href="?tab=backups" class="tab-btn <?= $activeTab === 'backups' ? 'active' : '' ?>">⏪ Откат и Бэкапы</a>
     </nav>
 
@@ -677,30 +679,6 @@ $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
 
           <button type="submit" class="btn btn-green">💾 Применить ко всем страницам сайта</button>
         </form>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($activeTab === 'mcp'): ?>
-      <div class="card">
-        <h2>🤖 Подключение ChatGPT по протоколу MCP / OpenAPI Actions</h2>
-        <p class="sub">Ваш сайт оснащен двусторонним шлюзом искусственного интеллекта. Вы можете управлять новостями, товарами, дилерами и контактами прямо из диалога с ChatGPT.</p>
-
-        <h3 style="font-size:15px;margin-bottom:8px;">1. Адрес MCP-сервера (Streamable HTTP JSON-RPC 2.0):</h3>
-        <code class="code-box">https://lopal.kz/api/mcp.php</code>
-
-        <h3 style="font-size:15px;margin-bottom:8px;">2. Ссылка для импорта схемы в ChatGPT (Custom GPT ➔ Actions ➔ Import from URL):</h3>
-        <code class="code-box">https://lopal.kz/api/mcp.php?openapi=1</code>
-
-        <h3 style="font-size:15px;margin-bottom:8px;">3. Секретный ключ авторизации (Bearer Token / API Key):</h3>
-        <code class="code-box"><?= htmlspecialchars(LOPAL_MCP_API_KEY) ?></code>
-
-        <h3 style="font-size:15px;margin:18px 0 8px;">Примеры команд, которые можно писать в ChatGPT:</h3>
-        <ul style="padding-left:20px;font-size:14px;color:#334155;line-height:1.8;">
-          <li><em>«Опубликуй на lopal.kz новость о поступлении антифриза Lopal Coolion SE01 на склад в Алматы»</em></li>
-          <li><em>«Покажи список всех точек продаж на карте lopal.kz и добавь новое СТО в Алматы»</em></li>
-          <li><em>«Добавь новое моторное масло в каталог на сайте»</em></li>
-          <li><em>«Откати сайт к исходному состоянию»</em></li>
-        </ul>
       </div>
     <?php endif; ?>
 
