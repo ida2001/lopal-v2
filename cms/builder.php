@@ -116,7 +116,7 @@ HTML;
   <meta name="twitter:title" content="Новости LOPAL в Казахстане — {$company}">
   <meta name="twitter:description" content="Свежие новости официального дистрибьютора LOPAL в РК: новинки продукции, допуски автопроизводителей и развитие дилерской сети.">
   <meta name="twitter:image" content="https://lopal.kz/assets/branding/topmaq-hero-dark.jpg">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AutoPartsStore", "name": "LOPAL Казахстан — {$company}", "description": "Официальный эксклюзивный дистрибьютор смазочных материалов, моторных и трансмиссионных масел Jiangsu Lopal Tech в Республике Казахстан.", "url": "https://lopal.kz/", "logo": "https://lopal.kz/assets/branding/lopal-logo.png", "image": "https://lopal.kz/assets/branding/topmaq-hero-dark.jpg", "telephone": "+7-707-523-65-25", "email": "{$email}", "address": {"@type": "PostalAddress", "streetAddress": "ул. Сокпакбаева, 67а", "addressLocality": "Алматы", "addressCountry": "KZ"}, "geo": {"@type": "GeoCoordinates", "latitude": 43.2685, "longitude": 76.9125}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "18:00"}], "sameAs": ["{$instaUrl}"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "AutoPartsStore", "name": "LOPAL Казахстан — {$company}", "description": "Официальный эксклюзивный дистрибьютор смазочных материалов, моторных и трансмиссионных масел Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан.", "url": "https://lopal.kz/", "logo": "https://lopal.kz/assets/branding/lopal-logo.png", "image": "https://lopal.kz/assets/branding/topmaq-hero-dark.jpg", "telephone": "+7-707-523-65-25", "email": "{$email}", "address": {"@type": "PostalAddress", "streetAddress": "ул. Сокпакбаева, 67а", "addressLocality": "Алматы", "addressCountry": "KZ"}, "geo": {"@type": "GeoCoordinates", "latitude": 43.2685, "longitude": 76.9125}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "18:00"}], "sameAs": ["{$instaUrl}"]}</script>
 </head>
 <body>
 
@@ -161,7 +161,7 @@ HTML;
           <span class="kicker kicker-gold">Пресс-центр официального представительства</span>
           <h1 class="section-title">Новости LOPAL в Казахстане</h1>
           <p class="section-subtitle">
-            Актуальные события ТОО «ТопМакОйл» и корпорации Jiangsu Lopal Tech: поступление новых партий на склад в Алматы, 
+            Актуальные события ТОО «ТопМакОйл» и корпорации Jiangsu Lopal New Material Tech. Co., Ltd.: поступление новых партий на склад в Алматы, 
             обзоры стандартов <strong>API SQ / ILSAC GF-7</strong>, решения для гибридов <strong>NEV</strong> и развитие сети партнерских ПЗМ.
           </p>
         </div>
@@ -225,7 +225,7 @@ HTML;
             <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО ТопМакОйл" height="30">
           </div>
           <p class="footer-desc">
-            {$company} — официальный дистрибьютор и генеральный представитель Jiangsu Lopal Tech Co., Ltd. в Республике Казахстан.
+            {$company} — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан.
           </p>
           <div style="font-size: 13.5px; color: #CBD5E1; line-height: 1.8;">
             <div>🏢 <strong>Юр. лицо:</strong> {$company}</div>
