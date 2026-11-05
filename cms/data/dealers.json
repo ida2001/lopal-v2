@@ -1,0 +1,128 @@
+[
+  {
+    "id": "hq",
+    "isHq": true,
+    "badge": "Центральный склад и сервис",
+    "name": "ТОО «ТопМакОйл» / Topmaqoil Service",
+    "address": "г. Алматы, ул. Сокпакбаева, 67а",
+    "phone": "+7 (707) 523-65-25",
+    "phoneHref": "+77075236525",
+    "coords": [
+      43.2685,
+      76.9125
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A1%D0%BE%D0%BA%D0%BF%D0%B0%D0%BA%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%2067%D0%B0"
+  },
+  {
+    "id": "maslenka",
+    "isHq": false,
+    "badge": "Продажа масел Lopal",
+    "name": "@Maslenka.kz (ТЦ Car City)",
+    "address": "г. Алматы, ул. Яссауи, 57а, ТЦ Car City, 4 ярус, бутик 44",
+    "phone": "+7 (707) 523-65-25",
+    "phoneHref": "+77075236525",
+    "coords": [
+      43.2288,
+      76.8431
+    ],
+    "dgis": "https://2gis.kz/almaty/search/Car%20City%20%D0%AF%D1%81%D1%81%D0%B0%D1%83%D0%B8%2057%D0%B0"
+  },
+  {
+    "id": "yerkin",
+    "isHq": false,
+    "badge": "Замена масла и фильтров",
+    "name": "ПЗМ «Yerkin Oil Service»",
+    "address": "г. Алматы, Медеуский р-н, ул. Халиуллина, 160/1, боксы 15–16",
+    "phone": "+7 (707) 138-30-26",
+    "phoneHref": "+77071383026",
+    "coords": [
+      43.2795,
+      76.9792
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A5%D0%B0%D0%BB%D0%B8%D1%83%D0%BB%D0%BB%D0%B8%D0%BD%D0%B0%20160%2F1"
+  },
+  {
+    "id": "azrem",
+    "isHq": false,
+    "badge": "Автосервис и ПЗМ",
+    "name": "AzRemService",
+    "address": "г. Алматы, ул. Казыбаева, 1/1",
+    "phone": "+7 (747) 489-03-07",
+    "phoneHref": "+77474890307",
+    "coords": [
+      43.2842,
+      76.9168
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9A%D0%B0%D0%B7%D1%8B%D0%B1%D0%B0%D0%B5%D0%B2%D0%B0%201%2F1"
+  },
+  {
+    "id": "suleon",
+    "isHq": false,
+    "badge": "Магазин автозапчастей",
+    "name": "ИП SULEON PARTS",
+    "address": "г. Алматы, ул. Прокофьева, 244",
+    "phone": "+7 (777) 801-12-49",
+    "phoneHref": "+77778011249",
+    "coords": [
+      43.2554,
+      76.8829
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9F%D1%80%D0%BE%D0%BA%D0%BE%D1%84%D1%8C%D0%B5%D0%B2%D0%B0%20244"
+  },
+  {
+    "id": "oilbt",
+    "isHq": false,
+    "badge": "Продажа и экспресс-замена",
+    "name": "ИП Oilbt.kz",
+    "address": "г. Алматы, ул. Ораза Жандосова, 94а/1",
+    "phone": "+7 (701) 707-00-72",
+    "phoneHref": "+77017070072",
+    "coords": [
+      43.2185,
+      76.8794
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%96%D0%B0%D0%BD%D0%B4%D0%BE%D1%81%D0%BE%D0%B2%D0%B0%2094%D0%B0%2F1"
+  },
+  {
+    "id": "remzona",
+    "isHq": false,
+    "badge": "Автосервис",
+    "name": "Ремзона такси",
+    "address": "г. Алматы, ул. Толе би, 285/4",
+    "phone": "+7 (747) 202-43-43",
+    "phoneHref": "+77472024343",
+    "coords": [
+      43.2462,
+      76.8615
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A2%D0%BE%D0%BB%D0%B5%20%D0%B1%D0%B8%20285%2F4"
+  },
+  {
+    "id": "alex",
+    "isHq": false,
+    "badge": "СТО и замена масла",
+    "name": "СТО «Alex»",
+    "address": "г. Алматы, ул. Островского, 23",
+    "phone": "+7 (705) 169-10-10",
+    "phoneHref": "+77051691010",
+    "coords": [
+      43.2912,
+      76.941
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%9E%D1%81%D1%82%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE%2023"
+  },
+  {
+    "id": "erudit",
+    "isHq": false,
+    "badge": "Автотовары и смазочные материалы",
+    "name": "ИП Эрудит",
+    "address": "г. Алматы, мкр. Тастыбулак, ул. Алмалы, 2/66",
+    "phone": "+7 (707) 523-65-25",
+    "phoneHref": "+77075236525",
+    "coords": [
+      43.2045,
+      76.814
+    ],
+    "dgis": "https://2gis.kz/almaty/search/%D0%A2%D0%B0%D1%81%D1%82%D1%8B%D0%B1%D1%83%D0%BB%D0%B0%D0%BA%20%D0%90%D0%BB%D0%BC%D0%B0%D0%BB%D1%8B%202%2F66"
+  }
+]

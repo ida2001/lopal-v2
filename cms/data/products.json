@@ -1,0 +1,371 @@
+[
+  {
+    "id": "prod-1",
+    "slug": "l1-advance-esf-fe-plus",
+    "category": "passengers",
+    "category_title": "Легковые автомобили",
+    "name": "Lopal 1 Advance ESF (SAE 0W-20 / 5W-30)",
+    "image": "assets/products/lopal-1-advance-esf-fe-plus-0w20.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "API SQ / SP"
+      },
+      {
+        "class": "badge-oem",
+        "text": "MB 229.52"
+      }
+    ],
+    "specs": [
+      "API SQ",
+      "ILSAC GF-7A",
+      "ACEA C3 / C2",
+      "MB-Approval 229.52",
+      "BMW LL-04"
+    ],
+    "description": "Флагманское синтетическое моторное масло для современных высокофорсированных двигателей. Соответствует самым свежим требованиям ACEA C3-23. Защищает турбины и катализаторы от термической деградации.",
+    "detail_url": "product-l1-advance-esf-fe-plus.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-2",
+    "slug": "l1-ultra-up-fe",
+    "category": "passengers",
+    "category_title": "Легковые автомобили",
+    "name": "Lopal 1 Ultra UP FE SAE 0W-20",
+    "image": "assets/products/lopal-1-ultra-up-fe-0w20.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "API SQ"
+      },
+      {
+        "class": "badge-gf7",
+        "text": "ILSAC GF-7A"
+      }
+    ],
+    "specs": [
+      "API SQ",
+      "ILSAC GF-7A",
+      "Защита от LSPI",
+      "Формула Vis-Power"
+    ],
+    "description": "Маловязкое ресурсосберегающее масло с феноменальной экономией топлива. Рекомендовано для японских, корейских и китайских автомобилей с непосредственным впрыском TGDI.",
+    "detail_url": "product-l1-ultra-up-fe.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-3",
+    "slug": "l1-master-esf-lt",
+    "category": "passengers",
+    "category_title": "Легковые автомобили",
+    "name": "Lopal 1 Master ESF LT SAE 0W-30",
+    "image": "assets/products/lopal-1-master-esf-lt-0w30.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "API SQ"
+      },
+      {
+        "class": "badge-oem",
+        "text": "Porsche A40"
+      }
+    ],
+    "specs": [
+      "API SQ",
+      "ACEA C2 / A5/B5",
+      "BMW Longlife-12FE",
+      "Porsche A40"
+    ],
+    "description": "Разработано специально для немецких двигателей с высокими требованиями к энергосбережению и защите фильтров сажи DPF.",
+    "detail_url": "product-l1-master-esf-lt.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-4",
+    "slug": "l1-ultra-esf",
+    "category": "passengers",
+    "category_title": "Легковые автомобили",
+    "name": "Lopal 1 Ultra ESF SAE 0W-30 / 5W-30",
+    "image": "assets/products/lopal-1-ultra-esf-5w30.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "API SP"
+      },
+      {
+        "class": "badge-oem",
+        "text": "China VI Low SAPS"
+      }
+    ],
+    "specs": [
+      "API SP",
+      "ACEA C3",
+      "GPF / DPF Safe",
+      "MB 229.51"
+    ],
+    "description": "Малозольное синтетическое масло с непревзойденной термоокислительной стабильностью для экологических стандартов Euro 6 и China VI.",
+    "detail_url": "product-l1-ultra-esf.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-5",
+    "slug": "sonic-9688",
+    "category": "passengers",
+    "category_title": "Легковые автомобили",
+    "name": "Lopal SONIC 9688 SAE 5W-40",
+    "image": "assets/products/lopal-1-sonic-9688.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "API SP"
+      },
+      {
+        "class": "badge-oem",
+        "text": "ACEA A3/B4"
+      }
+    ],
+    "specs": [
+      "API SP",
+      "ACEA A3/B4",
+      "Высокий HTHS",
+      "Выносливость"
+    ],
+    "description": "Классическое полнозольное масло высокой вязкости для двигателей с пробегом, защищает при экстремальных летних температурах Казахстана.",
+    "detail_url": "product-sonic-9688.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-6",
+    "slug": "item-6",
+    "category": "nev",
+    "category_title": "Электрокары & Гибриды (NEV)",
+    "name": "Lopal 1 Guardian HPO Pro / XP (0W-16, 0W-20)",
+    "image": "assets/products_2026/nev-guardian-hpo-xp-pro.jpg",
+    "badges": [
+      {
+        "class": "badge-nev",
+        "text": "NEV HYBRID OIL"
+      },
+      {
+        "class": "badge-sq",
+        "text": "API SQ / GF-7B"
+      }
+    ],
+    "specs": [
+      "Для гибридов (PHEV/HEV)",
+      "Тест Lubrizol LTD168",
+      "Защита от эмульсии"
+    ],
+    "description": "Специализированное масло для гибридов: выдерживает до 10х больше циклов запуска/останова, защищает непрогретый мотор (20–40 °C) от разжижения топливом и эмульгирования.",
+    "detail_url": "technologies.html",
+    "detail_btn_text": "Инновации NEV →"
+  },
+  {
+    "id": "prod-7",
+    "slug": "item-7",
+    "category": "nev",
+    "category_title": "Электрокары & Гибриды (NEV)",
+    "name": "Lopal New Energy E21 / E22 / E23 Трансмиссионные",
+    "image": "assets/products_2026/nev-transmission-e21-e22-e23.jpg",
+    "badges": [
+      {
+        "class": "badge-nev",
+        "text": "E-TRANSMISSION"
+      },
+      {
+        "class": "badge-oem",
+        "text": "E-ATF / E-CVTF / E-DCTF"
+      }
+    ],
+    "specs": [
+      "E21: E-ATF",
+      "E22: E-CVTF",
+      "E23: E-DCTF",
+      "Совместимость с медью"
+    ],
+    "description": "Жидкости для гибридных коробок передач с интегрированными тяговыми электромоторами. Защищают медные обмотки от коррозии.",
+    "detail_url": "technologies.html",
+    "detail_btn_text": "Инновации NEV →"
+  },
+  {
+    "id": "prod-8",
+    "slug": "item-8",
+    "category": "nev",
+    "category_title": "Электрокары & Гибриды (NEV)",
+    "name": "Lopal Coolion SE01 (Батарейный антифриз EV)",
+    "image": "assets/products_2026/nev-coolion-se01-coolant.jpg",
+    "badges": [
+      {
+        "class": "badge-nev",
+        "text": "EV BATTERY COOLANT"
+      },
+      {
+        "class": "badge-oem",
+        "text": "Low Conductivity"
+      }
+    ],
+    "specs": [
+      "Низкая электропроводность",
+      "Пожаробезопасность тяговых батарей"
+    ],
+    "description": "Специальный хладагент для охлаждения тяговых аккумуляторов электромобилей. Исключает риск короткого замыкания.",
+    "detail_url": "technologies.html",
+    "detail_btn_text": "Инновации NEV →"
+  },
+  {
+    "id": "prod-9",
+    "slug": "item-9",
+    "category": "nev",
+    "category_title": "Электрокары & Гибриды (NEV)",
+    "name": "Lopal C-Star Healthy Grain Ethanol Washer Fluid",
+    "image": "assets/products_2026/nev-cstar-ethanol-washer.jpg",
+    "badges": [
+      {
+        "class": "badge-nev",
+        "text": "0% МЕТАНОЛА"
+      },
+      {
+        "class": "badge-oem",
+        "text": "GB/T 23436 / REACH"
+      }
+    ],
+    "specs": [
+      "Пищевой зерновой спирт ≥95%",
+      "Без запаха метанола"
+    ],
+    "description": "Экологически чистая незамерзающая жидкость без токсичного метанола. Безопасна для здоровья пассажиров и поликарбоната фар.",
+    "detail_url": "technologies.html",
+    "detail_btn_text": "Инновации NEV →"
+  },
+  {
+    "id": "prod-10",
+    "slug": "extra-k10",
+    "category": "commercial",
+    "category_title": "Коммерческий транспорт",
+    "name": "Lopal Extra K10 Heavy Duty SAE 10W-40",
+    "image": "assets/products/lopal-extra-k10-ck4.jpg",
+    "badges": [
+      {
+        "class": "badge-heavy",
+        "text": "HEAVY DUTY"
+      },
+      {
+        "class": "badge-sq",
+        "text": "API CK-4 / CJ-4"
+      }
+    ],
+    "specs": [
+      "API CK-4 / CJ-4",
+      "Cummins CES 20086",
+      "Volvo VDS-4.5",
+      "Интервалы 100 000+ км"
+    ],
+    "description": "Моторное масло высшей категории для дизельных двигателей Euro V/VI магистральных тягачей, автобусов и тяжелой техники.",
+    "detail_url": "product-extra-k10.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-11",
+    "slug": "duragear-g500",
+    "category": "commercial",
+    "category_title": "Коммерческий транспорт",
+    "name": "Lopal DuraGear G500 SAE 75W-90 / 80W-90",
+    "image": "assets/products/lopal-duragear-g500.jpg",
+    "badges": [
+      {
+        "class": "badge-heavy",
+        "text": "HEAVY GEAR"
+      },
+      {
+        "class": "badge-oem",
+        "text": "API GL-5"
+      }
+    ],
+    "specs": [
+      "API GL-5",
+      "MIL-L-2105D",
+      "Высокое давление EP"
+    ],
+    "description": "Трансмиссионное масло для тяжелонагруженных гипоидных мостов, редукторов и дифференциалов грузового транспорта.",
+    "detail_url": "product-duragear-g500.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-12",
+    "slug": "atf-9800",
+    "category": "fluids",
+    "category_title": "Трансмиссия & Техжидкости",
+    "name": "Lopal ATF 9800 Multi-Vehicle",
+    "image": "assets/products/lopal-atf-9800.jpg",
+    "badges": [
+      {
+        "class": "badge-oem",
+        "text": "MULTI ATF"
+      },
+      {
+        "class": "badge-gf7",
+        "text": "DEXRON-VI"
+      }
+    ],
+    "specs": [
+      "Toyota WS",
+      "ZF 6/8/9 Speed",
+      "Hyundai SP-IV"
+    ],
+    "description": "Синтетическая трансмиссионная жидкость для 6-9 ступенчатых АКПП легковых автомобилей.",
+    "detail_url": "product-atf-9800.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-13",
+    "slug": "dctf-72x",
+    "category": "fluids",
+    "category_title": "Трансмиссия & Техжидкости",
+    "name": "Lopal DCTF 72X (Роботизированные КПП)",
+    "image": "assets/products/lopal-dctf-72x.jpg",
+    "badges": [
+      {
+        "class": "badge-oem",
+        "text": "DUAL CLUTCH"
+      },
+      {
+        "class": "badge-sq",
+        "text": "WET DCTF"
+      }
+    ],
+    "specs": [
+      "VW DSG (DQ250, DQ500)",
+      "Geely 7DCT",
+      "Haval 7DCT"
+    ],
+    "description": "Специальная синтетическая жидкость для роботизированных коробок передач с мокрым двойным сцеплением.",
+    "detail_url": "product-dctf-72x.html",
+    "detail_btn_text": "Подробное описание →"
+  },
+  {
+    "id": "prod-14",
+    "slug": "dot5-1",
+    "category": "fluids",
+    "category_title": "Трансмиссия & Техжидкости",
+    "name": "Lopal Fully Synthetic Brake Fluid DOT 5.1",
+    "image": "assets/products/lopal-brake-dot5-1.jpg",
+    "badges": [
+      {
+        "class": "badge-sq",
+        "text": "DOT 5.1"
+      },
+      {
+        "class": "badge-oem",
+        "text": "ESP / ABS HIGH-TECH"
+      }
+    ],
+    "specs": [
+      "Сухая точка кипения > 260°C",
+      "Низкая вязкость при -40°C"
+    ],
+    "description": "Синтетическая тормозная жидкость для современных автомобилей с активными системами безопасности ESP/ABS/ADAS.",
+    "detail_url": "product-dot5-1.html",
+    "detail_btn_text": "Подробное описание →"
+  }
+]
