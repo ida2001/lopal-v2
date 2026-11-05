@@ -685,14 +685,12 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
 /**
  * Вызов DeepSeek Chat Completions API
  */
-function lopal_call_deepseek(string $apiKey, array $messages, array $tools, string $model = 'deepseek-chat'): array {
+function lopal_call_deepseek(string $apiKey, array $messages, array $tools, string $model = 'deepseek-flash'): array {
     $url = 'https://api.deepseek.com/chat/completions';
-    $validModels = ['deepseek-chat', 'deepseek-flash'];
-    if (!in_array($model, $validModels)) {
-        $model = 'deepseek-chat';
-    }
+    // Официальный идентификатор модели в API DeepSeek: deepseek-flash (архитектура DeepSeek-V4.1-Flash-1017)
+    $apiModel = ($model === 'deepseek-chat') ? 'deepseek-chat' : 'deepseek-flash';
     $body = json_encode([
-        'model' => $model,
+        'model' => $apiModel,
         'messages' => $messages,
         'tools' => $tools,
         'tool_choice' => 'auto',
@@ -807,9 +805,11 @@ if ($action === 'chat') {
         }
     }
 
-    $chosenModel = trim($payload['model'] ?? ($settings['deepseek_model'] ?? 'deepseek-chat'));
-    if (!in_array($chosenModel, ['deepseek-chat', 'deepseek-flash'])) {
+    $chosenModel = trim($payload['model'] ?? ($settings['deepseek_model'] ?? 'deepseek-flash'));
+    if ($chosenModel === 'deepseek-chat') {
         $chosenModel = 'deepseek-chat';
+    } else {
+        $chosenModel = 'deepseek-flash';
     }
 
     $tools = lopal_get_ai_tools_schema();
