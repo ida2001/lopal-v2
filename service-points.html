@@ -108,176 +108,315 @@
         </div>
 
         <!-- Интерактивная карта дилеров и точек продаж -->
-        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Интерактивная карта дилеров и ПЗМ:</h2>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 14px;">Интерактивная карта дилеров и ПЗМ в Казахстане:</h2>
+        <div id="dealersCityFilter" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;"></div>
         <div id="dealersPageMap" class="page-dealers-map-wrap"></div>
 
         <!-- Авторизованные дилеры и партнерские точки в Казахстане -->
-        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 24px;">Авторизованные дилеры, точки продаж и ПЗМ в Казахстане:</h2>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 24px;">Авторизованные дилеры, точки продаж и ПЗМ по городам Казахстана:</h2>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП OILBT</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Астана, Проспект Абылай хана, 50а</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77010370704" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 037-07-04</a>
+        <div id="dealersListContainer">
+          <div class="dealer-city-section" data-city-section="г. Алматы" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Алматы</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">9 точек</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Алматы" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="hq" style="border: 2px solid var(--topmaq-gold);">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Topmaq oil service (@topmaqoil_service)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Сокпакбаева, 67а (по 2ГИС)</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Центральный склад и клубный сервис GEELY</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77075236525" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (707) 523-65-25</a>
+                    <button type="button" data-focus-dealer="hq" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-azrem" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ТОО AZ РемСервис (@AzRemService)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Казыбаева, 1/2</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77474890307" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (747) 489-03-07</a>
+                    <button type="button" data-focus-dealer="almaty-azrem" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-maslenka" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Maslenka (@Maslenka.kz)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Яссауи, 57а, ТЦ Car City, 4 ярус, 44 бутик</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77774223306" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 422-33-06</a>
+                    <button type="button" data-focus-dealer="almaty-maslenka" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-suleon" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП SULEON PARTS</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Прокофьева, 244</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77778011249" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 801-12-49</a>
+                    <button type="button" data-focus-dealer="almaty-suleon" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-oilbt" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Oilbt.kz</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Ораза Жандосова, 94а/1</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77012182675" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 218-26-75</a>
+                    <button type="button" data-focus-dealer="almaty-oilbt" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-yerkin" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ПЗМ «Yerkin Oil Service»</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, Медеуский район, ул. Халиуллина, 160/1, боксы 15 и 16</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77083741232" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (708) 374-12-32, +7 (777) 799-99-84</a>
+                    <button type="button" data-focus-dealer="almaty-yerkin" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-remzona" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Ремзона такси</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Толе би, 285/4</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77472024343" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (747) 202-43-43</a>
+                    <button type="button" data-focus-dealer="almaty-remzona" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-erudit" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Эрудит</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, мкр. Тастыбулак, ул. Алмалы, 2/66</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Интернет магазин</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77015935025" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 593-50-25</a>
+                    <button type="button" data-focus-dealer="almaty-erudit" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="almaty-alex" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис ALEX (@CTO_alex_)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алматы, ул. Островского, 23</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77051691010" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (705) 169-10-10</a>
+                    <button type="button" data-focus-dealer="almaty-alex" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП OILBT (WhatsApp)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Астана, Улица Динмухамеда Конаева, 12/1</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77017070072" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 701 707 00 72, +7 702 483 60 49, +7 701 037 07 05</a>
+          <div class="dealer-city-section" data-city-section="г. Астана" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Астана</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">3 точки</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Астана" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="astana-oilbt-1" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП OILBT</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Астана, Проспект Абылай хана, 50а</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77010370704" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 037-07-04</a>
+                    <button type="button" data-focus-dealer="astana-oilbt-1" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="astana-oilbt-2" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП OILBT (WhatsApp)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Астана, Улица Динмухамеда Конаева, 12/1</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77017070072" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 701 707 00 72, +7 702 483 60 49, +7 701 037 07 05</a>
+                    <button type="button" data-focus-dealer="astana-oilbt-2" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="astana-evgroup" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ТОО EVGROUP KAZAKHSTAN (@Dacarkz, @Dacar_astana01)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Астана</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77071050071" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (707) 105-00-71</a>
+                    <button type="button" data-focus-dealer="astana-evgroup" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ТОО EVGROUP KAZAKHSTAN (@Dacarkz, @Dacar_astana01)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Астана</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77071050071" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (707) 105-00-71</a>
+          <div class="dealer-city-section" data-city-section="г. Шымкент" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Шымкент</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">2 точки</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Шымкент" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="shymkent-ysoil" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Y.S.OIL service</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Шымкент, район Туран, ул. Кожанова, 31</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77019908544" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 990-85-44</a>
+                    <button type="button" data-focus-dealer="shymkent-ysoil" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="shymkent-china" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис CHINA + (@china_plus_17)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Шымкент, ул. Сырым батыра, 173/1</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77077220103" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (707) 722-01-03</a>
+                    <button type="button" data-focus-dealer="shymkent-china" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ТОО AZ РемСервис (@AzRemService)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Казыбаева, 1/2</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77474890307" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (747) 489-03-07</a>
+          <div class="dealer-city-section" data-city-section="г. Актау" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Актау</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">2 точки</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Актау" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="aktau-eneos" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Eneos oil bar</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Актау, Мангистауская область, мкр. 1, здание 1/7, 1/8 напротив теннисного корта</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77011745154" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 174-51-54</a>
+                    <button type="button" data-focus-dealer="aktau-eneos" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-highlight-card" data-dealer-card="aktau-grm" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Авто комплекс GRM</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Актау, Мангистауская область, Промышленная зона 1, здание 67</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77772007778" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 200-77-78</a>
+                    <button type="button" data-focus-dealer="aktau-grm" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Maslenka (@Maslenka.kz)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Яссауи, 57а, ТЦ Car City, 4 ярус, 44 бутик</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77774223306" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 422-33-06</a>
+          <div class="dealer-city-section" data-city-section="г. Талдыкорган" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Талдыкорган</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">1 точка</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Талдыкорган" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="taldykorgan-west" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">West oil</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Талдыкорган, ул. Гагарина, 103</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77080702424" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (708) 070-24-24</a>
+                    <button type="button" data-focus-dealer="taldykorgan-west" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП SULEON PARTS</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Прокофьева, 244</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77778011249" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 801-12-49</a>
+          <div class="dealer-city-section" data-city-section="г. Алтай (ВКО)" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Алтай (ВКО)</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">1 точка</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Алтай (ВКО)" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="altay-partner" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Partner Auto</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Алтай, ВКО, ул. Астана, 69</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77764377333" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (776) 437-73-33</a>
+                    <button type="button" data-focus-dealer="altay-partner" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Oilbt.kz</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Ораза Жандосова, 94а/1</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77012182675" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 218-26-75</a>
+          <div class="dealer-city-section" data-city-section="г. Арысь (Туркестанская обл.)" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>г. Арысь (Туркестанская обл.)</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">1 точка</span>
+              </h3>
+              <button type="button" data-zoom-city="г. Арысь (Туркестанская обл.)" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+              <div class="tech-highlight-card" data-dealer-card="arys-china" style="">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис CHINA + (@china_plus_17)</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 г. Арысь, Туркестанская область, ул. Алаш, дом 20</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:+77775770313" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 577-03-13</a>
+                    <button type="button" data-focus-dealer="arys-china" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ПЗМ «Yerkin Oil Service»</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, Медеуский район, ул. Халиуллина, 160/1, боксы 15 и 16</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77083741232" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (708) 374-12-32, +7 (777) 799-99-84</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Ремзона такси</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Толе би, 285/4</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77472024343" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (747) 202-43-43</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Эрудит</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, мкр. Тастыбулак, ул. Алмалы, 2/66</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Интернет магазин</span>
-              <a href="tel:+77015935025" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 593-50-25</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис ALEX (@CTO_alex_)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алматы, ул. Островского, 23</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77051691010" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (705) 169-10-10</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Eneos oil bar</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Актау, Мангистауская область, мкр. 1, здание 1/7, 1/8 напротив теннисного корта</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77011745154" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 174-51-54</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Авто комплекс GRM</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Актау, Мангистауская область, Промышленная зона 1, здание 67</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77772007778" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 200-77-78</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">ИП Partner Auto</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Алтай, ВКО, ул. Астана, 69</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77764377333" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (776) 437-73-33</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">West oil</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Талдыкорган, ул. Гагарина, 103</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77080702424" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (708) 070-24-24</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Y.S.OIL service</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Шымкент, район Туран, ул. Кожанова, 31</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Автосервис, Магазин, оптовая и розничная торговля</span>
-              <a href="tel:+77019908544" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (701) 990-85-44</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис CHINA + (@china_plus_17)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Шымкент, ул. Сырым батыра, 173/1</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77077220103" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (707) 722-01-03</a>
-            </div>
-          </div>
-
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">Автосервис CHINA + (@china_plus_17)</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">г. Арысь, Туркестанская область, ул. Алаш, дом 20</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">Магазин и автосервис</span>
-              <a href="tel:+77775770313" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 +7 (777) 577-03-13</a>
-            </div>
-          </div>
-
-        </div>
+        </div><!-- /dealersListContainer -->
 
       </div>
     </section>
@@ -357,6 +496,6 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=9"></script>
+  <script src="js/main.js?v=20"></script>
 </body>
 </html>

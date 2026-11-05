@@ -292,7 +292,7 @@ HTML;
   </footer>
 
   <script id="lopalNewsData" type="application/json">{$newsJsonEncoded}</script>
-  <script src="js/main.js?v=11"></script>
+  <script src="js/main.js?v=20"></script>
   <script>
   (function(){
     var dataEl = document.getElementById('lopalNewsData');
@@ -427,6 +427,30 @@ HTML;
 /**
  * Обновление точек продаж (DEALERS_DATA в js/main.js и карточек в service-points.html)
  */
+function lopal_extract_dealer_city(array $d): string {
+    if (!empty($d['city'])) return trim($d['city']);
+    $addr = $d['address'] ?? '';
+    if (mb_stripos($addr, 'Алматы') !== false) return 'г. Алматы';
+    if (mb_stripos($addr, 'Астана') !== false) return 'г. Астана';
+    if (mb_stripos($addr, 'Шымкент') !== false) return 'г. Шымкент';
+    if (mb_stripos($addr, 'Актау') !== false) return 'г. Актау';
+    if (mb_stripos($addr, 'Талдыкорган') !== false) return 'г. Талдыкорган';
+    if (mb_stripos($addr, 'Алтай') !== false) return 'г. Алтай (ВКО)';
+    if (mb_stripos($addr, 'Арысь') !== false) return 'г. Арысь (Туркестанская обл.)';
+    if (preg_match('/г\.\s*([А-Яа-яЁёA-Za-z\-]+)/u', $addr, $m)) {
+        return 'г. ' . $m[1];
+    }
+    return 'Другие регионы';
+}
+
+function lopal_plural_points(int $n): string {
+    $mod10 = $n % 10;
+    $mod100 = $n % 100;
+    if ($mod10 === 1 && $mod100 !== 11) return $n . ' точка';
+    if ($mod10 >= 2 && $mod10 <= 4 && ($mod100 < 10 || $mod100 >= 20)) return $n . ' точки';
+    return $n . ' точек';
+}
+
 function lopal_build_dealers(): bool {
     $dealers = lopal_read_json('dealers');
     if (empty($dealers)) return false;
@@ -445,35 +469,65 @@ function lopal_build_dealers(): bool {
         }
     }
 
-    // 2. Обновляем сетку карточек в service-points.html
+    // 2. Обновляем сгруппированную по городам сетку карточек в service-points.html
     $spFile = LOPAL_ROOT_DIR . '/service-points.html';
     if (file_exists($spFile)) {
         $spContent = file_get_contents($spFile);
-        $cardsHtml = "\n";
+        $grouped = [];
         foreach ($dealers as $d) {
-            if (!empty($d['isHq'])) continue;
-            $name = htmlspecialchars($d['name'] ?? '', ENT_QUOTES, 'UTF-8');
-            $addr = htmlspecialchars($d['address'] ?? '', ENT_QUOTES, 'UTF-8');
-            $phone = htmlspecialchars($d['phone'] ?? '', ENT_QUOTES, 'UTF-8');
-            $phoneHref = htmlspecialchars($d['phoneHref'] ?? '', ENT_QUOTES, 'UTF-8');
-            $badge = htmlspecialchars($d['badge'] ?? 'Точка продаж', ENT_QUOTES, 'UTF-8');
+            $city = lopal_extract_dealer_city($d);
+            if (!isset($grouped[$city])) $grouped[$city] = [];
+            $grouped[$city][] = $d;
+        }
 
-            $cardsHtml .= <<<HTML
-          <div class="tech-highlight-card">
-            <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">{$name}</h4>
-            <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">{$addr}</p>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <span class="spec-pill" style="color:var(--lopal-green);">{$badge}</span>
-              <a href="tel:{$phoneHref}" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 {$phone}</a>
+        $sectionsHtml = "\n";
+        foreach ($grouped as $city => $cityDealers) {
+            $cityEsc = htmlspecialchars($city, ENT_QUOTES, 'UTF-8');
+            $countLabel = lopal_plural_points(count($cityDealers));
+            $sectionsHtml .= <<<HTML
+          <div class="dealer-city-section" data-city-section="{$cityEsc}" style="margin-bottom: 42px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-subtle);">
+              <h3 style="font-size: 20px; font-weight: 800; color: var(--ink-primary); margin: 0; display:flex; align-items:center; gap:10px;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:rgba(0,132,61,0.1); color:var(--lopal-green); font-size:17px;">📍</span>
+                <span>{$cityEsc}</span>
+                <span style="font-size: 12.5px; font-weight: 700; background: var(--bg-secondary); color: var(--lopal-green); padding: 3px 11px; border-radius: 99px; border: 1px solid rgba(0,132,61,0.25);">{$countLabel}</span>
+              </h3>
+              <button type="button" data-zoom-city="{$cityEsc}" style="background:var(--bg-secondary); border:1px solid var(--border-medium); color:var(--ink-primary); border-radius:99px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer;">Показать город на карте ↑</button>
             </div>
-          </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
 
 HTML;
+            foreach ($cityDealers as $d) {
+                $id = htmlspecialchars($d['id'] ?? '', ENT_QUOTES, 'UTF-8');
+                $name = htmlspecialchars($d['name'] ?? '', ENT_QUOTES, 'UTF-8');
+                $addr = htmlspecialchars($d['address'] ?? '', ENT_QUOTES, 'UTF-8');
+                $phone = htmlspecialchars($d['phone'] ?? '', ENT_QUOTES, 'UTF-8');
+                $phoneHref = htmlspecialchars($d['phoneHref'] ?? '', ENT_QUOTES, 'UTF-8');
+                $badge = htmlspecialchars($d['badge'] ?? 'Точка продаж', ENT_QUOTES, 'UTF-8');
+                $hqStyle = !empty($d['isHq']) ? 'border: 2px solid var(--topmaq-gold);' : '';
+
+                $sectionsHtml .= <<<HTML
+              <div class="tech-highlight-card" data-dealer-card="{$id}" style="{$hqStyle}">
+                <h4 style="font-size: 17px; font-weight: 700; color: var(--ink-primary); margin-bottom: 8px;">{$name}</h4>
+                <p style="font-size: 13.5px; color: var(--ink-secondary); margin-bottom: 12px;">📍 {$addr}</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                  <span class="spec-pill" style="color:var(--lopal-green);">{$badge}</span>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <a href="tel:{$phoneHref}" style="font-size: 13.5px; font-weight: 600; color: var(--topmaq-gold);">📞 {$phone}</a>
+                    <button type="button" data-focus-dealer="{$id}" style="background:rgba(0,132,61,0.08);border:1px solid rgba(0,132,61,0.25);color:var(--lopal-green);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;">На карте ↑</button>
+                  </div>
+                </div>
+              </div>
+
+HTML;
+            }
+            $sectionsHtml .= "            </div>\n          </div>\n\n";
         }
-        $patternSp = '/(<div style="display: grid; grid-template-columns: repeat\(auto-fill, minmax\(340px, 1fr\)\); gap: 24px;">)([\s\S]*?)(<\/div>\s*<\/div>\s*<\/section>)/';
+
+        $patternSp = '/(<div id="dealersListContainer">)([\s\S]*?)(<\/div><!-- \/dealersListContainer -->)/';
         if (preg_match($patternSp, $spContent)) {
-            $spUpdated = preg_replace_callback($patternSp, function($m) use ($cardsHtml) {
-                return $m[1] . $cardsHtml . "        " . $m[3];
+            $spUpdated = preg_replace_callback($patternSp, function($m) use ($sectionsHtml) {
+                return $m[1] . $sectionsHtml . "        " . $m[3];
             }, $spContent, 1);
             file_put_contents($spFile, $spUpdated, LOCK_EX);
         }

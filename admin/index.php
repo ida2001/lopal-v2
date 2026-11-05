@@ -169,6 +169,7 @@ if ($isLogged && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['cms_act
         $item = [
             'id' => $id,
             'isHq' => ($id === 'hq'),
+            'city' => !empty($_POST['city']) ? trim($_POST['city']) : lopal_extract_dealer_city($_POST),
             'badge' => trim($_POST['badge'] ?: 'Точка продаж и ПЗМ'),
             'name' => trim($_POST['name'] ?? ''),
             'address' => trim($_POST['address'] ?? ''),
@@ -550,9 +551,14 @@ if ($activeTab === 'mcp') {
                 <span style="font-size:12.5px; color:var(--muted);">Кликните в любое место на карте или перетащите зеленый маркер 📌</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(43.2550, 76.9120, 13)">🏙️ Алматы</button>
-                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(51.1694, 71.4491, 13)">🏙️ Астана</button>
-                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(42.3417, 69.5901, 13)">🏙️ Шымкент</button>
+                <button type="button" class="btn btn-green" style="padding:6px 12px; font-size:12px;" onclick="fitAllDealersOnAdminMap()">🇰🇿 Весь Казахстан (<?= count($dealersList) ?>)</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(43.2550, 76.9120, 12)">🏙️ Алматы</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(51.1450, 71.4491, 12)">🏙️ Астана</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(42.3500, 69.5901, 12)">🏙️ Шымкент</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(43.6550, 51.1750, 12)">🏙️ Актау</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(45.0216, 78.4265, 14)">🏙️ Талдыкорган</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(49.7300, 84.2679, 14)">🏙️ Алтай</button>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="centerMapOnCoords(42.4280, 68.8020, 14)">🏙️ Арысь</button>
                 <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="locateUserPosition()">🎯 Моё положение</button>
               </div>
             </div>
@@ -565,7 +571,7 @@ if ($activeTab === 'mcp') {
             <div id="map_search_status" style="font-size:12.5px; margin-bottom:8px; display:none; padding:8px 12px; border-radius:8px;"></div>
 
             <!-- Контейнер карты Leaflet -->
-            <div id="dealer_map_picker" style="height: 380px; width: 100%; border-radius: 10px; border: 1px solid #CBD5E1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); z-index: 1;"></div>
+            <div id="dealer_map_picker" style="height: 420px; width: 100%; border-radius: 10px; border: 1px solid #CBD5E1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); z-index: 1;"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12.5px; color:var(--muted); flex-wrap:wrap; gap:8px;">
               <span>Координаты выбранной точки: <strong id="coords_preview" style="color:var(--green); font-family:monospace; font-size:13.5px; background:#E8F5E9; padding:3px 10px; border-radius:6px; font-weight:700;">43.255000, 76.912000</strong></span>
@@ -597,26 +603,40 @@ if ($activeTab === 'mcp') {
       </div>
 
       <div class="card">
-        <h2>Действующие точки продаж и СТО (<?= count($dealersList) ?>)</h2>
-        <?php foreach ($dealersList as $d): ?>
-          <div class="item-row">
-            <div style="flex:1;">
-              <div style="font-size:12px;color:var(--green);font-weight:700;"><?= htmlspecialchars($d['badge'] ?? '') ?> <?= !empty($d['isHq']) ? '⭐ ЦЕНТРАЛЬНЫЙ ХАБ' : '' ?></div>
-              <div style="font-size:16px;font-weight:700;margin:2px 0;"><?= htmlspecialchars($d['name'] ?? '') ?></div>
-              <div style="font-size:13.5px;color:#475569;">📍 <?= htmlspecialchars($d['address'] ?? '') ?> · 📞 <?= htmlspecialchars($d['phone'] ?? '') ?></div>
-            </div>
-            <div style="display:flex;gap:8px;">
-              <button type="button" class="btn btn-outline" onclick='editDealer(<?= json_encode($d, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>✏️ Изменить</button>
-              <?php if (empty($d['isHq'])): ?>
-                <form method="post" onsubmit="return confirm('Удалить точку продаж?');">
-                  <input type="hidden" name="cms_action" value="delete_dealer">
-                  <input type="hidden" name="active_tab" value="dealers">
-                  <input type="hidden" name="id" value="<?= htmlspecialchars($d['id']) ?>">
-                  <button type="submit" class="btn btn-danger">🗑️</button>
-                </form>
-              <?php endif; ?>
-            </div>
+        <h2>Действующие точки продаж и СТО по городам Казахстана (<?= count($dealersList) ?>)</h2>
+        <?php
+          $groupedAdminDealers = [];
+          foreach ($dealersList as $d) {
+              $city = function_exists('lopal_extract_dealer_city') ? lopal_extract_dealer_city($d) : ($d['city'] ?? 'Другие города');
+              if (!isset($groupedAdminDealers[$city])) $groupedAdminDealers[$city] = [];
+              $groupedAdminDealers[$city][] = $d;
+          }
+        ?>
+        <?php foreach ($groupedAdminDealers as $cityTitle => $cityItems): ?>
+          <div style="margin-top: 22px; margin-bottom: 10px; padding: 10px 14px; background: #F1F5F9; border-left: 4px solid var(--green); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-size: 15px; color: #0F172A;">📍 <?= htmlspecialchars($cityTitle) ?></strong>
+            <span style="font-size: 12px; font-weight: 700; background: #fff; color: var(--green); padding: 3px 10px; border-radius: 99px; border: 1px solid #CBD5E1;">Точек: <?= count($cityItems) ?></span>
           </div>
+          <?php foreach ($cityItems as $d): ?>
+            <div class="item-row">
+              <div style="flex:1;">
+                <div style="font-size:12px;color:var(--green);font-weight:700;"><?= htmlspecialchars($d['badge'] ?? '') ?> <?= !empty($d['isHq']) ? '⭐ ЦЕНТРАЛЬНЫЙ ХАБ' : '' ?></div>
+                <div style="font-size:16px;font-weight:700;margin:2px 0;"><?= htmlspecialchars($d['name'] ?? '') ?></div>
+                <div style="font-size:13.5px;color:#475569;">📍 <?= htmlspecialchars($d['address'] ?? '') ?> · 📞 <?= htmlspecialchars($d['phone'] ?? '') ?></div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn btn-outline" onclick='editDealer(<?= json_encode($d, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>✏️ Изменить</button>
+                <?php if (empty($d['isHq'])): ?>
+                  <form method="post" onsubmit="return confirm('Удалить точку продаж?');">
+                    <input type="hidden" name="cms_action" value="delete_dealer">
+                    <input type="hidden" name="active_tab" value="dealers">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($d['id']) ?>">
+                    <button type="submit" class="btn btn-danger">🗑️</button>
+                  </form>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
@@ -802,10 +822,27 @@ if ($activeTab === 'mcp') {
     otherMarkersLayer = L.layerGroup().addTo(dealerMap);
     renderOtherDealersMarkers();
     updateCoordsPreview(initLat, initLng);
+    fitAllDealersOnAdminMap();
 
     setTimeout(() => {
-      if (dealerMap) dealerMap.invalidateSize();
+      if (dealerMap) {
+        dealerMap.invalidateSize();
+        fitAllDealersOnAdminMap();
+      }
     }, 250);
+  }
+
+  function fitAllDealersOnAdminMap() {
+    if (!dealerMap) return;
+    const pts = [];
+    existingDealersData.forEach(d => {
+      if (d.coords && d.coords[0] && d.coords[1]) {
+        pts.push([parseFloat(d.coords[0]), parseFloat(d.coords[1])]);
+      }
+    });
+    if (pts.length > 0) {
+      dealerMap.fitBounds(pts, { padding: [35, 35], maxZoom: 13 });
+    }
   }
 
   function renderOtherDealersMarkers(excludeId = null) {
