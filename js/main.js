@@ -404,9 +404,9 @@
 
       var popupContent =
         '<div style="font-family:Inter,sans-serif;min-width:210px;padding:4px 2px;">' +
-          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:' + color + ';margin-bottom:3px;">' + d.badge + '</div>' +
+          '<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:' + color + ';margin-bottom:3px;">' + getLocalizedBadge(d.badge) + '</div>' +
           '<div style="font-size:14px;font-weight:800;color:#0F172A;margin-bottom:4px;">' + d.name + '</div>' +
-          '<div style="font-size:12.5px;color:#475569;margin-bottom:8px;">' + d.address + '</div>' +
+          '<div style="font-size:12.5px;color:#475569;margin-bottom:8px;">' + getLocalizedAddress(d.address) + '</div>' +
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px;border-top:1px solid #E2E8F0;">' +
             '<a href="tel:' + d.phoneHref + '" style="font-size:12.5px;font-weight:700;color:#00843D;text-decoration:none;">' + d.phone + '</a>' +
             '<a href="' + d.dgis + '" target="_blank" rel="noopener" style="font-size:11.5px;font-weight:700;background:#00843D;color:#fff;padding:4px 10px;border-radius:99px;text-decoration:none;">2ГИС ↗</a>' +
@@ -462,6 +462,32 @@
       var cityGroups = groupDealersByCity(DEALERS_DATA);
 
       var isKz = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+
+      function getLocalizedBadge(badge) {
+        if (!isKz) return badge;
+        if (badge.indexOf('Центральный склад') !== -1) return 'Орталық қойма және GEELY клубтық сервисі';
+        if (badge.indexOf('Автосервис, Магазин') !== -1) return 'Автосервис, дүкен, көтерме және бөлшек сауда';
+        if (badge.indexOf('Магазин, оптовая') !== -1) return 'Дүкен, көтерме және бөлшек сауда';
+        if (badge.indexOf('Магазин и автосервис') !== -1) return 'Дүкен және автосервис';
+        return badge;
+      }
+
+      function getLocalizedAddress(addr) {
+        if (!isKz) return addr;
+        return addr
+          .replace('г. Алматы', 'Алматы қ.')
+          .replace('г. Астана', 'Астана қ.')
+          .replace('г. Шымкент', 'Шымкент қ.')
+          .replace('г. Актау', 'Ақтау қ.')
+          .replace('г. Талдыкорган', 'Талдықорған қ.')
+          .replace('г. Алтай', 'Алтай қ.')
+          .replace('г. Арысь', 'Арыс қ.')
+          .replace('ул. Сокпакбаева', 'Соқпақбаев к-сі')
+          .replace('ул. Халиуллина', 'Халиуллин к-сі')
+          .replace('ул. Каратал', 'Қаратал к-сі')
+          .replace('ул. Казыбек би', 'Қазыбек би к-сі')
+          .replace('по 2ГИС', '2GIS бойынша');
+      }
       var allLabel = isKz ? ('🇰🇿 Барлығы (' + DEALERS_DATA.length + ')') : ('🇰🇿 Все (' + DEALERS_DATA.length + ')');
       var modalTitleText = isKz
         ? ('LOPAL өнімдерін қайдан сатып алуға болады — Дилерлер мен МАО картасы (' + DEALERS_DATA.length + ' нүкте)')
