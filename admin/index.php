@@ -859,6 +859,102 @@ if ($activeTab === 'mcp') {
           <a href="visual_editor.php?page=index.html" class="btn btn-green">🚀 Открыть Главную в конструкторе</a>
         </div>
 
+        <!-- Блок подробной инструкции по работе с визуальным редактором -->
+        <div style="margin-bottom: 22px; background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+          <div onclick="toggleAdminGuide()" style="padding: 13px 20px; background: #F1F5F9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:18px;">📖</span>
+              <strong style="font-size:14px; color:#0F172A;">Инструкция: Как пользоваться визуальным редактором и конструктором страниц</strong>
+              <span style="font-size:11px; background:#00843D; color:#fff; padding:2px 7px; border-radius:99px; font-weight:700;">Справка</span>
+            </div>
+            <span id="adminGuideArrow" style="font-size:13px; color:#0284C7; font-weight:700;">▼ Развернуть инструкцию</span>
+          </div>
+
+          <div id="adminGuideContent" style="display:none; padding: 20px; border-top: 1px solid #CBD5E1;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+              
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#00843D; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  ✏️ 1. Редактирование текстов и кнопок
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  Кликните мышкой по любому тексту прямо на макете страницы. Он станет редактируемым с мигающим курсором.
+                </p>
+                <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
+                  В панели вверху можно выделить слово и нажать <b>B</b> (жирный), <i>I</i> (курсив), <u>U</u> (подчеркивание) или 🔗 (ссылка).
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#0284C7; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  🖼️ 2. Замена фотографий и баннеров
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  Кликните по любой картинке или баннеру. Внизу экрана появится панель управления элементом с кнопкой <strong>«📷 Заменить картинку»</strong>.
+                </p>
+                <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
+                  Вы можете выбрать готовое фото из библиотеки сервера или загрузить новое фото с вашего компьютера (JPG, PNG, WebP).
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#D97706; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  ➕ 3. Добавление готовых блоков
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  Нажмите золотую кнопку <strong>«➕ Добавить блок»</strong> в верхней панели редактора:
+                </p>
+                <ul style="font-size:11.5px; color:#64748B; padding-left:16px; margin:0; line-height:1.5;">
+                  <li><strong>Вопрос-ответ (FAQ)</strong> — раскрывающийся аккордеон;</li>
+                  <li><strong>Таблица характеристик</strong> — параметры с легким добавлением строк;</li>
+                  <li><strong>YouTube Видео</strong> — адаптивный видео-баннер;</li>
+                  <li><strong>Hero-промо баннер</strong> и <strong>сетка из 3 карточек</strong>.</li>
+                </ul>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#7C3AED; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  ↕️ 4. Перемещение и удаление секций
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  Наведите курсор на любую секцию — в её правом верхнем углу всплывает плавающее мини-меню:
+                </p>
+                <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
+                  <code>⬆️ / ⬇️</code> — переместить секцию выше или ниже;<br>
+                  <code>🖼️ Фон-баннер</code> — установить фоновую подложку;<br>
+                  <code>📋 Копия</code> — дублировать блок целиком;<br>
+                  <code>🗑️ Удалить</code> — удалить блок со страницы.
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#16A34A; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  💾 5. Сохранение изменений (Ctrl+S)
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  Нажмите зеленую кнопку <strong>«💾 Сохранить»</strong> в правом верхнем углу или просто нажмите горячие клавиши <strong>Ctrl + S</strong> (Cmd + S на Mac).
+                </p>
+                <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
+                  Перед каждым сохранением создается автоматический бэкап, поэтому любые изменения всегда можно безопасно откатить.
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:16px;">
+                <h4 style="color:#E11D48; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  🤖 6. Создание страниц через AI-помощника
+                </h4>
+                <p style="font-size:12.5px; color:#475569; line-height:1.55; margin-bottom:6px;">
+                  AI-помощник умеет создавать и публиковать страницы целиком по вашей голосовой (🎤) или текстовой команде!
+                </p>
+                <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
+                  Пример: <em>«Создай страницу "Сервис и замена масла" с адресом service.html и добавь ссылку в меню»</em>. AI сгенерирует страницу с фирменным стилем LOPAL и выдаст вам прямую ссылку в визуальный редактор.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:12px;">
           <?php foreach ($allHtmlPaths as $fPath): ?>
             <?php
@@ -1051,6 +1147,15 @@ if ($activeTab === 'mcp') {
         } catch (e) {
           alert('Ошибка соединения: ' + e.message);
         }
+      }
+
+      function toggleAdminGuide() {
+        const content = document.getElementById('adminGuideContent');
+        const arrow = document.getElementById('adminGuideArrow');
+        if (!content) return;
+        const isHidden = (content.style.display === 'none');
+        content.style.display = isHidden ? 'block' : 'none';
+        if (arrow) arrow.textContent = isHidden ? '▲ Свернуть инструкцию' : '▼ Развернуть инструкцию';
       }
 
       function autoFillSlug(title) {

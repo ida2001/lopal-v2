@@ -468,6 +468,10 @@ foreach ($allHtmlFiles as $f) {
     </div>
 
     <div class="ve-topbar-right">
+      <button type="button" class="ve-btn" onclick="openGuideModal()" title="Инструкция по визуальному редактору">
+        <span>❓</span>
+        <span class="ve-label-full"> Инструкция</span>
+      </button>
       <a href="../<?= htmlspecialchars($requestedPage) ?>" target="_blank" class="ve-btn" title="Открыть страницу на сайте в новой вкладке">
         <span>↗</span>
         <span class="ve-label-full"> На сайте</span>
@@ -609,6 +613,67 @@ foreach ($allHtmlFiles as $f) {
     </div>
   </div>
 
+  <!-- МОДАЛЬНОЕ ОКНО: ИНСТРУКЦИЯ ПО РАБОТЕ С РЕДАКТОРОМ -->
+  <div class="ve-modal-backdrop" id="guideModal">
+    <div class="ve-modal" style="width: min(880px, 96vw);">
+      <div class="ve-modal-header">
+        <h3>📖 Инструкция по работе с визуальным редактором LOPAL</h3>
+        <button type="button" class="ve-btn ve-btn-icon" onclick="closeGuideModal()">✕</button>
+      </div>
+      <div class="ve-modal-body" style="font-size:13px; line-height:1.6; color:#CBD5E1;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:14px;">
+          
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#10B981; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">✏️ 1. Редактирование текстов</h4>
+            <p style="margin-bottom:6px;">Кликните по любому заголовку, параграфу, бейджу или кнопке прямо на странице. Появится текстовый курсор — вы можете менять текст как в обычном текстовом редакторе.</p>
+            <p style="color:#94A3B8; font-size:12px;">В верхней панели можно выделить текст и применить форматирование: <b>B</b> (жирный), <i>I</i> (курсив), <u>U</u> (подчеркнутый) или 🔗 (ссылка).</p>
+          </div>
+
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#38BDF8; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">🖼️ 2. Замена картинок и баннеров</h4>
+            <p style="margin-bottom:6px;">Кликните по любой фотографии или баннеру — внизу экрана появится панель управления с кнопкой <strong>«📷 Заменить картинку»</strong>.</p>
+            <p style="color:#94A3B8; font-size:12px;">Вы можете выбрать готовое изображение из медиатеки сервера или загрузить новое фото прямо с компьютера.</p>
+          </div>
+
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#F59E0B; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">➕ 3. Добавление готовых блоков</h4>
+            <p style="margin-bottom:6px;">Нажмите золотую кнопку <strong>«➕ Добавить блок»</strong> в верхней панели:</p>
+            <ul style="padding-left:18px; font-size:12px; color:#94A3B8; line-height:1.5;">
+              <li><strong>Аккордеон FAQ:</strong> список частых вопросов и ответов с раскрытием по клику;</li>
+              <li><strong>Таблица характеристик:</strong> таблица допусков и параметров с кнопками добавления строк;</li>
+              <li><strong>Видео YouTube:</strong> широкоформатный плеер с адаптивным видео;</li>
+              <li><strong>Hero-баннер и 3 колонки преимуществ.</strong></li>
+            </ul>
+          </div>
+
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#A78BFA; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">↕️ 4. Управление секциями страницы</h4>
+            <p style="margin-bottom:6px;">При наведении курсора на любую секцию в правом верхнем углу всплывает панель управления:</p>
+            <ul style="padding-left:18px; font-size:12px; color:#94A3B8; line-height:1.5;">
+              <li><strong>⬆️ / ⬇️</strong> — поднять или опустить секцию по странице;</li>
+              <li><strong>🖼️ Фон-баннер</strong> — установить или сменить фоновое изображение;</li>
+              <li><strong>📋 Копия</strong> — продублировать секцию целиком;</li>
+              <li><strong>🗑️ Удалить</strong> — удалить ненужный блок со страницы.</li>
+            </ul>
+          </div>
+
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#34D399; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">💾 5. Быстрое сохранение (Ctrl+S)</h4>
+            <p style="margin-bottom:6px;">Нажмите зеленую кнопку <strong>«💾 Сохранить изменения»</strong> в правом верхнем углу.</p>
+            <p style="color:#94A3B8; font-size:12px;">Также работает горячая клавиша <strong>Ctrl + S</strong> (Cmd + S) в любой момент редактирования прямо внутри страницы.</p>
+          </div>
+
+          <div style="background:#0F172A; border:1px solid #334155; border-radius:12px; padding:16px;">
+            <h4 style="color:#F43F5E; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">🤖 6. Создание страниц через AI</h4>
+            <p style="margin-bottom:6px;">Вы можете поручить создание новой страницы AI-помощнику в админке:</p>
+            <p style="color:#94A3B8; font-size:12px;">Скажите в микрофон (🎤) или напишите: <em>«Создай страницу "Гарантия" с адресом warranty.html и добавь в главное меню»</em>. Страница создастся и сразу появится в конструкторе!</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="ve-toast" id="veToast"></div>
 
   <script>
@@ -626,6 +691,16 @@ foreach ($allHtmlFiles as $f) {
     t.style.display = 'block';
     clearTimeout(window.__veToastTimer);
     window.__veToastTimer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+  }
+
+  function openGuideModal() {
+    const m = document.getElementById('guideModal');
+    if (m) m.classList.add('is-open');
+  }
+
+  function closeGuideModal() {
+    const m = document.getElementById('guideModal');
+    if (m) m.classList.remove('is-open');
   }
 
   function switchPage(page) {

@@ -375,6 +375,43 @@ function lopal_get_ai_tools_schema(): array {
         [
             'type' => 'function',
             'function' => [
+                'name' => 'create_page',
+                'description' => 'Создать новую полноценную страницу на сайте по единому дизайну LOPAL (с мобильным меню, шапкой, футером, Hero-баннером и контентными блоками) и автоматически добавить её в меню навигации.',
+                'parameters' => [
+                    'type' => 'object',
+                    'required' => ['slug', 'title'],
+                    'properties' => [
+                        'slug' => ['type' => 'string', 'description' => 'Имя файла на латинице (например: "promo", "warranty", "agro", "faq") без .html'],
+                        'title' => ['type' => 'string', 'description' => 'Название/заголовок страницы (например: "Условия гарантии и сервиса")'],
+                        'subtitle' => ['type' => 'string', 'description' => 'Подзаголовок и краткое описание страницы'],
+                        'kicker' => ['type' => 'string', 'description' => 'Верхний бейдж над заголовком (например: "Официальный сервис LOPAL")'],
+                        'add_to_menu' => ['type' => 'boolean', 'description' => 'Добавить ли ссылку в главное меню навигации (по умолчанию true)'],
+                        'menu_title' => ['type' => 'string', 'description' => 'Короткое название пункта в меню (например: "Гарантия"). Если не указано, используется title.']
+                    ]
+                ]
+            ]
+        ],
+        [
+            'type' => 'function',
+            'function' => [
+                'name' => 'manage_menu',
+                'description' => 'Управление пунктами главного меню сайта (список, добавление, скрытие/показ, удаление). Изменения автоматически применяются ко всем страницам сайта.',
+                'parameters' => [
+                    'type' => 'object',
+                    'required' => ['action'],
+                    'properties' => [
+                        'action' => ['type' => 'string', 'enum' => ['list', 'add', 'toggle_visibility', 'delete'], 'description' => 'Действие с меню'],
+                        'title' => ['type' => 'string', 'description' => 'Название пункта в меню (для action="add")'],
+                        'url' => ['type' => 'string', 'description' => 'URL страницы (например: "promo.html" или "https://...")'],
+                        'id' => ['type' => 'string', 'description' => 'ID пункта меню (например: "nav-promo" для toggle_visibility или delete)'],
+                        'visible' => ['type' => 'boolean', 'description' => 'Отображать пункт в меню или скрыть (true/false)']
+                    ]
+                ]
+            ]
+        ],
+        [
+            'type' => 'function',
+            'function' => [
                 'name' => 'list_backups',
                 'description' => 'Показать список доступных автоматических бэкапов и статус эталонного снимка initial_snapshot.',
                 'parameters' => [
@@ -671,6 +708,84 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             $siteChanged = true;
             return ['ok' => true, 'modified_pages' => $modifiedPages, 'count' => count($modifiedPages)];
 
+        case 'create_page':
+            $slug = trim($args['slug'] ?? '');
+            $title = trim($args['title'] ?? '');
+            $subtitle = trim($args['subtitle'] ?? '');
+            $kicker = trim($args['kicker'] ?? 'Официальное представительство LOPAL в РК');
+            $addToMenu = !isset($args['add_to_menu']) || !empty($args['add_to_menu']);
+            $menuTitle = trim($args['menu_title'] ?? $title);
+
+            $res = lopal_create_new_page($slug, $title, $subtitle, $kicker, $addToMenu, $menuTitle);
+            if (!empty($res['ok'])) {
+                $filename = $res['filename'] ?? ($slug . '.html');
+                $siteChanged = true;
+                return [
+                    'ok' => true,
+                    'filename' => $filename,
+                    'url' => 'https://lopal.kz/' . $filename,
+                    'editor_url' => 'visual_editor.php?page=' . urlencode($filename),
+                    'added_to_menu' => $addToMenu,
+                    'message' => "Страница {$filename} успешно создана и опубликована! Она добавлена в меню сайта и доступна для визуального редактирования."
+                ];
+            }
+            return $res;
+
+        case 'manage_menu':
+            $act = $args['action'] ?? 'list';
+            $menu = lopal_get_menu();
+            if ($act === 'list') {
+                return ['ok' => true, 'menu' => $menu];
+            }
+            if ($act === 'add') {
+                $title = trim($args['title'] ?? '');
+                $url = trim($args['url'] ?? '');
+                if ($title === '' || $url === '') {
+                    return ['ok' => false, 'error' => 'Для добавления пункта меню укажите title и url'];
+                }
+                $slug = preg_replace('/[^a-zA-Z0-9_-]/', '-', pathinfo($url, PATHINFO_FILENAME));
+                $menu[] = [
+                    'id' => 'nav-' . ($slug ?: time()),
+                    'title' => $title,
+                    'url' => $url,
+                    'visible' => true
+                ];
+                lopal_write_json('menu', $menu, 'ai_add_menu');
+                lopal_rebuild_all_menus();
+                $siteChanged = true;
+                return ['ok' => true, 'message' => "Пункт меню '{$title}' добавлен!", 'menu' => $menu];
+            }
+            if ($act === 'toggle_visibility') {
+                $id = trim($args['id'] ?? '');
+                $vis = !empty($args['visible']);
+                $found = false;
+                foreach ($menu as &$item) {
+                    if (($item['id'] ?? '') === $id || ($item['url'] ?? '') === $id) {
+                        $item['visible'] = $vis;
+                        $found = true;
+                    }
+                }
+                unset($item);
+                if (!$found) return ['ok' => false, 'error' => "Пункт меню с ID/URL '{$id}' не найден"];
+                lopal_write_json('menu', $menu, 'ai_toggle_menu');
+                lopal_rebuild_all_menus();
+                $siteChanged = true;
+                return ['ok' => true, 'message' => "Видимость пункта '{$id}' изменена на " . ($vis ? 'видимый' : 'скрытый'), 'menu' => $menu];
+            }
+            if ($act === 'delete') {
+                $id = trim($args['id'] ?? '');
+                $before = count($menu);
+                $menu = array_values(array_filter($menu, fn($m) => ($m['id'] ?? '') !== $id && ($m['url'] ?? '') !== $id));
+                if (count($menu) === $before) {
+                    return ['ok' => false, 'error' => "Пункт меню '{$id}' не найден для удаления"];
+                }
+                lopal_write_json('menu', $menu, 'ai_delete_menu');
+                lopal_rebuild_all_menus();
+                $siteChanged = true;
+                return ['ok' => true, 'message' => "Пункт меню '{$id}' удален!", 'menu' => $menu];
+            }
+            return ['ok' => false, 'error' => 'Неизвестное действие с меню: ' . $act];
+
         case 'list_backups':
             $snaps = array_map('basename', glob(LOPAL_BACKUPS_DIR . '/snap_*', GLOB_ONLYDIR) ?: []);
             rsort($snaps);
@@ -802,12 +917,21 @@ if ($action === 'chat') {
         . "3. Управлять дилерской сетью и СТО по городам Казахстана (list_dealers, upsert_dealer, delete_dealer). Координаты на карте определяются автоматически по адресу.\n"
         . "4. Изменять глобальные контакты, телефоны, WhatsApp и график работы сразу на всех 25 страницах сайта (update_site_settings).\n"
         . "5. Читать и напрямую редактировать тексты на любой HTML-странице сайта (list_html_pages, read_page_text, replace_page_text).\n"
-        . "6. Делать откат к бэкапам (list_backups, rollback_site).\n\n"
+        . "6. Делать откат к бэкапам (list_backups, rollback_site).\n"
+        . "7. Создавать новые страницы на сайте и сразу публиковать их (create_page). Страница создается адаптивной, с единой шапкой, мобильным меню и футером.\n"
+        . "8. Управлять пунктами меню навигации (manage_menu) — добавлять ссылки, скрывать/показывать и удалять вкладки.\n\n"
         . "Правила:\n"
         . "- Когда пользователь просит что-то добавить, изменить или удалить на сайте — СРАЗУ вызывай нужный инструмент (function tool), а не просто пиши текст.\n"
+        . "- Когда пользователь просит создать новую страницу, вкладку или раздел (например: 'создай страницу акций', 'сделай вкладку гарантия'):\n"
+        . "   1) Сгенерируй slug на латинице (например: promo, warranty, agro, faq).\n"
+        . "   2) Вызови инструмент create_page с понятным заголовком (title), кратким описанием (subtitle) и бейджем (kicker).\n"
+        . "   3) В ответе обязательно дай пользователю две прямые ссылки в формате Markdown:\n"
+        . "      - 🌐 Опубликованная страница: [lopal.kz/имя.html](https://lopal.kz/имя.html)\n"
+        . "      - 🎨 Открыть в визуальном конструкторе: [Редактировать страницу](visual_editor.php?page=имя.html)\n"
+        . "   4) Напомни пользователю, что в визуальном конструкторе он может кликнуть по любому тексту прямо на странице, сменить картинки или добавить специфические блоки (FAQ-аккордеон, таблицу характеристик, видео YouTube, Hero-баннер).\n"
         . "- Если нужно исправить текст на конкретной странице (например, partners.html или about.html), сначала вызови read_page_text, чтобы увидеть точный фрагмент, а затем вызови replace_page_text.\n"
         . "- НИКОГДА и ни при каких условиях не выводи в ответах секретные API-ключи, пароли или токены. Если упоминаются настройки или API, отображай только маску (например sk-b0...0c77).\n"
-        . "- Отвечай лаконично, вежливо и по делу на русском языке, перечисляя какие именно изменения были внесены на сайт.";
+        . "- Отвечай лаконично, вежливо и по делу на русском языке, перечисляя какие именно действия были выполнены.";
 
     $messages = [
         ['role' => 'system', 'content' => $systemPrompt]
