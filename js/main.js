@@ -461,9 +461,17 @@
 
       var cityGroups = groupDealersByCity(DEALERS_DATA);
 
+      var isKz = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+      var allLabel = isKz ? ('🇰🇿 Барлығы (' + DEALERS_DATA.length + ')') : ('🇰🇿 Все (' + DEALERS_DATA.length + ')');
+      var modalTitleText = isKz
+        ? ('LOPAL өнімдерін қайдан сатып алуға болады — Дилерлер мен МАО картасы (' + DEALERS_DATA.length + ' нүкте)')
+        : ('Где купить продукцию LOPAL — Карта дилеров и ПЗМ (' + DEALERS_DATA.length + ' точек в РК)');
+      var allPointsBtnText = isKz ? 'Барлық сату нүктелері →' : 'Все точки продаж →';
+      var closeBtnAria = isKz ? 'Картаны жабу' : 'Закрыть карту';
+
       var filterPillsHtml =
         '<div style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;position:sticky;top:0;z-index:5;">' +
-          '<button type="button" data-modal-city="all" style="padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #00843D;background:#00843D;color:#fff;">🇰🇿 Все (' + DEALERS_DATA.length + ')</button>' +
+          '<button type="button" data-modal-city="all" style="padding:5px 11px;border-radius:99px;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid #00843D;background:#00843D;color:#fff;">' + allLabel + '</button>' +
           cityGroups.map(function (g) {
             var shortCity = g.city.replace(/^г\.\s*/, '').replace(/\s*\(.*\)$/, '');
             return '<button type="button" data-modal-city="' + g.city + '" style="padding:5px 10px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid #CBD5E1;background:#fff;color:#0F172A;">' + shortCity + ' (' + g.items.length + ')</button>';
@@ -496,11 +504,11 @@
         '<div class="selector-modal" style="width: min(1140px, 100%); height: min(780px, 90vh);">' +
           '<div class="selector-modal-header">' +
             '<div class="selector-modal-title">' +
-              '<span>Где купить продукцию LOPAL — Карта дилеров и ПЗМ (' + DEALERS_DATA.length + ' точек в РК)</span>' +
+              '<span>' + modalTitleText + '</span>' +
             '</div>' +
             '<div class="selector-modal-actions">' +
-              '<a href="service-points.html" class="btn btn-sm btn-outline" style="font-size: 12.5px;">Все точки продаж →</a>' +
-              '<button class="modal-close-btn" data-close-dealers type="button" aria-label="Закрыть карту">✕</button>' +
+              '<a href="service-points.html" class="btn btn-sm btn-outline" style="font-size: 12.5px;">' + allPointsBtnText + '</a>' +
+              '<button class="modal-close-btn" data-close-dealers type="button" aria-label="' + closeBtnAria + '">✕</button>' +
             '</div>' +
           '</div>' +
           '<div class="dealers-modal-body">' +
@@ -598,7 +606,10 @@
         if (event.data.productNo && dealersModal) {
           var titleSpan = dealersModal.querySelector('.selector-modal-title span');
           if (titleSpan) {
-            titleSpan.textContent = 'Где купить ' + event.data.productNo + ' — Карта дилеров и ПЗМ';
+            var isKz = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+            titleSpan.textContent = isKz
+              ? (event.data.productNo + ' қайдан сатып алуға болады — Дилерлер мен МАО картасы')
+              : ('Где купить ' + event.data.productNo + ' — Карта дилеров и ПЗМ');
           }
         }
       }
@@ -620,8 +631,10 @@
       }
 
       var groups = groupDealersByCity(DEALERS_DATA);
+      var isKzPage = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+      var allKazakhstanLabel = isKzPage ? ('🇰🇿 Бүкіл Қазақстан (' + DEALERS_DATA.length + ')') : ('🇰🇿 Весь Казахстан (' + DEALERS_DATA.length + ')');
       var filterHtml =
-        '<button type="button" data-page-city="all" style="padding:8px 16px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #00843D;background:#00843D;color:#fff;transition:all 0.2s;">🇰🇿 Весь Казахстан (' + DEALERS_DATA.length + ')</button>' +
+        '<button type="button" data-page-city="all" style="padding:8px 16px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #00843D;background:#00843D;color:#fff;transition:all 0.2s;">' + allKazakhstanLabel + '</button>' +
         groups.map(function (g) {
           return '<button type="button" data-page-city="' + g.city + '" style="padding:8px 15px;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #CBD5E1;background:#fff;color:#0F172A;transition:all 0.2s;">📍 ' + g.city + ' (' + g.items.length + ')</button>';
         }).join('');
@@ -790,7 +803,11 @@
     document.querySelectorAll('form[data-demo-form]').forEach(function (form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        showToast('Спасибо за обращение! Представитель ТОО «Topmaq oil» свяжется с вами в ближайшее время.');
+        var isKz = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+        var toastMsg = isKz
+          ? 'Өтінішіңіз үшін рақмет! «Topmaq oil» ЖШС өкілі сізбен жақын арада хабарласады.'
+          : 'Спасибо за обращение! Представитель ТОО «Topmaq oil» свяжется с вами в ближайшее время.';
+        showToast(toastMsg);
         form.reset();
       });
     });
