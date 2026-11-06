@@ -63,9 +63,10 @@ if ($action === 'save_key') {
  * 2. Сохранение выбранной модели DeepSeek
  */
 if ($action === 'save_model') {
-    $model = trim($payload['model'] ?? 'deepseek-chat');
-    if (!in_array($model, ['deepseek-chat', 'deepseek-flash'])) {
-        $model = 'deepseek-chat';
+    $model = trim($payload['model'] ?? 'deepseek-flash');
+    $allowedModels = ['deepseek-flash', 'deepseek-chat', 'deepseek-reasoner'];
+    if (!in_array($model, $allowedModels)) {
+        $model = 'deepseek-flash';
     }
     $settings = lopal_read_json('settings');
     $settings['deepseek_model'] = $model;
@@ -88,7 +89,7 @@ if ($action === 'status') {
         'ok' => true,
         'hasKey' => ($apiKey !== ''),
         'maskedKey' => $apiKey !== '' ? (substr($apiKey, 0, 5) . '...' . substr($apiKey, -4)) : '',
-        'model' => $settings['deepseek_model'] ?? 'deepseek-chat'
+        'model' => $settings['deepseek_model'] ?? 'deepseek-flash'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -687,15 +688,22 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
  */
 function lopal_call_deepseek(string $apiKey, array $messages, array $tools, string $model = 'deepseek-flash'): array {
     $url = 'https://api.deepseek.com/chat/completions';
-    // Официальный идентификатор модели в API DeepSeek: deepseek-flash (архитектура DeepSeek-V4.1-Flash-1017)
-    $apiModel = ($model === 'deepseek-chat') ? 'deepseek-chat' : 'deepseek-flash';
-    $body = json_encode([
+    $allowedModels = ['deepseek-flash', 'deepseek-chat', 'deepseek-reasoner'];
+    $apiModel = in_array($model, $allowedModels) ? $model : 'deepseek-flash';
+
+    $reqData = [
         'model' => $apiModel,
         'messages' => $messages,
-        'tools' => $tools,
-        'tool_choice' => 'auto',
-        'temperature' => 0.2
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        'temperature' => ($apiModel === 'deepseek-reasoner') ? 1.0 : 0.2
+    ];
+
+    // deepseek-reasoner (R1) в DeepSeek API не поддерживает параметр tools
+    if ($apiModel !== 'deepseek-reasoner' && !empty($tools)) {
+        $reqData['tools'] = $tools;
+        $reqData['tool_choice'] = 'auto';
+    }
+
+    $body = json_encode($reqData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
@@ -806,9 +814,8 @@ if ($action === 'chat') {
     }
 
     $chosenModel = trim($payload['model'] ?? ($settings['deepseek_model'] ?? 'deepseek-flash'));
-    if ($chosenModel === 'deepseek-chat') {
-        $chosenModel = 'deepseek-chat';
-    } else {
+    $allowedModels = ['deepseek-flash', 'deepseek-chat', 'deepseek-reasoner'];
+    if (!in_array($chosenModel, $allowedModels)) {
         $chosenModel = 'deepseek-flash';
     }
 

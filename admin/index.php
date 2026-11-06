@@ -247,6 +247,7 @@ $newsList = $isLogged ? lopal_read_json('news') : [];
 $productsList = $isLogged ? lopal_read_json('products') : [];
 $dealersList = $isLogged ? lopal_read_json('dealers') : [];
 $settings = $isLogged ? lopal_read_json('settings') : [];
+$dsModel = $settings['deepseek_model'] ?? 'deepseek-flash';
 $snapshots = $isLogged ? array_map('basename', glob(LOPAL_BACKUPS_DIR . '/snap_*', GLOB_ONLYDIR) ?: []) : [];
 rsort($snapshots);
 $activeTab = $_GET['tab'] ?? ($_POST['active_tab'] ?? 'news');
@@ -757,9 +758,13 @@ if ($activeTab === 'mcp') {
             <p class="sub" style="margin-bottom:0;">Управляйте новостями, каталогом масел, точками продаж на карте, контактами и текстами всех 25 страниц голосом (🎤) или текстом.</p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <div style="display:inline-flex; align-items:center; gap:6px; background:#F1F5F9; color:#0F172A; padding:6px 12px; border-radius:99px; font-size:12px; font-weight:700; border:1px solid var(--border);">
-              <span style="color:#00843D;">⚡</span>
-              <span>DeepSeek V4.1-Flash-1017</span>
+            <div style="display:inline-flex; align-items:center; gap:8px; background:#F8FAFC; padding:5px 12px; border-radius:10px; border:1px solid var(--border);">
+              <span style="font-size:12.5px; font-weight:700; color:#475569;">🧠 Модель:</span>
+              <select id="aiModelSelect" onchange="changeAiModel(this.value)" style="padding:5px 10px; font-size:12.5px; font-weight:700; border-radius:8px; border:1px solid #CBD5E1; background:#fff; cursor:pointer; color:#0F172A; margin:0;">
+                <option value="deepseek-flash" <?= ($dsModel === 'deepseek-flash') ? 'selected' : '' ?>>⚡ DeepSeek V4.1-Flash-1017 (Быстрая)</option>
+                <option value="deepseek-chat" <?= ($dsModel === 'deepseek-chat') ? 'selected' : '' ?>>🚀 DeepSeek-V3 (Флагманская)</option>
+                <option value="deepseek-reasoner" <?= ($dsModel === 'deepseek-reasoner') ? 'selected' : '' ?>>🔬 DeepSeek-R1 (Глубокое мышление)</option>
+              </select>
             </div>
             <button type="button" class="btn btn-outline" style="padding:7px 13px; font-size:12.5px;" onclick="toggleAiKeyBox()">🔑 API-ключ DeepSeek</button>
             <button type="button" class="btn btn-outline" style="padding:7px 13px; font-size:12.5px;" onclick="clearAiHistory()">🗑️ Очистить диалог</button>
@@ -1155,9 +1160,13 @@ if ($activeTab === 'mcp') {
     <div id="aiFloatingWidget" style="position:fixed; right:22px; bottom:22px; z-index:9999;">
       <div id="aiDrawerBox" style="display:none; width:min(420px, calc(100vw - 32px)); height:min(560px, 78vh); background:#fff; border-radius:16px; box-shadow:0 16px 48px rgba(15,23,42,0.28); border:1px solid #CBD5E1; flex-direction:column; overflow:hidden; margin-bottom:12px;">
         <div style="background:#0F172A; color:#fff; padding:11px 16px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-          <div style="display:flex; align-items:center; gap:8px; font-weight:800; font-size:13.5px;">
-            <span>🤖 DeepSeek V4.1-Flash</span>
-            <span style="font-size:10px; background:rgba(0,132,61,0.35); color:#86EFAC; border:1px solid #16A34A; padding:2px 7px; border-radius:99px; font-weight:700;">1017</span>
+          <div style="display:flex; align-items:center; gap:8px; font-weight:800; font-size:13px;">
+            <span>🤖 AI</span>
+            <select id="aiDrawerModelSelect" onchange="changeAiModel(this.value)" style="background:#1E293B; color:#38BDF8; border:1px solid #334155; border-radius:6px; font-size:11.5px; padding:3px 8px; font-weight:700; cursor:pointer; margin:0;">
+              <option value="deepseek-flash" <?= ($dsModel === 'deepseek-flash') ? 'selected' : '' ?>>⚡ V4.1-Flash</option>
+              <option value="deepseek-chat" <?= ($dsModel === 'deepseek-chat') ? 'selected' : '' ?>>🚀 V3 Chat</option>
+              <option value="deepseek-reasoner" <?= ($dsModel === 'deepseek-reasoner') ? 'selected' : '' ?>>🔬 R1 Reasoner</option>
+            </select>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
             <a href="?tab=ai" style="color:#94A3B8; font-size:11.5px; text-decoration:none;">Развернуть ↗</a>
@@ -1522,7 +1531,12 @@ if ($activeTab === 'mcp') {
       });
       const data = await resp.json();
       if (data.ok) {
-        const modelLabel = (model === 'deepseek-flash') ? '🚀 deepseek-flash (быстрая и экономная)' : '⚡ deepseek-chat (V3)';
+        const labels = {
+          'deepseek-flash': '⚡ DeepSeek V4.1-Flash-1017 (быстрая)',
+          'deepseek-chat': '🚀 DeepSeek-V3 (флагманская)',
+          'deepseek-reasoner': '🔬 DeepSeek-R1 (глубокое мышление)'
+        };
+        const modelLabel = labels[model] || model;
         aiChatHistory.push({
           role: 'assistant',
           content: 'ℹ️ Модель переключена на **' + modelLabel + '**. Все последующие текстовые и голосовые команды будут выполняться через эту модель.'

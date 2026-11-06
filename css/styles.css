@@ -941,7 +941,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   z-index: 2000;
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(8px);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -951,10 +951,16 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
+#newsArticleModal[aria-hidden="true"],
+.news-modal-overlay:not(.is-active) {
+  display: none !important;
+}
+
 .news-modal-overlay.is-active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .news-modal-window {

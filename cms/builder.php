@@ -188,7 +188,7 @@ HTML;
   </main>
 
   <!-- Модальное окно чтения полной новости -->
-  <div id="newsArticleModal" class="news-modal-overlay" aria-hidden="true">
+  <div id="newsArticleModal" class="news-modal-overlay" style="display: none;" aria-hidden="true">
     <div class="news-modal-window">
       <div class="selector-modal-header" style="border-bottom: 1px solid var(--border-light); background: #FFFFFF; padding: 16px 24px;">
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -308,8 +308,11 @@ HTML;
       } else {
         document.getElementById('newsModalImgWrap').style.display = 'none';
       }
-      modal.classList.add('is-active');
-      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'flex';
+      setTimeout(function() {
+        modal.classList.add('is-active');
+        modal.setAttribute('aria-hidden', 'false');
+      }, 10);
       document.body.style.overflow = 'hidden';
     }
 
@@ -317,6 +320,11 @@ HTML;
       modal.classList.remove('is-active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      setTimeout(function() {
+        if (!modal.classList.contains('is-active')) {
+          modal.style.display = 'none';
+        }
+      }, 250);
     }
 
     document.addEventListener('click', function(e){
