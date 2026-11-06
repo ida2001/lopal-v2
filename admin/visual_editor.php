@@ -62,54 +62,88 @@ foreach ($allHtmlFiles as $f) {
 
     /* Верхняя панель конструктора */
     .ve-topbar {
-      height: 58px;
+      min-height: 52px;
+      height: 52px;
       background: #0F172A;
       border-bottom: 1px solid #334155;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      gap: 10px;
+      padding: 0 10px;
+      gap: 6px;
       flex-shrink: 0;
       z-index: 100;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #334155 transparent;
     }
+    .ve-topbar::-webkit-scrollbar { height: 3px; }
+    .ve-topbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
     .ve-topbar-left, .ve-topbar-center, .ve-topbar-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .ve-topbar-left {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+    .ve-topbar-center {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-width: 0;
+    }
+    .ve-topbar-right {
+      margin-left: auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     .ve-brand {
       font-weight: 800;
-      font-size: 14px;
+      font-size: 13px;
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding-right: 8px;
+      gap: 4px;
+      padding-right: 6px;
       border-right: 1px solid #334155;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .ve-brand span { color: #10B981; }
     .ve-page-select {
       background: #1E293B;
       color: #F8FAFC;
       border: 1px solid #475569;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 12.5px;
+      border-radius: 7px;
+      padding: 5px 8px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      max-width: 250px;
+      max-width: 170px;
+      min-width: 105px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      flex-shrink: 1;
     }
 
     /* Кнопки панели */
     .ve-btn {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 7px 12px;
-      border-radius: 8px;
-      font-size: 12.5px;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 9px;
+      border-radius: 7px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       border: 1px solid #334155;
@@ -118,14 +152,76 @@ foreach ($allHtmlFiles as $f) {
       text-decoration: none;
       transition: all 0.15s ease;
       white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1.2;
     }
     .ve-btn:hover { background: #334155; color: #fff; }
     .ve-btn.is-active { background: #00843D; border-color: #10B981; color: #fff; }
-    .ve-btn-green { background: #00843D; border-color: #059669; color: #fff; }
-    .ve-btn-green:hover { background: #059669; }
+    .ve-btn-green {
+      background: #00843D;
+      border-color: #059669;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(0, 132, 61, 0.4);
+    }
+    .ve-btn-green:hover {
+      background: #059669;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+    }
     .ve-btn-gold { background: #D97706; border-color: #F59E0B; color: #fff; }
     .ve-btn-gold:hover { background: #B45309; }
-    .ve-btn-icon { padding: 6px 9px; font-size: 13px; }
+    .ve-btn-icon { padding: 5px 8px; font-size: 12px; min-width: 27px; }
+
+    /* Группа кнопок форматирования B / I / U / Link */
+    .ve-format-group {
+      display: inline-flex;
+      align-items: center;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ve-format-group button {
+      background: transparent;
+      border: none;
+      border-right: 1px solid #334155;
+      color: #E2E8F0;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 8px;
+      min-width: 27px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .ve-format-group button:last-child {
+      border-right: none;
+    }
+    .ve-format-group button:hover {
+      background: #334155;
+      color: #fff;
+    }
+
+    /* Адаптивность для экранов 1366px, 1280px, 1024px и зума браузера */
+    .ve-label-short { display: none; }
+    @media (max-width: 1420px) {
+      .ve-brand span { display: none; }
+      .ve-label-full { display: none !important; }
+      .ve-label-short { display: inline !important; }
+      .ve-page-select { max-width: 140px; }
+      .ve-btn { padding: 5px 8px; font-size: 11.5px; }
+    }
+    @media (max-width: 1140px) {
+      .ve-format-group, .ve-sep-format { display: none !important; }
+      .ve-page-select { max-width: 120px; }
+      .ve-brand { display: none; }
+    }
+    @media (max-width: 900px) {
+      .ve-topbar-left a span:last-child { display: none; }
+    }
 
     /* Контекстная панель выбранного элемента (внизу экрана) */
     .ve-context-bar {
@@ -322,9 +418,13 @@ foreach ($allHtmlFiles as $f) {
   <!-- Верхняя панель студии визуального редактирования -->
   <header class="ve-topbar">
     <div class="ve-topbar-left">
-      <a href="index.php?tab=pages" class="ve-btn" title="Вернуться в панель управления">← В админку</a>
-      <div class="ve-brand">LOPAL <span>Visual Studio</span></div>
-      <select class="ve-page-select" id="pageSwitcher" onchange="switchPage(this.value)">
+      <a href="index.php?tab=pages" class="ve-btn" title="Вернуться в панель управления (Админка)">
+        <span>←</span>
+        <span class="ve-label-full"> В админку</span>
+        <span class="ve-label-short"> Админка</span>
+      </a>
+      <div class="ve-brand">LOPAL <span>Studio</span></div>
+      <select class="ve-page-select" id="pageSwitcher" onchange="switchPage(this.value)" title="Выбрать страницу для редактирования">
         <?php foreach ($pagesList as $file => $label): ?>
           <option value="<?= htmlspecialchars($file) ?>" <?= ($file === $requestedPage) ? 'selected' : '' ?>>
             <?= htmlspecialchars($label) ?>
@@ -334,25 +434,50 @@ foreach ($allHtmlFiles as $f) {
     </div>
 
     <div class="ve-topbar-center">
-      <button type="button" class="ve-btn is-active" id="btnEditMode" onclick="toggleEditMode(true)">✏️ Режим правки</button>
-      <button type="button" class="ve-btn" id="btnPreviewMode" onclick="toggleEditMode(false)">👁️ Просмотр</button>
+      <button type="button" class="ve-btn is-active" id="btnEditMode" onclick="toggleEditMode(true)" title="Режим интерактивной правки текста и элементов">
+        <span>✏️</span>
+        <span class="ve-label-full"> Режим правки</span>
+        <span class="ve-label-short"> Правка</span>
+      </button>
+      <button type="button" class="ve-btn" id="btnPreviewMode" onclick="toggleEditMode(false)" title="Предпросмотр без управляющих элементов">
+        <span>👁️</span>
+        <span> Просмотр</span>
+      </button>
 
-      <span style="width:1px; height:24px; background:#334155; margin:0 4px;"></span>
+      <span class="ve-sep-format" style="width:1px; height:20px; background:#334155; margin:0 2px;"></span>
 
-      <button type="button" class="ve-btn ve-btn-icon" onclick="execFormat('bold')" title="Жирный (Ctrl+B)"><b>B</b></button>
-      <button type="button" class="ve-btn ve-btn-icon" onclick="execFormat('italic')" title="Курсив (Ctrl+I)"><i>I</i></button>
-      <button type="button" class="ve-btn ve-btn-icon" onclick="execFormat('underline')" title="Подчеркнутый"><u>U</u></button>
-      <button type="button" class="ve-btn ve-btn-icon" onclick="promptLink()" title="Добавить/изменить ссылку">🔗</button>
+      <div class="ve-format-group" title="Форматирование выделенного текста">
+        <button type="button" onclick="execFormat('bold')" title="Жирный (Ctrl+B)"><b>B</b></button>
+        <button type="button" onclick="execFormat('italic')" title="Курсив (Ctrl+I)"><i>I</i></button>
+        <button type="button" onclick="execFormat('underline')" title="Подчеркнутый"><u>U</u></button>
+        <button type="button" onclick="promptLink()" title="Добавить/изменить ссылку">🔗</button>
+      </div>
 
-      <span style="width:1px; height:24px; background:#334155; margin:0 4px;"></span>
+      <span class="ve-sep-format" style="width:1px; height:20px; background:#334155; margin:0 2px;"></span>
 
-      <button type="button" class="ve-btn ve-btn-gold" onclick="openBlocksModal()">➕ Добавить блок</button>
-      <button type="button" class="ve-btn" onclick="openMediaModal(null)">🖼️ Картинки / Баннеры</button>
+      <button type="button" class="ve-btn ve-btn-gold" onclick="openBlocksModal()" title="Добавить готовый блок (FAQ, Таблица, Видео, Баннер...)">
+        <span>➕</span>
+        <span class="ve-label-full"> Добавить блок</span>
+        <span class="ve-label-short"> Блок</span>
+      </button>
+      <button type="button" class="ve-btn" onclick="openMediaModal(null)" title="Медиатека изображений и баннеров">
+        <span>🖼️</span>
+        <span class="ve-label-full"> Картинки / Баннеры</span>
+        <span class="ve-label-short"> Медиа</span>
+      </button>
     </div>
 
     <div class="ve-topbar-right">
-      <a href="../<?= htmlspecialchars($requestedPage) ?>" target="_blank" class="ve-btn" title="Открыть страницу на сайте">↗ На сайте</a>
-      <button type="button" class="ve-btn ve-btn-green" id="savePageBtn" onclick="saveCurrentPage()">💾 Сохранить изменения</button>
+      <a href="../<?= htmlspecialchars($requestedPage) ?>" target="_blank" class="ve-btn" title="Открыть страницу на сайте в новой вкладке">
+        <span>↗</span>
+        <span class="ve-label-full"> На сайте</span>
+        <span class="ve-label-short"> Сайт</span>
+      </a>
+      <button type="button" class="ve-btn ve-btn-green" id="savePageBtn" onclick="saveCurrentPage()" title="Сохранить изменения на сервере (Ctrl+S)">
+        <span>💾</span>
+        <span class="ve-label-full"> Сохранить изменения</span>
+        <span class="ve-label-short"> Сохранить</span>
+      </button>
     </div>
   </header>
 
@@ -605,6 +730,14 @@ foreach ($allHtmlFiles as $f) {
 
       selectElementInPage(e.target);
     }, true);
+
+    // Поддержка Ctrl+S внутри редактируемой страницы
+    doc.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveCurrentPage();
+      }
+    });
   });
 
   function refreshEditableElements() {
@@ -1243,8 +1376,8 @@ foreach ($allHtmlFiles as $f) {
     }
 
     const btn = document.getElementById('savePageBtn');
-    const origText = btn.textContent;
-    btn.textContent = '⏳ Сохранение...';
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<span>⏳</span><span class="ve-label-full"> Сохранение...</span><span class="ve-label-short"> Сохранение...</span>';
     btn.disabled = true;
 
     // Клонируем <main> и очищаем от служебных атрибутов и панелей редактора
@@ -1279,10 +1412,18 @@ foreach ($allHtmlFiles as $f) {
     } catch (e) {
       showVeToast('⚠️ Ошибка соединения с сервером', true);
     } finally {
-      btn.textContent = origText;
+      btn.innerHTML = origHtml;
       btn.disabled = false;
     }
   }
+
+  // Горячая клавиша Ctrl+S (Cmd+S) для быстрого сохранения
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      saveCurrentPage();
+    }
+  });
   </script>
 </body>
 </html>
