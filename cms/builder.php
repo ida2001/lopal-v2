@@ -104,7 +104,7 @@ HTML;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=10">
+  <link rel="stylesheet" href="css/styles.css?v=21">
 
   <!-- SEO, OpenGraph & Schema.org -->
   <meta name="robots" content="index, follow">
@@ -197,20 +197,20 @@ HTML;
   </main>
 
   <!-- Модальное окно чтения полной новости -->
-  <div id="newsArticleModal" class="selector-modal-backdrop" aria-hidden="true" style="z-index: 1200;">
-    <div class="selector-modal-window" style="max-width: 780px; height: auto; max-height: 90vh; display: flex; flex-direction: column; border-radius: 20px; overflow: hidden;">
-      <div class="selector-modal-header" style="border-bottom: 1px solid var(--border-light); background: #FFFFFF;">
+  <div id="newsArticleModal" class="news-modal-overlay" aria-hidden="true">
+    <div class="news-modal-window">
+      <div class="selector-modal-header" style="border-bottom: 1px solid var(--border-light); background: #FFFFFF; padding: 16px 24px;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span id="newsModalBadge" class="badge-tag badge-sq">НОВОСТИ</span>
           <span id="newsModalDate" style="font-size: 13px; font-weight: 600; color: var(--ink-muted);"></span>
         </div>
-        <button type="button" id="closeNewsModalBtn" class="selector-modal-close" aria-label="Закрыть">✕</button>
+        <button type="button" id="closeNewsModalBtn" class="selector-modal-close" aria-label="Закрыть" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-primary); line-height:1;">✕</button>
       </div>
       <div style="padding: 28px 32px; overflow-y: auto; background: #FFFFFF;">
-        <div id="newsModalImgWrap" style="margin-bottom: 22px; border-radius: 14px; overflow: hidden; max-height: 360px; background: #0F172A;">
-          <img id="newsModalImg" src="" alt="" style="width: 100%; height: 100%; max-height: 360px; object-fit: cover; display: block;">
+        <div id="newsModalImgWrap" style="margin-bottom: 22px; border-radius: 14px; overflow: hidden; max-height: 380px; background: #0F172A;">
+          <img id="newsModalImg" src="" alt="" style="width: 100%; height: 100%; max-height: 380px; object-fit: cover; display: block;">
         </div>
-        <h2 id="newsModalTitle" style="font-size: clamp(20px, 2.6vw, 26px); font-weight: 800; color: var(--ink-primary); margin-bottom: 16px; line-height: 1.3;"></h2>
+        <h2 id="newsModalTitle" style="font-size: clamp(20px, 2.4vw, 24px); font-weight: 800; color: var(--ink-primary); margin-bottom: 16px; line-height: 1.35;"></h2>
         <div id="newsModalBody" style="font-size: 15.5px; line-height: 1.75; color: var(--ink-secondary); white-space: pre-line; margin-bottom: 28px;"></div>
         <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-top: 20px; border-top: 1px solid var(--border-light);">
           <a href="products.html" class="btn btn-primary btn-sm">Перейти в каталог продукции</a>
@@ -317,13 +317,13 @@ HTML;
       } else {
         document.getElementById('newsModalImgWrap').style.display = 'none';
       }
-      modal.classList.add('is-open');
+      modal.classList.add('is-active');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
     }
 
     function closeNews() {
-      modal.classList.remove('is-open');
+      modal.classList.remove('is-active');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     }
@@ -338,7 +338,7 @@ HTML;
       }
     });
     document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeNews();
+      if (e.key === 'Escape' && modal.classList.contains('is-active')) closeNews();
     });
   })();
   </script>
