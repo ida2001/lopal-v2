@@ -87,6 +87,7 @@ HTML;
     }
 
     $newsJsonEncoded = json_encode(array_values($newsList), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $navUlHtml = lopal_render_nav_ul('news.html');
 
     $html = <<<HTML
 <!DOCTYPE html>
@@ -136,17 +137,7 @@ HTML;
       </a>
 
       <nav class="site-nav" id="siteNav" aria-label="Главное меню">
-        <ul>
-          <li><a href="index.html">Главная</a></li>
-          <li><a href="products.html">Каталог</a></li>
-          <li><a href="selector.html">Подбор масла</a></li>
-          <li><a href="technologies.html">Технологии</a></li>
-          <li><a href="certificates.html">Допуски OEM</a></li>
-          <li><a href="service-points.html">Точки продаж</a></li>
-          <li><a href="news.html" class="is-active">Новости</a></li>
-          <li><a href="partners.html">Партнёрам</a></li>
-          <li><a href="contacts.html">Контакты</a></li>
-        </ul>
+{$navUlHtml}
       </nav>
 
       <div class="header-actions">
@@ -726,7 +717,7 @@ function lopal_restore_data_snapshot(string $snapName): array {
     if (!is_dir($dir)) {
         return ['ok' => false, 'error' => 'Снимок не найден: ' . $snapName];
     }
-    foreach (['settings', 'news', 'products', 'dealers'] as $name) {
+    foreach (['settings', 'news', 'products', 'dealers', 'menu'] as $name) {
         if (file_exists($dir . '/' . $name . '.json')) {
             @copy($dir . '/' . $name . '.json', LOPAL_DATA_DIR . '/' . $name . '.json');
         }
@@ -734,3 +725,328 @@ function lopal_restore_data_snapshot(string $snapName): array {
     lopal_rebuild_all();
     return ['ok' => true, 'snapshot' => $snapName];
 }
+
+/**
+ * Получение структуры главного меню сайта
+ */
+function lopal_get_menu(): array {
+    $menu = lopal_read_json('menu');
+    if (!empty($menu) && is_array($menu)) {
+        return $menu;
+    }
+    return [
+        ['id' => 'nav-home', 'title' => 'Главная', 'url' => 'index.html', 'visible' => true],
+        ['id' => 'nav-products', 'title' => 'Каталог', 'url' => 'products.html', 'visible' => true],
+        ['id' => 'nav-selector', 'title' => 'Подбор масла', 'url' => 'selector.html', 'visible' => true],
+        ['id' => 'nav-tech', 'title' => 'Технологии', 'url' => 'technologies.html', 'visible' => true],
+        ['id' => 'nav-certs', 'title' => 'Допуски OEM', 'url' => 'certificates.html', 'visible' => true],
+        ['id' => 'nav-dealers', 'title' => 'Точки продаж', 'url' => 'service-points.html', 'visible' => true],
+        ['id' => 'nav-news', 'title' => 'Новости', 'url' => 'news.html', 'visible' => true],
+        ['id' => 'nav-partners', 'title' => 'Партнёрам', 'url' => 'partners.html', 'visible' => true],
+        ['id' => 'nav-contacts', 'title' => 'Контакты', 'url' => 'contacts.html', 'visible' => true],
+    ];
+}
+
+/**
+ * Генерация HTML-списка <ul> для верхнего меню сайта
+ */
+function lopal_render_nav_ul(string $activePage = ''): string {
+    $menu = lopal_get_menu();
+    $lines = ["        <ul>"];
+    foreach ($menu as $item) {
+        if (isset($item['visible']) && !$item['visible']) {
+            continue;
+        }
+        $url = htmlspecialchars($item['url'] ?? 'index.html', ENT_QUOTES, 'UTF-8');
+        $title = htmlspecialchars($item['title'] ?? 'Раздел', ENT_QUOTES, 'UTF-8');
+        $activeAttr = ($activePage !== '' && basename($url) === basename($activePage)) ? ' class="is-active"' : '';
+        $lines[] = "          <li><a href=\"{$url}\"{$activeAttr}>{$title}</a></li>";
+    }
+    $lines[] = "        </ul>";
+    return implode("\n", $lines);
+}
+
+/**
+ * Сквозное обновление главного меню шапки во всех HTML-страницах сайта
+ */
+function lopal_apply_global_menu(): int {
+    $htmlFiles = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
+    $updatedCount = 0;
+
+    foreach ($htmlFiles as $file) {
+        $fname = basename($file);
+        if ($fname === 'readme.html') continue;
+        $content = file_get_contents($file);
+        $orig = $content;
+
+        $navUl = lopal_render_nav_ul($fname);
+        $newNav = "<nav class=\"site-nav\" id=\"siteNav\" aria-label=\"Главное меню\">\n{$navUl}\n      </nav>";
+
+        $pattern = '/<nav\s+class="site-nav"\s+id="siteNav"[^>]*>\s*<ul>[\s\S]*?<\/ul>\s*<\/nav>/i';
+        if (preg_match($pattern, $content)) {
+            $content = preg_replace($pattern, $newNav, $content, 1);
+        }
+
+        if ($content !== $orig) {
+            file_put_contents($file, $content, LOCK_EX);
+            $updatedCount++;
+        }
+    }
+    return $updatedCount;
+}
+
+/**
+ * Резервное копирование отдельной HTML-страницы перед визуальным редактированием
+ */
+function lopal_backup_page_file(string $filename, string $reason = 'visual_edit'): string {
+    $filename = basename($filename);
+    $src = LOPAL_ROOT_DIR . '/' . $filename;
+    if (!file_exists($src)) return '';
+
+    $pagesBackupDir = LOPAL_BACKUPS_DIR . '/pages';
+    if (!is_dir($pagesBackupDir)) {
+        @mkdir($pagesBackupDir, 0755, true);
+    }
+
+    $stamp = date('Ymd_His') . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+    $dest = $pagesBackupDir . '/' . $stamp;
+    @copy($src, $dest);
+
+    // Храним последние 50 бэкапов страниц
+    $files = glob($pagesBackupDir . '/*') ?: [];
+    if (count($files) > 50) {
+        sort($files);
+        $toDel = array_slice($files, 0, count($files) - 50);
+        foreach ($toDel as $f) @unlink($f);
+    }
+    return basename($dest);
+}
+
+/**
+ * Создание новой страницы сайта с фирменной шапкой, подвалом и стартовыми секциями
+ */
+function lopal_create_new_page(string $slug, string $title, string $subtitle = '', string $kicker = 'Официальное представительство LOPAL в РК', bool $addToMenu = true, string $menuTitle = ''): array {
+    $slug = strtolower(trim($slug));
+    $slug = preg_replace('/\.html$/i', '', $slug);
+    $slug = preg_replace('/[^a-z0-9\-]/', '-', $slug);
+    $slug = trim(preg_replace('/-+/', '-', $slug), '-');
+
+    if ($slug === '' || in_array($slug, ['admin', 'api', 'cms', 'css', 'js', 'assets'])) {
+        return ['ok' => false, 'error' => 'Укажите корректное имя файла на латинице (например: promo, agro, faq)'];
+    }
+
+    $filename = $slug . '.html';
+    $filepath = LOPAL_ROOT_DIR . '/' . $filename;
+    if (file_exists($filepath)) {
+        return ['ok' => false, 'error' => 'Страница ' . $filename . ' уже существует. Выберите другое имя или отредактируйте существующую страницу.'];
+    }
+
+    $settings = lopal_read_json('settings');
+    $company = htmlspecialchars($settings['company_name'] ?? 'ТОО «Topmaq oil» (TOPMAQ OIL)', ENT_QUOTES, 'UTF-8');
+    $address = htmlspecialchars($settings['address'] ?? 'Казахстан, г. Алматы, ул. Сокпакбаева, 67а', ENT_QUOTES, 'UTF-8');
+    $phoneMain = htmlspecialchars($settings['phone_main'] ?? '+7 (707) 523-65-25', ENT_QUOTES, 'UTF-8');
+    $phoneMainHref = htmlspecialchars($settings['phone_main_href'] ?? '+77075236525', ENT_QUOTES, 'UTF-8');
+    $email = htmlspecialchars($settings['email'] ?? 'info@lopal.kz', ENT_QUOTES, 'UTF-8');
+    $insta = htmlspecialchars($settings['instagram'] ?? '@lopal.kz', ENT_QUOTES, 'UTF-8');
+    $instaUrl = htmlspecialchars($settings['instagram_url'] ?? 'https://instagram.com/lopal.kz', ENT_QUOTES, 'UTF-8');
+    $wa = preg_replace('/\D+/', '', $settings['whatsapp'] ?? '77075236525');
+
+    $titleEsc = htmlspecialchars($title !== '' ? $title : 'Новый раздел LOPAL', ENT_QUOTES, 'UTF-8');
+    $subEsc = htmlspecialchars($subtitle !== '' ? $subtitle : 'Официальная продукция и технические решения Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан от эксклюзивного дистрибьютора ' . ($settings['company_name'] ?? 'ТОО «Topmaq oil»'), ENT_QUOTES, 'UTF-8');
+    $kickerEsc = htmlspecialchars($kicker !== '' ? $kicker : 'Официальное представительство LOPAL в РК', ENT_QUOTES, 'UTF-8');
+
+    if ($addToMenu) {
+        $menu = lopal_get_menu();
+        $mLabel = trim($menuTitle) !== '' ? trim($menuTitle) : $title;
+        $menu[] = [
+            'id' => 'nav-' . $slug,
+            'title' => $mLabel,
+            'url' => $filename,
+            'visible' => true
+        ];
+        lopal_write_json('menu', $menu, 'add_menu_' . $slug);
+    }
+
+    $navUlHtml = lopal_render_nav_ul($filename);
+
+    $html = <<<HTML
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>{$titleEsc} — LOPAL Казахстан | {$company}</title>
+  <meta name="description" content="{$subEsc}">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=22">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://lopal.kz/{$filename}">
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-combo" aria-label="Lopal Kazakhstan — На главную">
+        <img class="brand-lopal-img" src="assets/branding/lopal-logo.png" alt="Lopal Tech 龙蟠科技" height="34">
+        <span class="brand-divider"></span>
+        <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="32">
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="Главное меню">
+{$navUlHtml}
+      </nav>
+
+      <div class="header-actions">
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Главный баннер раздела -->
+    <section class="hero" style="min-height: 360px; padding: 64px 0; background: linear-gradient(90deg, rgba(8, 14, 26, 0.78) 0%, rgba(8, 14, 26, 0.48) 60%, rgba(8, 14, 26, 0.25) 100%), url('assets/branding/catalog-hero-sunrise.jpg') center / cover no-repeat;">
+      <div class="container">
+        <div class="hero-text" style="max-width: 780px;">
+          <div class="hero-tag">
+            <span>{$kickerEsc}</span>
+          </div>
+          <h1>{$titleEsc}</h1>
+          <p class="hero-lead">{$subEsc}</p>
+          <div class="hero-buttons">
+            <a href="products.html" class="btn btn-primary">Перейти в каталог</a>
+            <a href="https://wa.me/{$wa}?text=Здравствуйте,%20вопрос%20по%20продукции%20Lopal" target="_blank" rel="noopener" class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.4);">Консультация в WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Основная контентная секция -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="kicker kicker-gold">{$kickerEsc}</span>
+          <h2 class="section-title">{$titleEsc}</h2>
+          <p class="section-subtitle">Вы можете отредактировать этот текст, заменить изображения или добавить новые блоки (баннеры, таблицы характеристик, FAQ, видео YouTube) через визуальный редактор.</p>
+        </div>
+
+        <div class="tech-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+          <div class="tech-highlight-card">
+            <span class="badge-tag badge-sq" style="margin-bottom: 12px; display: inline-block;">ПРЕИМУЩЕСТВО 01</span>
+            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Оригинальное качество OEM</h3>
+            <p style="color: var(--ink-secondary); line-height: 1.65;">Прямые поставки с заводов Jiangsu Lopal New Material Tech. Co., Ltd. с полным пакетом паспортов качества и сертификатов.</p>
+          </div>
+          <div class="tech-highlight-card">
+            <span class="badge-tag badge-nev" style="margin-bottom: 12px; display: inline-block;">ПРЕИМУЩЕСТВО 02</span>
+            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Передовые технологии</h3>
+            <p style="color: var(--ink-secondary); line-height: 1.65;">Новейшие допуски API SQ / ILSAC GF-7 и специализированные линейки для гибридных и электрических автомобилей (NEV).</p>
+          </div>
+          <div class="tech-highlight-card">
+            <span class="badge-tag badge-gf7" style="margin-bottom: 12px; display: inline-block;">ПРЕИМУЩЕСТВО 03</span>
+            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Складская программа в РК</h3>
+            <p style="color: var(--ink-secondary); line-height: 1.65;">Постоянное наличие полного ассортимента на центральном складе ТОО «Topmaq oil» в г. Алматы и у дилеров по Казахстану.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Подвал сайта -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="brand-combo" style="margin-bottom: 16px;">
+            <img class="brand-lopal-img" src="assets/branding/lopal-logo-white.png" alt="Lopal" height="34">
+            <span class="brand-divider"></span>
+            <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="30">
+          </div>
+          <p class="footer-desc">
+            {$company} — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан.
+          </p>
+          <div style="font-size: 13.5px; color: #CBD5E1; line-height: 1.8;">
+            <div>🏢 <strong>Юр. лицо:</strong> {$company}</div>
+            <div>📍 <strong>Адрес:</strong> {$address}</div>
+            <div>📞 <strong>Телефон:</strong> <a href="tel:{$phoneMainHref}" style="color:var(--topmaq-gold);">{$phoneMain}</a></div>
+            <div>✉️ <strong>Email:</strong> <a href="mailto:{$email}" style="color:var(--topmaq-gold);">{$email}</a></div>
+            <div>📸 <strong>Instagram:</strong> <a href="{$instaUrl}" target="_blank" rel="noopener" style="color:#38BDF8;">{$insta}</a></div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Продукция</h4>
+          <ul class="footer-links">
+            <li><a href="products.html">Легковые масла API SQ / SP</a></li>
+            <li><a href="products.html">Линейка для гибридов (NEV)</a></li>
+            <li><a href="products.html">Редукторные жидкости EV</a></li>
+            <li><a href="products.html">Дизельные масла CK-4</a></li>
+            <li><a href="products.html">Трансмиссионные жидкости</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Разделы</h4>
+          <ul class="footer-links">
+            <li><a href="selector.html">Подбор масла онлайн</a></li>
+            <li><a href="technologies.html">Технологии и R&amp;D</a></li>
+            <li><a href="certificates.html">Сертификаты и допуски</a></li>
+            <li><a href="service-points.html">Точки продаж и СТО</a></li>
+            <li><a href="news.html">Новости компании</a></li>
+            <li><a href="partners.html">Партнёрам и дилерам</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Прямой контакт</h4>
+          <p style="font-size: 13px; margin-bottom: 14px; color: #94A3B8;">
+            Запросите оптовый прайс-лист или консультацию технического специалиста.
+          </p>
+          <a href="https://wa.me/{$wa}?text=Здравствуйте,%20интересует%20продукция%20Lopal" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 10px;">
+            Написать в WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Lopal Kazakhstan · {$company}. Все права защищены.</div>
+        <div class="footer-developer">
+          Разработано в <a href="https://ai-studio-api-nz5z.onrender.com/" target="_blank" rel="noopener">AI-Studio-Mark</a>
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <a href="news.html">Новости</a>
+          <a href="contacts.html">Контакты</a>
+          <a href="partners.html">Сотрудничество</a>
+          <a href="selector.html">Lopal Oil Selector</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=21"></script>
+</body>
+</html>
+HTML;
+
+    file_put_contents($filepath, $html, LOCK_EX);
+    if ($addToMenu) {
+        lopal_apply_global_menu();
+    }
+    lopal_build_sitemap();
+
+    return [
+        'ok' => true,
+        'filename' => $filename,
+        'title' => $title
+    ];
+}
+

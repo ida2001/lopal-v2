@@ -1,0 +1,56 @@
+[
+  {
+    "id": "nav-home",
+    "title": "Главная",
+    "url": "index.html",
+    "visible": true
+  },
+  {
+    "id": "nav-products",
+    "title": "Каталог",
+    "url": "products.html",
+    "visible": true
+  },
+  {
+    "id": "nav-selector",
+    "title": "Подбор масла",
+    "url": "selector.html",
+    "visible": true
+  },
+  {
+    "id": "nav-tech",
+    "title": "Технологии",
+    "url": "technologies.html",
+    "visible": true
+  },
+  {
+    "id": "nav-certs",
+    "title": "Допуски OEM",
+    "url": "certificates.html",
+    "visible": true
+  },
+  {
+    "id": "nav-dealers",
+    "title": "Точки продаж",
+    "url": "service-points.html",
+    "visible": true
+  },
+  {
+    "id": "nav-news",
+    "title": "Новости",
+    "url": "news.html",
+    "visible": true
+  },
+  {
+    "id": "nav-partners",
+    "title": "Партнёрам",
+    "url": "partners.html",
+    "visible": true
+  },
+  {
+    "id": "nav-contacts",
+    "title": "Контакты",
+    "url": "contacts.html",
+    "visible": true
+  }
+]

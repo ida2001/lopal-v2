@@ -47,7 +47,7 @@ function lopal_create_data_backup(string $reason = 'auto'): string {
     if (!is_dir($snapDir)) {
         @mkdir($snapDir, 0755, true);
     }
-    foreach (['settings', 'news', 'products', 'dealers'] as $file) {
+    foreach (['settings', 'news', 'products', 'dealers', 'menu'] as $file) {
         $src = LOPAL_DATA_DIR . '/' . $file . '.json';
         if (file_exists($src)) {
             @copy($src, $snapDir . '/' . $file . '.json');

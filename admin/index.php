@@ -353,6 +353,7 @@ if ($activeTab === 'mcp') {
 
     <nav class="tabs">
       <a href="?tab=ai" class="tab-btn <?= $activeTab === 'ai' ? 'active' : '' ?>">🤖 AI-Ассистент (DeepSeek)</a>
+      <a href="?tab=pages" class="tab-btn <?= $activeTab === 'pages' ? 'active' : '' ?>">🎨 Страницы и Меню (Визуальный редактор)</a>
       <a href="?tab=news" class="tab-btn <?= $activeTab === 'news' ? 'active' : '' ?>">📰 Новости (<?= count($newsList) ?>)</a>
       <a href="?tab=products" class="tab-btn <?= $activeTab === 'products' ? 'active' : '' ?>">🛢️ Каталог масел (<?= count($productsList) ?>)</a>
       <a href="?tab=dealers" class="tab-btn <?= $activeTab === 'dealers' ? 'active' : '' ?>">📍 Точки продаж и СТО (<?= count($dealersList) ?>)</a>
@@ -811,6 +812,340 @@ if ($activeTab === 'mcp') {
           </div>
         </div>
       </div>
+    <?php endif; ?>
+
+    <?php if ($activeTab === 'pages'): ?>
+      <?php
+        $menuList = lopal_get_menu();
+        $allHtmlPaths = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
+        $protectedFiles = [
+          'index.html', 'products.html', 'selector.html', 'technologies.html',
+          'certificates.html', 'service-points.html', 'news.html', 'partners.html',
+          'contacts.html', 'about.html', 'media.html'
+        ];
+        $pageTitlesRu = [
+          'index.html' => '🏠 Главная страница',
+          'products.html' => '🛢️ Каталог продукции',
+          'selector.html' => '🔍 Онлайн-подбор масла',
+          'technologies.html' => '🔬 Технологии R&D',
+          'certificates.html' => '📜 Допуски OEM и сертификаты',
+          'service-points.html' => '📍 Точки продаж и СТО',
+          'news.html' => '📰 Новости компании',
+          'partners.html' => '🤝 Партнёрам и дилерам',
+          'contacts.html' => '📞 Контакты и реквизиты',
+          'about.html' => '🏢 О компании',
+          'media.html' => '🎬 Медиа и материалы',
+        ];
+      ?>
+
+      <!-- 1. ВИЗУАЛЬНЫЙ РЕДАКТОР СТРАНИЦ САЙТА -->
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <h2>🎨 Визуальный конструктор и редактор всех страниц сайта</h2>
+            <p class="sub" style="margin-bottom:0;">
+              Нажмите <strong>«✏️ Визуальный редактор»</strong> напротив любой страницы, чтобы менять тексты, заголовки, баннеры и картинки кликом мыши прямо на странице, а также добавлять <strong>Аккордеоны FAQ</strong>, <strong>Таблицы характеристик</strong> и <strong>Видео YouTube</strong>.
+            </p>
+          </div>
+          <a href="visual_editor.php?page=index.html" class="btn btn-green">🚀 Открыть Главную в конструкторе</a>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:12px;">
+          <?php foreach ($allHtmlPaths as $fPath): ?>
+            <?php
+              $bName = basename($fPath);
+              if ($bName === 'readme.html') continue;
+              $isCore = in_array($bName, $protectedFiles) || strpos($bName, 'product-') === 0;
+              $ruTitle = $pageTitlesRu[$bName] ?? null;
+              if (!$ruTitle) {
+                $rawHtml = @file_get_contents($fPath);
+                if ($rawHtml && preg_match('/<h1[^>]*>([\s\S]*?)<\/h1>/i', $rawHtml, $mH1)) {
+                  $ruTitle = '📄 ' . mb_substr(trim(strip_tags($mH1[1])), 0, 48);
+                } else {
+                  $ruTitle = '📄 Страница ' . $bName;
+                }
+              }
+              $modDate = date('d.m.Y H:i', filemtime($fPath));
+            ?>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:#FAFBFD;">
+              <div style="min-width:0;">
+                <div style="font-weight:800; font-size:14.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  <?= htmlspecialchars($ruTitle) ?>
+                </div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">
+                  <code><?= htmlspecialchars($bName) ?></code> · изм. <?= $modDate ?>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <a href="visual_editor.php?page=<?= urlencode($bName) ?>" class="btn btn-green" style="padding:7px 12px; font-size:12.5px;">✏️ Редактировать</a>
+                <a href="../<?= htmlspecialchars($bName) ?>" target="_blank" class="btn btn-outline" style="padding:7px 10px; font-size:12.5px;" title="Открыть страницу на сайте">↗</a>
+                <?php if (!$isCore): ?>
+                  <button type="button" class="btn btn-danger" style="padding:7px 10px; font-size:12.5px;" onclick="deleteCustomPage('<?= htmlspecialchars($bName) ?>')" title="Удалить пользовательскую страницу">🗑️</button>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <!-- 2. СОЗДАНИЕ НОВОЙ ВКЛАДКИ / СТРАНИЦЫ -->
+      <div class="card">
+        <h2>➕ Создать новую страницу (раздел / вкладку)</h2>
+        <p class="sub">Система автоматически создаст новую страницу с фирменной шапкой, подвалом и стилями LOPAL, добавит её в главное меню и откроет в визуальном конструкторе.</p>
+
+        <div class="grid-2">
+          <div>
+            <label>Заголовок новой страницы (H1) *</label>
+            <input type="text" id="new_page_title" placeholder="Например: Акции и спецпредложения LOPAL" oninput="autoFillSlug(this.value)">
+          </div>
+          <div>
+            <label>Адрес файла (URL на латинице без пробелов) *</label>
+            <input type="text" id="new_page_slug" placeholder="Например: promo или agro">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Надзаголовок (золотой бейдж / Kicker)</label>
+            <input type="text" id="new_page_kicker" value="Официальное представительство LOPAL в РК">
+          </div>
+          <div>
+            <label>Название вкладки в главном меню шапки</label>
+            <input type="text" id="new_page_menu_title" placeholder="Например: Акции">
+          </div>
+        </div>
+
+        <label>Краткое описание раздела (подзаголовок баннера и SEO Description)</label>
+        <textarea id="new_page_subtitle" rows="2" placeholder="Введите краткое описание новой страницы..."></textarea>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-top:6px;">
+          <label style="display:inline-flex; align-items:center; gap:8px; margin:0; cursor:pointer; font-size:14px;">
+            <input type="checkbox" id="new_page_add_menu" checked style="width:18px; height:18px; margin:0;">
+            <strong>Сразу добавить новую вкладку в главное меню шапки на всех страницах сайта</strong>
+          </label>
+          <button type="button" class="btn btn-green" onclick="createNewSitePage()">🚀 Создать страницу и перейти в конструктор</button>
+        </div>
+      </div>
+
+      <!-- 3. УПРАВЛЕНИЕ ГЛАВНЫМ МЕНЮ САЙТА (ВКЛАДКИ ШАПКИ) -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+          <div>
+            <h2>🧭 Управление вкладками главного меню сайта</h2>
+            <p class="sub" style="margin-bottom:0;">Меняйте названия, ссылки, порядок следования или видимость вкладок. При нажатии «Сохранить меню» шапка автоматически обновится во всех 25+ файлах сайта.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline" onclick="addMenuRow()">➕ Добавить вкладку в меню</button>
+            <button type="button" class="btn btn-green" onclick="saveGlobalMenu()">💾 Сохранить меню на всём сайте</button>
+          </div>
+        </div>
+
+        <div id="menuRowsContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+
+      <!-- 4. ТОЧКИ ВОССТАНОВЛЕНИЯ ОТРЕДАКТИРОВАННЫХ СТРАНИЦ -->
+      <?php
+        $pBackupsDir = LOPAL_BACKUPS_DIR . '/pages';
+        $pBackups = is_dir($pBackupsDir) ? (glob($pBackupsDir . '/*') ?: []) : [];
+        rsort($pBackups);
+        $pBackups = array_slice($pBackups, 0, 12);
+      ?>
+      <?php if (!empty($pBackups)): ?>
+        <div class="card">
+          <h2>⏪ История сохранений визуального редактора</h2>
+          <p class="sub">Перед каждым сохранением страницы в визуальном редакторе создается резервная копия файла. Вы можете откатить любую страницу в один клик.</p>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <?php foreach ($pBackups as $pb): ?>
+              <?php $pbName = basename($pb); ?>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#F8FAFC; border:1px solid var(--border); border-radius:10px;">
+                <div>
+                  <strong><code><?= htmlspecialchars($pbName) ?></code></strong>
+                  <span style="font-size:12px; color:var(--muted); margin-left:8px;">📅 <?= date('d.m.Y H:i:s', filemtime($pb)) ?></span>
+                </div>
+                <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="restorePageBackup('<?= htmlspecialchars($pbName) ?>')">⏪ Восстановить версию</button>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <script>
+      let adminMenuData = <?= json_encode(array_values($menuList), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
+      function escMenuVal(str) {
+        return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      function renderAdminMenuRows() {
+        const box = document.getElementById('menuRowsContainer');
+        if (!box) return;
+        box.innerHTML = adminMenuData.map((item, idx) => `
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 14px; background:#F8FAFC; border:1px solid var(--border); border-radius:12px;">
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn btn-outline" style="padding:6px 10px; font-size:12px;" onclick="moveMenuRow(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>⬆️</button>
+              <button type="button" class="btn btn-outline" style="padding:6px 10px; font-size:12px;" onclick="moveMenuRow(${idx}, 1)" ${idx === adminMenuData.length - 1 ? 'disabled' : ''}>⬇️</button>
+            </div>
+            <div style="flex:1; min-width:180px;">
+              <input type="text" value="${escMenuVal(item.title || '')}" placeholder="Название вкладки" style="margin-bottom:0;" oninput="adminMenuData[${idx}].title = this.value">
+            </div>
+            <div style="flex:1; min-width:180px;">
+              <input type="text" value="${escMenuVal(item.url || '')}" placeholder="Адрес (например: promo.html)" style="margin-bottom:0;" oninput="adminMenuData[${idx}].url = this.value">
+            </div>
+            <label style="display:inline-flex; align-items:center; gap:6px; margin:0; cursor:pointer; font-size:13px; white-space:nowrap;">
+              <input type="checkbox" ${item.visible !== false ? 'checked' : ''} onchange="adminMenuData[${idx}].visible = this.checked" style="width:16px; height:16px; margin:0;">
+              Показывать
+            </label>
+            <a href="visual_editor.php?page=${encodeURIComponent(item.url || 'index.html')}" class="btn btn-outline" style="padding:7px 11px; font-size:12px;" title="Редактировать страницу">✏️</a>
+            <button type="button" class="btn btn-danger" style="padding:7px 11px; font-size:12px;" onclick="removeMenuRow(${idx})" title="Удалить вкладку из меню">✕</button>
+          </div>
+        `).join('');
+      }
+
+      function moveMenuRow(idx, dir) {
+        const target = idx + dir;
+        if (target < 0 || target >= adminMenuData.length) return;
+        const tmp = adminMenuData[idx];
+        adminMenuData[idx] = adminMenuData[target];
+        adminMenuData[target] = tmp;
+        renderAdminMenuRows();
+      }
+
+      function addMenuRow() {
+        adminMenuData.push({
+          id: 'nav-' + Date.now(),
+          title: 'Новая вкладка',
+          url: 'index.html',
+          visible: true
+        });
+        renderAdminMenuRows();
+      }
+
+      function removeMenuRow(idx) {
+        if (!confirm('Убрать эту вкладку из главного меню? (Сам файл страницы при этом не удаляется)')) return;
+        adminMenuData.splice(idx, 1);
+        renderAdminMenuRows();
+      }
+
+      async function saveGlobalMenu() {
+        try {
+          const resp = await fetch('../api/page_editor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'save_menu', menu: adminMenuData })
+          });
+          const data = await resp.json();
+          if (data.ok) {
+            alert('✅ ' + data.message);
+          } else {
+            alert('⚠️ ' + (data.error || 'Ошибка сохранения меню'));
+          }
+        } catch (e) {
+          alert('Ошибка соединения: ' + e.message);
+        }
+      }
+
+      function autoFillSlug(title) {
+        const map = {
+          'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m',
+          'н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ы':'y','э':'e','ю':'yu','я':'ya'
+        };
+        const slugInput = document.getElementById('new_page_slug');
+        const menuTitleInput = document.getElementById('new_page_menu_title');
+        if (menuTitleInput && !menuTitleInput.dataset.touched) {
+          menuTitleInput.value = title.trim().split(' ').slice(0, 2).join(' ');
+        }
+        if (slugInput && !slugInput.dataset.touched) {
+          let s = title.toLowerCase().split('').map(ch => map[ch] !== undefined ? map[ch] : ch).join('');
+          s = s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 32);
+          slugInput.value = s;
+        }
+      }
+
+      async function createNewSitePage() {
+        const title = document.getElementById('new_page_title').value.trim();
+        const slug = document.getElementById('new_page_slug').value.trim();
+        const kicker = document.getElementById('new_page_kicker').value.trim();
+        const menuTitle = document.getElementById('new_page_menu_title').value.trim();
+        const subtitle = document.getElementById('new_page_subtitle').value.trim();
+        const addToMenu = document.getElementById('new_page_add_menu').checked;
+
+        if (!title || !slug) {
+          alert('Пожалуйста, заполните Заголовок и Адрес файла (URL на латинице).');
+          return;
+        }
+
+        try {
+          const resp = await fetch('../api/page_editor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'create_page',
+              title: title,
+              slug: slug,
+              kicker: kicker,
+              menu_title: menuTitle || title,
+              subtitle: subtitle,
+              add_to_menu: addToMenu
+            })
+          });
+          const data = await resp.json();
+          if (data.ok && data.filename) {
+            window.location.href = 'visual_editor.php?page=' + encodeURIComponent(data.filename);
+          } else {
+            alert('⚠️ ' + (data.error || 'Не удалось создать страницу'));
+          }
+        } catch (e) {
+          alert('Ошибка сети: ' + e.message);
+        }
+      }
+
+      async function deleteCustomPage(filename) {
+        if (!confirm('Вы действительно хотите удалить страницу ' + filename + ' и убрать её из меню?')) return;
+        try {
+          const resp = await fetch('../api/page_editor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_page', page: filename })
+          });
+          const data = await resp.json();
+          if (data.ok) {
+            window.location.reload();
+          } else {
+            alert('⚠️ ' + (data.error || 'Ошибка удаления'));
+          }
+        } catch (e) {
+          alert('Ошибка: ' + e.message);
+        }
+      }
+
+      async function restorePageBackup(backupName) {
+        if (!confirm('Восстановить страницу из резервной копии ' + backupName + '?')) return;
+        try {
+          const resp = await fetch('../api/page_editor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'restore_page_backup', backup: backupName })
+          });
+          const data = await resp.json();
+          if (data.ok) {
+            alert('✅ ' + data.message);
+            window.location.reload();
+          } else {
+            alert('⚠️ ' + (data.error || 'Ошибка восстановления'));
+          }
+        } catch (e) {
+          alert('Ошибка: ' + e.message);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        renderAdminMenuRows();
+        const slugEl = document.getElementById('new_page_slug');
+        if (slugEl) slugEl.addEventListener('input', () => { slugEl.dataset.touched = '1'; });
+        const mtEl = document.getElementById('new_page_menu_title');
+        if (mtEl) mtEl.addEventListener('input', () => { mtEl.dataset.touched = '1'; });
+      });
+      </script>
     <?php endif; ?>
 
   </div>

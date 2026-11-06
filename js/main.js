@@ -795,5 +795,18 @@
       });
     });
 
+    /* ------------------------------------------------------------
+       8. Интерактивные аккордеоны FAQ (.lopal-faq-item)
+       ------------------------------------------------------------ */
+    document.addEventListener('click', function (e) {
+      if (window.__LOPAL_VISUAL_EDITOR_ACTIVE) return;
+      var qBtn = e.target.closest('.lopal-faq-question');
+      if (!qBtn) return;
+      var item = qBtn.closest('.lopal-faq-item');
+      if (item) {
+        item.classList.toggle('is-open');
+      }
+    });
+
   });
 })();

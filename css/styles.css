@@ -1819,3 +1819,139 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     gap: 12px;
   }
 }
+
+/* ============================================================
+   Блоки визуального конструктора (FAQ, Таблицы, Видео, Баннеры)
+   ============================================================ */
+.lopal-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.lopal-faq-item {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lopal-faq-item.is-open {
+  border-color: var(--lopal-green);
+  box-shadow: 0 8px 24px rgba(0, 132, 61, 0.1);
+}
+
+.lopal-faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink-primary);
+  cursor: pointer;
+}
+
+.lopal-faq-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 132, 61, 0.1);
+  color: var(--lopal-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.lopal-faq-item.is-open .lopal-faq-icon {
+  transform: rotate(45deg);
+  background: var(--lopal-green);
+  color: #FFFFFF;
+}
+
+.lopal-faq-answer {
+  display: none;
+  padding: 0 24px 22px 24px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-secondary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+}
+
+.lopal-faq-item.is-open .lopal-faq-answer {
+  display: block;
+}
+
+.lopal-specs-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+  background: #FFFFFF;
+}
+
+.lopal-custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14.5px;
+}
+
+.lopal-custom-table th {
+  background: #0F172A;
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 15px 20px;
+  border-bottom: 2px solid var(--lopal-green);
+}
+
+.lopal-custom-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--ink-primary);
+}
+
+.lopal-custom-table tr:nth-child(even) td {
+  background: #F8FAFC;
+}
+
+.lopal-custom-table tr:hover td {
+  background: rgba(0, 132, 61, 0.04);
+}
+
+.lopal-video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0F172A;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+  border: 2px solid rgba(0, 132, 61, 0.3);
+}
+
+.lopal-video-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
