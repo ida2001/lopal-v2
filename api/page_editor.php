@@ -117,7 +117,12 @@ if ($action === 'list_media') {
  * 2. Сохранение отредактированной страницы из визуального редактора
  */
 if ($action === 'save_page') {
-    $page = basename(trim($payload['page'] ?? ''));
+    $rawPage = trim($payload['page'] ?? '');
+    if (strpos($rawPage, 'kz/') === 0) {
+        $page = 'kz/' . basename(substr($rawPage, 3));
+    } else {
+        $page = basename($rawPage);
+    }
     if ($page === '' || substr($page, -5) !== '.html') {
         echo json_encode(['ok' => false, 'error' => 'Некорректное имя файла страницы'], JSON_UNESCAPED_UNICODE);
         exit;
@@ -297,6 +302,19 @@ if ($action === 'restore_page_backup') {
         exit;
     }
     echo json_encode(['ok' => false, 'error' => 'Не удалось определить целевую страницу из имени бэкапа'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($action === 'toggle_kz_status') {
+    $enable = !empty($payload['enable']);
+    $settings = lopal_read_json('settings');
+    $settings['enable_kazakh_lang'] = $enable;
+    lopal_write_json('settings', $settings, 'toggle_kz_status');
+    echo json_encode([
+        'ok' => true,
+        'enabled' => $enable,
+        'message' => $enable ? 'Казахская версия активирована на сайте!' : 'Казахская версия переведена в режим черновика (скрыта от посетителей).'
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 

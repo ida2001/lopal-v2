@@ -955,6 +955,31 @@ if ($activeTab === 'mcp') {
           </div>
         </div>
 
+        <!-- БЛОК УПРАВЛЕНИЯ КАЗАХСКОЙ ВЕРСИЕЙ САЙТА (KZ) -->
+        <div style="margin-bottom: 24px; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #fff; border-radius: 14px; padding: 20px 24px; border: 1px solid #334155; box-shadow: 0 4px 16px rgba(15,23,42,0.15);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+                <span style="font-size:24px;">🇰🇿</span>
+                <h3 style="margin:0; font-size:16px; color:#fff; font-weight:800;">Казахская версия сайта (KZ)</h3>
+                <span id="kzStatusBadge" style="font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:99px; background:<?= !empty($settings['enable_kazakh_lang']) ? '#16A34A' : '#475569' ?>; color:#fff;">
+                  <?= !empty($settings['enable_kazakh_lang']) ? '🟢 Активна на сайте (Язык доступен)' : '⚪ В разработке (Черновик / Не активна для посетителей)' ?>
+                </span>
+              </div>
+              <p style="margin:0; font-size:13px; color:#94A3B8; max-width:680px; line-height:1.5;">
+                Создано 10 страниц на казахском языке в папке <code>/kz/</code>. Публичный переключатель <strong>RU | KZ</strong> на сайте сейчас скрыт. Вы можете открыть предпросмотр, редактировать казахские страницы в конструкторе или включить версию для посетителей, когда будете готовы.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <a href="../kz/index.html" target="_blank" class="btn btn-outline" style="border-color:#475569; color:#38BDF8; font-size:12.5px;" title="Открыть предпросмотр казахской версии">👁️ Предпросмотр /kz/ ↗</a>
+              <a href="visual_editor.php?page=kz/index.html" class="btn btn-outline" style="border-color:#475569; color:#FCD34D; font-size:12.5px;" title="Редактировать казахскую главную в конструкторе">✏️ Конструктор KZ</a>
+              <button type="button" id="kzToggleBtn" class="btn <?= !empty($settings['enable_kazakh_lang']) ? 'btn-outline' : 'btn-green' ?>" onclick="toggleKzPublicStatus(<?= !empty($settings['enable_kazakh_lang']) ? 'false' : 'true' ?>)" style="font-size:12.5px;">
+                <?= !empty($settings['enable_kazakh_lang']) ? 'Скрыть с сайта (Черновик)' : '🚀 Активировать на сайте' ?>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:12px;">
           <?php foreach ($allHtmlPaths as $fPath): ?>
             <?php
@@ -1156,6 +1181,30 @@ if ($activeTab === 'mcp') {
         const isHidden = (content.style.display === 'none');
         content.style.display = isHidden ? 'block' : 'none';
         if (arrow) arrow.textContent = isHidden ? '▲ Свернуть инструкцию' : '▼ Развернуть инструкцию';
+      }
+
+      async function toggleKzPublicStatus(enable) {
+        const msg = enable 
+          ? 'Активировать казахскую версию на сайте? Переключатель RU | KZ станет виден всем посетителям.'
+          : 'Перевести казахскую версию в режим черновика? Переключатель RU | KZ будет скрыт от обычных посетителей сайта.';
+        if (!confirm(msg)) return;
+
+        try {
+          const resp = await fetch('../api/page_editor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'toggle_kz_status', enable: enable })
+          });
+          const data = await resp.json();
+          if (data.ok) {
+            alert('✅ ' + data.message);
+            window.location.reload();
+          } else {
+            alert('⚠️ ' + (data.error || 'Ошибка смены статуса'));
+          }
+        } catch(e) {
+          alert('Ошибка соединения: ' + e.message);
+        }
       }
 
       function autoFillSlug(title) {

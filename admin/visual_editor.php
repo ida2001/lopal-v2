@@ -13,31 +13,57 @@ if (empty($_SESSION['lopal_admin_logged'])) {
     exit;
 }
 
-$requestedPage = basename($_GET['page'] ?? 'index.html');
+$rawPage = trim($_GET['page'] ?? 'index.html');
+if (strpos($rawPage, 'kz/') === 0) {
+    $requestedPage = 'kz/' . basename(substr($rawPage, 3));
+} else {
+    $requestedPage = basename($rawPage);
+}
 if ($requestedPage === '' || substr($requestedPage, -5) !== '.html' || !file_exists(LOPAL_ROOT_DIR . '/' . $requestedPage)) {
     $requestedPage = 'index.html';
 }
 
 // Собираем список всех страниц сайта для быстрого переключения
 $allHtmlFiles = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
+$allKzFiles = glob(LOPAL_ROOT_DIR . '/kz/*.html') ?: [];
+
 $pageNamesMap = [
-    'index.html' => '🏠 Главная страница (index.html)',
-    'products.html' => '🛢️ Каталог продукции (products.html)',
-    'selector.html' => '🔍 Подбор масла (selector.html)',
-    'technologies.html' => '🔬 Технологии R&D (technologies.html)',
-    'certificates.html' => '📜 Допуски OEM и сертификаты (certificates.html)',
-    'service-points.html' => '📍 Точки продаж и СТО (service-points.html)',
-    'news.html' => '📰 Новости компании (news.html)',
-    'partners.html' => '🤝 Партнёрам и дилерам (partners.html)',
-    'contacts.html' => '📞 Контакты (contacts.html)',
-    'about.html' => '🏢 О компании (about.html)',
-    'media.html' => '🎬 Медиа и материалы (media.html)',
+    'index.html' => '🏠 [RU] Главная страница (index.html)',
+    'products.html' => '🛢️ [RU] Каталог продукции (products.html)',
+    'selector.html' => '🔍 [RU] Подбор масла (selector.html)',
+    'technologies.html' => '🔬 [RU] Технологии R&D (technologies.html)',
+    'certificates.html' => '📜 [RU] Допуски OEM и сертификаты (certificates.html)',
+    'service-points.html' => '📍 [RU] Точки продаж и СТО (service-points.html)',
+    'news.html' => '📰 [RU] Новости компании (news.html)',
+    'partners.html' => '🤝 [RU] Партнёрам и дилерам (partners.html)',
+    'contacts.html' => '📞 [RU] Контакты (contacts.html)',
+    'about.html' => '🏢 [RU] О компании (about.html)',
+    'media.html' => '🎬 [RU] Медиа и материалы (media.html)',
 ];
+
+$kzPageNamesMap = [
+    'kz/index.html' => '🇰🇿 [KZ] Басты бет (Басты бет)',
+    'kz/products.html' => '🇰🇿 [KZ] Өнімдер каталогы (Каталог)',
+    'kz/selector.html' => '🇰🇿 [KZ] Май таңдау онлайн (Подбор)',
+    'kz/technologies.html' => '🇰🇿 [KZ] Технологиялар мен R&D',
+    'kz/certificates.html' => '🇰🇿 [KZ] OEM рұқсаттары мен сертификаттар',
+    'kz/service-points.html' => '🇰🇿 [KZ] Сату нүктелері мен ТҚО',
+    'kz/news.html' => '🇰🇿 [KZ] Жаңалықтар',
+    'kz/partners.html' => '🇰🇿 [KZ] Серіктестерге',
+    'kz/contacts.html' => '🇰🇿 [KZ] Байланыс',
+    'kz/about.html' => '🇰🇿 [KZ] Компания туралы',
+];
+
 $pagesList = [];
 foreach ($allHtmlFiles as $f) {
     $b = basename($f);
     if ($b === 'readme.html') continue;
-    $label = $pageNamesMap[$b] ?? ('📄 ' . $b);
+    $label = $pageNamesMap[$b] ?? ('📄 [RU] ' . $b);
+    $pagesList[$b] = $label;
+}
+foreach ($allKzFiles as $f) {
+    $b = 'kz/' . basename($f);
+    $label = $kzPageNamesMap[$b] ?? ('🇰🇿 ' . $b);
     $pagesList[$b] = $label;
 }
 ?>
