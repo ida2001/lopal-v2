@@ -400,6 +400,14 @@ function lopal_get_ai_tools_schema(): array {
     ];
 }
 
+function lopal_sanitize_settings_for_ai(array $s): array {
+    if (isset($s['deepseek_api_key'])) {
+        $raw = trim($s['deepseek_api_key']);
+        $s['deepseek_api_key'] = ($raw !== '') ? (substr($raw, 0, 5) . '...' . substr($raw, -4)) : '';
+    }
+    return $s;
+}
+
 /**
  * Исполнение одного инструмента CMS
  */
@@ -409,7 +417,7 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             $htmlFiles = array_map('basename', glob(LOPAL_ROOT_DIR . '/*.html') ?: []);
             return [
                 'ok' => true,
-                'settings' => lopal_read_json('settings'),
+                'settings' => lopal_sanitize_settings_for_ai(lopal_read_json('settings')),
                 'counts' => [
                     'news' => count(lopal_read_json('news')),
                     'products' => count(lopal_read_json('products')),
@@ -578,6 +586,8 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
 
         case 'update_site_settings':
             $old = lopal_read_json('settings');
+            // Защита: AI никогда не может перезаписать или раскрыть API-ключ через этот инструмент
+            unset($args['deepseek_api_key']);
             $new = array_merge($old, $args);
             if (!empty($args['phone_main'])) {
                 $new['phone_main_href'] = '+' . preg_replace('/\D+/', '', $args['phone_main']);
@@ -590,7 +600,7 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             lopal_write_json('settings', $new, 'ai_update_settings');
             $updatedFiles = lopal_apply_global_settings($old, $new);
             $siteChanged = true;
-            return ['ok' => true, 'updated_html_files' => $updatedFiles, 'settings' => $new];
+            return ['ok' => true, 'updated_html_files' => $updatedFiles, 'settings' => lopal_sanitize_settings_for_ai($new)];
 
         case 'list_html_pages':
             $files = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
@@ -796,6 +806,7 @@ if ($action === 'chat') {
         . "Правила:\n"
         . "- Когда пользователь просит что-то добавить, изменить или удалить на сайте — СРАЗУ вызывай нужный инструмент (function tool), а не просто пиши текст.\n"
         . "- Если нужно исправить текст на конкретной странице (например, partners.html или about.html), сначала вызови read_page_text, чтобы увидеть точный фрагмент, а затем вызови replace_page_text.\n"
+        . "- НИКОГДА и ни при каких условиях не выводи в ответах секретные API-ключи, пароли или токены. Если упоминаются настройки или API, отображай только маску (например sk-b0...0c77).\n"
         . "- Отвечай лаконично, вежливо и по делу на русском языке, перечисляя какие именно изменения были внесены на сайт.";
 
     $messages = [

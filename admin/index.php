@@ -772,11 +772,15 @@ if ($activeTab === 'mcp') {
         </div>
 
         <div id="aiKeyConfigBox" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:<?= $hasDsKey ? 'none' : 'block' ?>;">
-          <label style="margin-bottom:6px;">DeepSeek API Key (<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" style="color:var(--green);">platform.deepseek.com</a>)</label>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <input type="password" id="deepseek_api_key_input" placeholder="sk-..." value="<?= htmlspecialchars($dsKey) ?>" style="flex:1; min-width:240px; margin-bottom:0;">
-            <button type="button" class="btn btn-green" onclick="saveDeepSeekKey()">💾 Сохранить ключ</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+            <label style="margin-bottom:0; font-weight:700;">DeepSeek API Key (<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" style="color:var(--green);">platform.deepseek.com</a>)</label>
+            <span style="font-size:11.5px; color:var(--muted);">🔒 Write-only: ключ никогда не передается в открытом виде в браузер</span>
           </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="password" id="deepseek_api_key_input" placeholder="<?= $hasDsKey ? 'Ключ подключен (' . htmlspecialchars($maskedDsKey) . '). Введите новый sk-... для замены' : 'Введите API-ключ DeepSeek (начинается с sk-...)' ?>" value="" autocomplete="new-password" style="flex:1; min-width:240px; margin-bottom:0;">
+            <button type="button" class="btn btn-green" onclick="saveDeepSeekKey()">💾 Сохранить новый ключ</button>
+          </div>
+          <p style="font-size:11.5px; color:var(--muted); margin-top:6px; margin-bottom:0;">Для перевыпуска: удалите скомпрометированный ключ в кабинете DeepSeek, создайте новый и вставьте в это поле.</p>
         </div>
       </div>
 
@@ -1669,6 +1673,10 @@ if ($activeTab === 'mcp') {
     const input = document.getElementById('deepseek_api_key_input');
     if (!input) return;
     const key = input.value.trim();
+    if (!key) {
+      alert('Пожалуйста, введите новый API-ключ DeepSeek (начинается с sk-)');
+      return;
+    }
     try {
       const resp = await fetch('../api/ai_agent.php', {
         method: 'POST',
@@ -1677,21 +1685,24 @@ if ($activeTab === 'mcp') {
       });
       const data = await resp.json();
       if (data.ok) {
+        input.value = ''; // Очищаем поле сразу, чтобы ключ не хранился в DOM
         const badge = document.getElementById('aiKeyStatusBadge');
         if (badge) {
           if (data.hasKey) {
             badge.style.background = '#DCFCE7';
             badge.style.color = '#166534';
             badge.textContent = '🟢 Подключен (' + data.maskedKey + ')';
+            input.placeholder = 'Ключ подключен (' + data.maskedKey + '). Введите новый для замены';
             const box = document.getElementById('aiKeyConfigBox');
             if (box) box.style.display = 'none';
           } else {
             badge.style.background = '#FEF3C7';
             badge.style.color = '#92400E';
             badge.textContent = '🔑 Требуется API-ключ DeepSeek';
+            input.placeholder = 'Введите API-ключ DeepSeek (начинается с sk-...)';
           }
         }
-        alert(data.hasKey ? '✅ API-ключ DeepSeek успешно сохранен!' : 'Ключ очищен.');
+        alert(data.hasKey ? '✅ Новый API-ключ DeepSeek успешно сохранен и активирован!' : 'Ключ очищен.');
       }
     } catch (e) {
       alert('Ошибка сохранения ключа: ' + e.message);
