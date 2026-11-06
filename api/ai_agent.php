@@ -640,34 +640,47 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             return ['ok' => true, 'updated_html_files' => $updatedFiles, 'settings' => lopal_sanitize_settings_for_ai($new)];
 
         case 'list_html_pages':
-            $files = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
+            $ruFiles = glob(LOPAL_ROOT_DIR . '/*.html') ?: [];
+            $kzFiles = glob(LOPAL_ROOT_DIR . '/kz/*.html') ?: [];
             $pages = [];
-            foreach ($files as $f) {
+            foreach ($ruFiles as $f) {
                 $c = @file_get_contents($f);
                 $title = '';
                 if ($c && preg_match('/<title>(.*?)<\/title>/is', $c, $m)) {
                     $title = trim($m[1]);
                 }
-                $pages[] = ['file' => basename($f), 'title' => $title, 'size_bytes' => filesize($f)];
+                $pages[] = ['file' => basename($f), 'lang' => 'ru', 'title' => $title, 'size_bytes' => filesize($f)];
+            }
+            foreach ($kzFiles as $f) {
+                $c = @file_get_contents($f);
+                $title = '';
+                if ($c && preg_match('/<title>(.*?)<\/title>/is', $c, $m)) {
+                    $title = trim($m[1]);
+                }
+                $pages[] = ['file' => 'kz/' . basename($f), 'lang' => 'kz', 'title' => $title, 'size_bytes' => filesize($f)];
             }
             return ['ok' => true, 'pages' => $pages];
 
         case 'read_page_text':
-            $page = basename($args['page'] ?? 'index.html');
-            $filePath = LOPAL_ROOT_DIR . '/' . $page;
+            $pageArg = trim($args['page'] ?? 'index.html');
+            $isKz = (strpos($pageArg, 'kz/') === 0 || strpos($pageArg, 'kz\\') === 0);
+            $cleanName = basename($pageArg);
+            $filePath = $isKz ? (LOPAL_ROOT_DIR . '/kz/' . $cleanName) : (LOPAL_ROOT_DIR . '/' . $cleanName);
+            $pageDisplay = $isKz ? ('kz/' . $cleanName) : $cleanName;
+
             if (!file_exists($filePath)) {
-                return ['ok' => false, 'error' => 'Страница не найдена: ' . $page];
+                return ['ok' => false, 'error' => 'Страница не найдена: ' . $pageDisplay];
             }
             $html = file_get_contents($filePath);
             $query = trim($args['search_query'] ?? '');
             if ($query !== '') {
                 $pos = mb_stripos($html, $query);
                 if ($pos === false) {
-                    return ['ok' => false, 'message' => "Фраза '{$query}' не найдена в {$page}"];
+                    return ['ok' => false, 'message' => "Фраза '{$query}' не найдена в {$pageDisplay}"];
                 }
                 $start = max(0, $pos - 600);
                 $snippet = mb_substr($html, $start, 1500);
-                return ['ok' => true, 'page' => $page, 'match_snippet' => $snippet];
+                return ['ok' => true, 'page' => $pageDisplay, 'match_snippet' => $snippet];
             }
             // Извлекаем чистый текст из main или body
             if (preg_match('/<main[^>]*>([\s\S]*?)<\/main>/i', $html, $m)) {
@@ -678,19 +691,27 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             $body = preg_replace('/<script[\s\S]*?<\/script>/i', '', $body);
             $body = preg_replace('/<style[\s\S]*?<\/style>/i', '', $body);
             $text = trim(preg_replace('/\s+/', ' ', strip_tags($body)));
-            return ['ok' => true, 'page' => $page, 'text_preview' => mb_substr($text, 0, 4000)];
+            return ['ok' => true, 'page' => $pageDisplay, 'text_preview' => mb_substr($text, 0, 4000)];
 
         case 'replace_page_text':
-            $page = trim($args['page'] ?? '');
+            $pageArg = trim($args['page'] ?? '');
             $search = (string)($args['search'] ?? '');
             $replace = (string)($args['replace'] ?? '');
             if ($search === '') {
                 return ['ok' => false, 'error' => 'Параметр search не может быть пустым'];
             }
             lopal_create_data_backup('ai_page_edit');
-            $targetFiles = ($page === 'ALL')
-                ? (glob(LOPAL_ROOT_DIR . '/*.html') ?: [])
-                : [LOPAL_ROOT_DIR . '/' . basename($page)];
+            
+            if ($pageArg === 'ALL') {
+                $targetFiles = array_merge(
+                    glob(LOPAL_ROOT_DIR . '/*.html') ?: [],
+                    glob(LOPAL_ROOT_DIR . '/kz/*.html') ?: []
+                );
+            } else {
+                $isKz = (strpos($pageArg, 'kz/') === 0 || strpos($pageArg, 'kz\\') === 0);
+                $cleanName = basename($pageArg);
+                $targetFiles = [$isKz ? (LOPAL_ROOT_DIR . '/kz/' . $cleanName) : (LOPAL_ROOT_DIR . '/' . $cleanName)];
+            }
 
             $modifiedPages = [];
             foreach ($targetFiles as $tf) {
@@ -699,7 +720,10 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
                 if (strpos($content, $search) !== false) {
                     $newContent = str_replace($search, $replace, $content);
                     file_put_contents($tf, $newContent, LOCK_EX);
-                    $modifiedPages[] = basename($tf);
+                    $rel = (strpos($tf, LOPAL_ROOT_DIR . '/kz') !== false || strpos($tf, LOPAL_ROOT_DIR . '\\kz') !== false)
+                        ? ('kz/' . basename($tf))
+                        : basename($tf);
+                    $modifiedPages[] = $rel;
                 }
             }
             if (empty($modifiedPages)) {
@@ -725,8 +749,12 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
                     'filename' => $filename,
                     'url' => 'https://lopal.kz/' . $filename,
                     'editor_url' => 'visual_editor.php?page=' . urlencode($filename),
+                    'kz_duplicated' => true,
+                    'kz_filename' => 'kz/' . $filename,
+                    'kz_url' => 'https://lopal.kz/kz/' . $filename,
+                    'kz_editor_url' => 'visual_editor.php?page=' . urlencode('kz/' . $filename),
                     'added_to_menu' => $addToMenu,
-                    'message' => "Страница {$filename} успешно создана и опубликована! Она добавлена в меню сайта и доступна для визуального редактирования."
+                    'message' => "Страница {$filename} успешно создана и опубликована сразу на двух языках (русская и казахская версия в /kz/)! Обе страницы добавлены в меню и доступны для визуального редактирования."
                 ];
             }
             return $res;
@@ -911,27 +939,38 @@ if ($action === 'chat') {
         . "- Дистрибьютор в РК: ТОО «Topmaq oil» (или ТОО Topmaq oil)\n"
         . "- Производитель: Jiangsu Lopal New Material Tech. Co., Ltd.\n"
         . "Текущая дата: " . date('d.m.Y') . ".\n\n"
+        . "🔴 ГЛАВНОЕ ОБЯЗАТЕЛЬНОЕ ПРАВИЛО ДВУЯЗЫЧНОСТИ (ДУБЛИРОВАНИЕ В КАЗАХСКОЙ ВЕРСИИ САЙТА /kz/):\n"
+        . "На сайте lopal.kz работают две параллельные полнофункциональные версии:\n"
+        . "   1) Русская версия сайта (в корне: index.html, products.html, contacts.html и др.)\n"
+        . "   2) Казахская версия сайта (в папке /kz/: kz/index.html, kz/products.html, kz/contacts.html и др.)\n"
+        . "ТЫ ОБЯЗАН СТРОГО И БЕЗУСЛОВНО ДУБЛИРОВАТЬ ВСЕ СВОИ ДЕЙСТВИЯ В КАЗАХСКОЙ ВЕРСИИ САЙТА! ЭТО СТРОГО ОБЯЗАТЕЛЬНО:\n"
+        . "1. При создании новой страницы (create_page): система автоматически генерирует сразу две страницы — русскую (slug.html) и казахскую (kz/slug.html). В ответе пользователю ОБЯЗАТЕЛЬНО дай ссылки на обе версии:\n"
+        . "   - 🌐 Русская версия: [lopal.kz/имя.html](https://lopal.kz/имя.html) · 🎨 [Редактировать в конструкторе](visual_editor.php?page=имя.html)\n"
+        . "   - 🇰🇿 Казахская версия: [lopal.kz/kz/имя.html](https://lopal.kz/kz/имя.html) · 🎨 [Редактировать в конструкторе (KZ)](visual_editor.php?page=kz/имя.html)\n"
+        . "2. При редактировании текста страниц (replace_page_text): если ты правишь русскую страницу (например, partners.html, about.html, contacts.html), ты ОБЯЗАН вызвать replace_page_text и для казахской версии (kz/partners.html, kz/about.html, kz/contacts.html), переведя заменяемый фрагмент на грамотный казахский язык (автомобильная и деловая терминология: мотор майлары, ТҚО, ресми дистрибьютор, өнімдер каталогы, сату нүктелері и др.). Если меняешь контакты на всех страницах (page='ALL'), изменения автоматически применяются и к русским, и к казахским страницам.\n"
+        . "3. При добавлении/изменении новостей (upsert_news), товаров (upsert_product), дилеров (upsert_dealer), меню (manage_menu) или контактов (update_site_settings) — эти данные автоматически собираются и синхронизируются для обеих языковых версий сайта. В отчете пользователю всегда подтверждай, что данные синхронизированы для русской и казахской версий.\n"
+        . "4. В финальном ответе пользователю ВСЕГДА явно подтверждай: '✅ Действие выполнено на основном сайте и обязательно продублировано в казахской версии (/kz/)'.\n\n"
         . "Твои возможности:\n"
         . "1. Публиковать, редактировать и удалять новости (list_news, upsert_news, delete_news).\n"
         . "2. Добавлять, изменять и удалять товары в каталоге масел (list_products, upsert_product, delete_product).\n"
         . "3. Управлять дилерской сетью и СТО по городам Казахстана (list_dealers, upsert_dealer, delete_dealer). Координаты на карте определяются автоматически по адресу.\n"
-        . "4. Изменять глобальные контакты, телефоны, WhatsApp и график работы сразу на всех 25 страницах сайта (update_site_settings).\n"
-        . "5. Читать и напрямую редактировать тексты на любой HTML-странице сайта (list_html_pages, read_page_text, replace_page_text).\n"
+        . "4. Изменять глобальные контакты, телефоны, WhatsApp и график работы сразу на всех страницах сайта (update_site_settings).\n"
+        . "5. Читать и напрямую редактировать тексты на любой HTML-странице сайта как в корне, так и в папке kz/ (list_html_pages, read_page_text, replace_page_text).\n"
         . "6. Делать откат к бэкапам (list_backups, rollback_site).\n"
-        . "7. Создавать новые страницы на сайте и сразу публиковать их (create_page). Страница создается адаптивной, с единой шапкой, мобильным меню и футером.\n"
+        . "7. Создавать новые страницы на сайте и сразу публиковать их синхронно на RU и KZ (create_page).\n"
         . "8. Управлять пунктами меню навигации (manage_menu) — добавлять ссылки, скрывать/показывать и удалять вкладки.\n\n"
         . "Правила:\n"
         . "- Когда пользователь просит что-то добавить, изменить или удалить на сайте — СРАЗУ вызывай нужный инструмент (function tool), а не просто пиши текст.\n"
         . "- Когда пользователь просит создать новую страницу, вкладку или раздел (например: 'создай страницу акций', 'сделай вкладку гарантия'):\n"
         . "   1) Сгенерируй slug на латинице (например: promo, warranty, agro, faq).\n"
         . "   2) Вызови инструмент create_page с понятным заголовком (title), кратким описанием (subtitle) и бейджем (kicker).\n"
-        . "   3) В ответе обязательно дай пользователю две прямые ссылки в формате Markdown:\n"
-        . "      - 🌐 Опубликованная страница: [lopal.kz/имя.html](https://lopal.kz/имя.html)\n"
-        . "      - 🎨 Открыть в визуальном конструкторе: [Редактировать страницу](visual_editor.php?page=имя.html)\n"
+        . "   3) В ответе обязательно дай пользователю прямые ссылки в формате Markdown для ОБЕИХ языковых версий:\n"
+        . "      - 🌐 Русская версия: [lopal.kz/имя.html](https://lopal.kz/имя.html) · 🎨 [Редактировать в конструкторе](visual_editor.php?page=имя.html)\n"
+        . "      - 🇰🇿 Казахская версия: [lopal.kz/kz/имя.html](https://lopal.kz/kz/имя.html) · 🎨 [Редактировать в конструкторе (KZ)](visual_editor.php?page=kz/имя.html)\n"
         . "   4) Напомни пользователю, что в визуальном конструкторе он может кликнуть по любому тексту прямо на странице, сменить картинки или добавить специфические блоки (FAQ-аккордеон, таблицу характеристик, видео YouTube, Hero-баннер).\n"
-        . "- Если нужно исправить текст на конкретной странице (например, partners.html или about.html), сначала вызови read_page_text, чтобы увидеть точный фрагмент, а затем вызови replace_page_text.\n"
+        . "- Если нужно исправить текст на конкретной странице (например, partners.html или about.html), сначала вызови read_page_text, чтобы увидеть точный фрагмент, а затем вызови replace_page_text для русской версии И для казахской версии (kz/имя.html).\n"
         . "- НИКОГДА и ни при каких условиях не выводи в ответах секретные API-ключи, пароли или токены. Если упоминаются настройки или API, отображай только маску (например sk-b0...0c77).\n"
-        . "- Отвечай лаконично, вежливо и по делу на русском языке, перечисляя какие именно действия были выполнены.";
+        . "- Отвечай лаконично, вежливо и по делу на русском языке, перечисляя какие именно действия были выполнены на обеих версиях сайта.";
 
     $messages = [
         ['role' => 'system', 'content' => $systemPrompt]

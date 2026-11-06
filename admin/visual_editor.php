@@ -695,6 +695,12 @@ foreach ($allKzFiles as $f) {
             <p style="color:#94A3B8; font-size:12px;">Скажите в микрофон (🎤) или напишите: <em>«Создай страницу "Гарантия" с адресом warranty.html и добавь в главное меню»</em>. Страница создастся и сразу появится в конструкторе!</p>
           </div>
 
+          <div style="background:#0F172A; border:1px solid #0284C7; border-radius:12px; padding:16px;">
+            <h4 style="color:#38BDF8; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-size:14px;">🇰🇿 7. Обязательное дублирование в версии KZ</h4>
+            <p style="margin-bottom:6px;">Все действия, страницы и новости обязательно дублируются в казахской версии (<code>/kz/</code>):</p>
+            <p style="color:#94A3B8; font-size:12px;">AI-ассистент автоматически создает парные страницы (RU и KZ) и синхронизирует меню. Вы можете переключиться на редактирование любой казахской страницы прямо из выпадающего списка страниц сверху (выбрав страницу с префиксом <strong>[KZ]</strong>).</p>
+          </div>
+
         </div>
       </div>
     </div>

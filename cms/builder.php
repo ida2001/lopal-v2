@@ -1051,10 +1051,24 @@ HTML;
     }
     lopal_build_sitemap();
 
+    // Автоматическое обязательное дублирование новой страницы в казахскую версию (/kz/)
+    $kzCreated = false;
+    $kzBuilderPath = dirname(__DIR__) . '/cms/kz_builder.php';
+    if (file_exists($kzBuilderPath)) {
+        require_once $kzBuilderPath;
+        if (function_exists('lopal_build_kz_page')) {
+            lopal_build_kz_page($filename, $titleEsc, $subEsc);
+            $kzCreated = true;
+        }
+    }
+
     return [
         'ok' => true,
         'filename' => $filename,
-        'title' => $title
+        'title' => $title,
+        'kz_duplicated' => $kzCreated,
+        'kz_url' => 'https://lopal.kz/kz/' . $filename,
+        'kz_editor_url' => 'visual_editor.php?page=' . urlencode('kz/' . $filename)
     ];
 }
 

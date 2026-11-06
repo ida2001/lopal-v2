@@ -771,6 +771,14 @@ if ($activeTab === 'mcp') {
           </div>
         </div>
 
+        <!-- Обязательное правило двуязычности для AI-агента -->
+        <div style="margin-top:14px; padding:10px 14px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:10px; display:flex; align-items:center; gap:10px; font-size:12.5px; color:#1E40AF;">
+          <span style="font-size:20px;">🇰🇿</span>
+          <div>
+            <strong>Обязательное правило двуязычности:</strong> AI-ассистент автоматически дублирует все создаваемые страницы, публикации новостей, товары и правки контента в казахской версии сайта (<code>/kz/</code>).
+          </div>
+        </div>
+
         <div id="aiKeyConfigBox" style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:<?= $hasDsKey ? 'none' : 'block' ?>;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
             <label style="margin-bottom:0; font-weight:700;">DeepSeek API Key (<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" style="color:var(--green);">platform.deepseek.com</a>)</label>
@@ -948,6 +956,18 @@ if ($activeTab === 'mcp') {
                 </p>
                 <div style="font-size:11.5px; color:#64748B; line-height:1.4;">
                   Пример: <em>«Создай страницу "Сервис и замена масла" с адресом service.html и добавь ссылку в меню»</em>. AI сгенерирует страницу с фирменным стилем LOPAL и выдаст вам прямую ссылку в визуальный редактор.
+                </div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #BFDBFE; border-radius:10px; padding:16px; background:#F0F9FF;">
+                <h4 style="color:#0284C7; font-size:13.5px; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                  🇰🇿 7. Обязательное дублирование в казахской версии (/kz/)
+                </h4>
+                <p style="font-size:12.5px; color:#0369A1; line-height:1.55; margin-bottom:6px;">
+                  На сайте действует строгое правило двуязычности. Любая новая страница или изменение текстов должны присутствовать и в русской, и в казахской версии!
+                </p>
+                <div style="font-size:11.5px; color:#0C4A6E; line-height:1.45;">
+                  AI-ассистент запрограммирован дублировать все операции: при создании страницы она генерируется сразу в двух экземплярах (<code>имя.html</code> и <code>kz/имя.html</code>) и добавляется в оба меню. В визуальном редакторе вы также можете напрямую редактировать страницы казахской версии, выбрав страницу с префиксом <strong>[KZ]</strong>.
                 </div>
               </div>
 
