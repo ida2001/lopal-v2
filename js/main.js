@@ -361,7 +361,9 @@
 
   function fitMapToDealersList(mapInstance, list, markersMap) {
     if (!mapInstance) return;
-    mapInstance.closePopup();
+    if (typeof mapInstance.closePopup === 'function') {
+      mapInstance.closePopup();
+    }
     var pts = [];
     list.forEach(function (d) {
       if (d.coords && d.coords.length >= 2) {
@@ -382,6 +384,42 @@
     } else {
       mapInstance.setView([48.0196, 66.9237], 5);
     }
+  }
+
+  function isKazakhPage() {
+    try {
+      return (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getLocalizedBadge(badge) {
+    if (!badge) return '';
+    if (!isKazakhPage()) return badge;
+    if (badge.indexOf('Центральный склад') !== -1) return 'Орталық қойма және GEELY клубтық сервисі';
+    if (badge.indexOf('Автосервис, Магазин') !== -1) return 'Автосервис, дүкен, көтерме және бөлшек сауда';
+    if (badge.indexOf('Магазин, оптовая') !== -1) return 'Дүкен, көтерме және бөлшек сауда';
+    if (badge.indexOf('Магазин и автосервис') !== -1) return 'Дүкен және автосервис';
+    return badge;
+  }
+
+  function getLocalizedAddress(addr) {
+    if (!addr) return '';
+    if (!isKazakhPage()) return addr;
+    return addr
+      .replace('г. Алматы', 'Алматы қ.')
+      .replace('г. Астана', 'Астана қ.')
+      .replace('г. Шымкент', 'Шымкент қ.')
+      .replace('г. Актау', 'Ақтау қ.')
+      .replace('г. Талдыкорган', 'Талдықорған қ.')
+      .replace('г. Алтай', 'Алтай қ.')
+      .replace('г. Арысь', 'Арыс қ.')
+      .replace('ул. Сокпакбаева', 'Соқпақбаев к-сі')
+      .replace('ул. Халиуллина', 'Халиуллин к-сі')
+      .replace('ул. Каратал', 'Қаратал к-сі')
+      .replace('ул. Казыбек би', 'Қазыбек би к-сі')
+      .replace('по 2ГИС', '2GIS бойынша');
   }
 
   function createMapMarkers(mapInstance) {
@@ -461,33 +499,7 @@
 
       var cityGroups = groupDealersByCity(DEALERS_DATA);
 
-      var isKz = (document.documentElement.lang === 'kk' || window.location.pathname.indexOf('/kz/') !== -1);
-
-      function getLocalizedBadge(badge) {
-        if (!isKz) return badge;
-        if (badge.indexOf('Центральный склад') !== -1) return 'Орталық қойма және GEELY клубтық сервисі';
-        if (badge.indexOf('Автосервис, Магазин') !== -1) return 'Автосервис, дүкен, көтерме және бөлшек сауда';
-        if (badge.indexOf('Магазин, оптовая') !== -1) return 'Дүкен, көтерме және бөлшек сауда';
-        if (badge.indexOf('Магазин и автосервис') !== -1) return 'Дүкен және автосервис';
-        return badge;
-      }
-
-      function getLocalizedAddress(addr) {
-        if (!isKz) return addr;
-        return addr
-          .replace('г. Алматы', 'Алматы қ.')
-          .replace('г. Астана', 'Астана қ.')
-          .replace('г. Шымкент', 'Шымкент қ.')
-          .replace('г. Актау', 'Ақтау қ.')
-          .replace('г. Талдыкорган', 'Талдықорған қ.')
-          .replace('г. Алтай', 'Алтай қ.')
-          .replace('г. Арысь', 'Арыс қ.')
-          .replace('ул. Сокпакбаева', 'Соқпақбаев к-сі')
-          .replace('ул. Халиуллина', 'Халиуллин к-сі')
-          .replace('ул. Каратал', 'Қаратал к-сі')
-          .replace('ул. Казыбек би', 'Қазыбек би к-сі')
-          .replace('по 2ГИС', '2GIS бойынша');
-      }
+      var isKz = isKazakhPage();
       var allLabel = isKz ? ('🇰🇿 Барлығы (' + DEALERS_DATA.length + ')') : ('🇰🇿 Все (' + DEALERS_DATA.length + ')');
       var modalTitleText = isKz
         ? ('LOPAL өнімдерін қайдан сатып алуға болады — Дилерлер мен МАО картасы (' + DEALERS_DATA.length + ' нүкте)')
@@ -508,9 +520,9 @@
         var itemsHtml = g.items.map(function (d) {
           return (
             '<button type="button" class="dealer-list-item' + (d.isHq ? ' is-hq' : '') + '" data-dealer-id="' + d.id + '">' +
-              '<span class="dealer-list-badge">' + d.badge + '</span>' +
+              '<span class="dealer-list-badge">' + getLocalizedBadge(d.badge) + '</span>' +
               '<div class="dealer-list-title">' + d.name + '</div>' +
-              '<div class="dealer-list-addr">' + d.address + '</div>' +
+              '<div class="dealer-list-addr">' + getLocalizedAddress(d.address) + '</div>' +
               '<div class="dealer-list-phone">' + d.phone + '</div>' +
             '</button>'
           );
