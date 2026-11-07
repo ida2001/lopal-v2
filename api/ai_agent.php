@@ -39,6 +39,12 @@ $payload = json_decode($rawBody, true);
 if (!is_array($payload)) {
     $payload = $_POST;
 }
+if (!empty($payload['messages']) && is_string($payload['messages'])) {
+    $decodedMsgs = json_decode($payload['messages'], true);
+    if (is_array($decodedMsgs)) {
+        $payload['messages'] = $decodedMsgs;
+    }
+}
 
 $action = $payload['action'] ?? 'chat';
 
@@ -148,6 +154,194 @@ function lopal_geocode_address(string $address): array {
         }
     }
     return [43.2550, 76.9120];
+}
+
+/**
+ * Папка для загрузки файлов, передаваемых ИИ-агенту
+ */
+function lopal_get_ai_upload_dir(): string {
+    $dir = LOPAL_ROOT_DIR . '/assets/uploads/ai_files';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
+    $ht = LOPAL_ROOT_DIR . '/assets/uploads/.htaccess';
+    if (!file_exists($ht)) {
+        $rule = "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|sh|bash|exe)$\">\n"
+              . "    Order Allow,Deny\n"
+              . "    Deny from all\n"
+              . "</FilesMatch>\nOptions -ExecCGI -Indexes\n";
+        @file_put_contents($ht, $rule);
+    }
+    return $dir;
+}
+
+/**
+ * Нормализация структуры $_FILES в единообразный список файлов
+ */
+function lopal_normalize_uploaded_files($filesInput): array {
+    if (empty($filesInput) || !is_array($filesInput)) return [];
+    $result = [];
+    if (isset($filesInput['name']) && is_array($filesInput['name'])) {
+        $count = count($filesInput['name']);
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($filesInput['name'][$i]) && ($filesInput['error'][$i] === UPLOAD_ERR_OK)) {
+                $result[] = [
+                    'name' => $filesInput['name'][$i],
+                    'type' => $filesInput['type'][$i] ?? '',
+                    'tmp_name' => $filesInput['tmp_name'][$i],
+                    'error' => $filesInput['error'][$i],
+                    'size' => $filesInput['size'][$i] ?? 0
+                ];
+            }
+        }
+    } elseif (isset($filesInput['name']) && is_string($filesInput['name'])) {
+        if ($filesInput['error'] === UPLOAD_ERR_OK) {
+            $result[] = $filesInput;
+        }
+    }
+    return $result;
+}
+
+/**
+ * Чтение и извлечение текстового содержимого или метаданных из файла
+ */
+function lopal_extract_file_content(string $filePath, string $origName, string $ext): array {
+    $isImage = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
+    $dimensions = null;
+    $text = '';
+
+    if ($isImage) {
+        $imgSize = @getimagesize($filePath);
+        if ($imgSize) {
+            $dimensions = $imgSize[0] . 'x' . $imgSize[1];
+        }
+        return [
+            'is_image' => true,
+            'dimensions' => $dimensions,
+            'text' => ''
+        ];
+    }
+
+    // Текстовые форматы (TXT, CSV, TSV, JSON, HTML, XML, MD, LOG, CSS, JS)
+    $textExts = ['txt', 'csv', 'tsv', 'json', 'html', 'htm', 'md', 'xml', 'log', 'css', 'js', 'sql', 'yaml', 'yml', 'rtf'];
+    if (in_array($ext, $textExts)) {
+        $raw = @file_get_contents($filePath);
+        if ($raw !== false) {
+            // Конвертация CP1251 / Windows-1251 (частый экспорт Excel в СНГ) в UTF-8
+            if (!preg_match('//u', $raw)) {
+                $conv = @iconv('WINDOWS-1251', 'UTF-8//IGNORE', $raw);
+                if ($conv !== false) $raw = $conv;
+            }
+            // Ограничение размера текста (до 30 000 символов)
+            if (mb_strlen($raw) > 30000) {
+                $text = mb_substr($raw, 0, 30000) . "\n\n[...файл содержит еще " . (mb_strlen($raw) - 30000) . " символов, показаны первые 30 000...]";
+            } else {
+                $text = $raw;
+            }
+        }
+        return ['is_image' => false, 'dimensions' => null, 'text' => $text];
+    }
+
+    // Документы DOCX (Word)
+    if ($ext === 'docx' && class_exists('ZipArchive')) {
+        $zip = new ZipArchive();
+        if ($zip->open($filePath) === true) {
+            $xml = $zip->getFromName('word/document.xml');
+            $zip->close();
+            if ($xml !== false) {
+                $xml = str_replace(['</w:p>', '</w:tr>'], "\n", $xml);
+                $rawDoc = trim(strip_tags($xml));
+                if (mb_strlen($rawDoc) > 30000) {
+                    $text = mb_substr($rawDoc, 0, 30000) . "\n\n[...документ сокращен...]";
+                } else {
+                    $text = $rawDoc;
+                }
+            }
+        }
+        return ['is_image' => false, 'dimensions' => null, 'text' => $text];
+    }
+
+    // Таблицы XLSX (Excel)
+    if ($ext === 'xlsx' && class_exists('ZipArchive')) {
+        $zip = new ZipArchive();
+        if ($zip->open($filePath) === true) {
+            $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+            $zip->close();
+            if ($sharedXml !== false) {
+                preg_match_all('/<t[^>]*>(.*?)<\/t>/is', $sharedXml, $matches);
+                if (!empty($matches[1])) {
+                    $lines = array_slice($matches[1], 0, 500);
+                    $text = "Строки и значения из листа Excel:\n" . implode("\n", $lines);
+                }
+            }
+        }
+        return ['is_image' => false, 'dimensions' => null, 'text' => $text];
+    }
+
+    // PDF документы
+    if ($ext === 'pdf') {
+        $rawPdf = @file_get_contents($filePath);
+        if ($rawPdf && preg_match_all('/BT[\s\S]*?ET/s', $rawPdf, $matches)) {
+            $chunks = [];
+            foreach (array_slice($matches[0], 0, 40) as $blk) {
+                if (preg_match_all('/\((.*?)\)\s*T[jJ]/s', $blk, $txts)) {
+                    $chunks[] = implode(' ', $txts[1]);
+                }
+            }
+            if (!empty($chunks)) {
+                $text = implode("\n", $chunks);
+            }
+        }
+        return ['is_image' => false, 'dimensions' => null, 'text' => $text];
+    }
+
+    return ['is_image' => false, 'dimensions' => null, 'text' => ''];
+}
+
+/**
+ * Безопасное сохранение и обработка отдельного загруженного файла
+ */
+function lopal_process_single_upload(array $rawFile, string $uploadDir): ?array {
+    $origName = $rawFile['name'] ?? '';
+    $tmpName = $rawFile['tmp_name'] ?? '';
+    if (empty($origName) || empty($tmpName) || !file_exists($tmpName)) {
+        return null;
+    }
+
+    // Запрещенные опасные расширения
+    $dangerousExts = ['php', 'phtml', 'php3', 'php4', 'php5', 'php7', 'phps', 'cgi', 'pl', 'py', 'sh', 'bash', 'exe', 'dll', 'bat', 'cmd', 'com', 'msi', 'vbs', 'jar'];
+    $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+    if (in_array($ext, $dangerousExts)) {
+        $ext = 'txt';
+    }
+    if ($ext === '') $ext = 'bin';
+
+    $safeBase = preg_replace('/[^a-zA-Z0-9_\-]/', '_', pathinfo($origName, PATHINFO_FILENAME));
+    $safeBase = substr($safeBase, 0, 36) ?: 'file';
+    $savedName = date('Ymd_His') . '_' . substr(md5(uniqid('', true)), 0, 6) . '_' . $safeBase . '.' . $ext;
+    $targetPath = $uploadDir . '/' . $savedName;
+
+    if (!move_uploaded_file($tmpName, $targetPath)) {
+        if (!copy($tmpName, $targetPath)) {
+            return null;
+        }
+    }
+
+    $extracted = lopal_extract_file_content($targetPath, $origName, $ext);
+    $relPath = 'assets/uploads/ai_files/' . $savedName;
+
+    return [
+        'original_name' => $origName,
+        'saved_name' => $savedName,
+        'rel_path' => $relPath,
+        'url' => 'https://lopal.kz/' . $relPath,
+        'size' => filesize($targetPath),
+        'size_kb' => round(filesize($targetPath) / 1024, 1),
+        'ext' => $ext,
+        'is_image' => $extracted['is_image'],
+        'dimensions' => $extracted['dimensions'],
+        'text_content' => $extracted['text']
+    ];
 }
 
 /**
@@ -430,6 +624,33 @@ function lopal_get_ai_tools_schema(): array {
                     'required' => ['target'],
                     'properties' => [
                         'target' => ['type' => 'string', 'description' => '"initial" для полного отката или имя снимка из list_backups']
+                    ]
+                ]
+            ]
+        ],
+        [
+            'type' => 'function',
+            'function' => [
+                'name' => 'list_uploaded_files',
+                'description' => 'Показать список файлов, прикрепленных пользователем в папку assets/uploads/ai_files/ (изображения, прайсы, списки, документы).',
+                'parameters' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'limit' => ['type' => 'integer', 'description' => 'Количество последних файлов (по умолчанию 15)']
+                    ]
+                ]
+            ]
+        ],
+        [
+            'type' => 'function',
+            'function' => [
+                'name' => 'read_uploaded_file',
+                'description' => 'Прочитать текстовое содержимое прикрепленного файла (CSV, TXT, JSON, HTML, DOCX) из папки assets/uploads/ai_files/.',
+                'parameters' => [
+                    'type' => 'object',
+                    'required' => ['filename'],
+                    'properties' => [
+                        'filename' => ['type' => 'string', 'description' => 'Имя файла или относительный путь из assets/uploads/ai_files/']
                     ]
                 ]
             ]
@@ -831,6 +1052,52 @@ function lopal_ai_exec_tool(string $name, array $args, bool &$siteChanged): arra
             $siteChanged = true;
             return $res;
 
+        case 'list_uploaded_files':
+            $dir = lopal_get_ai_upload_dir();
+            $files = glob($dir . '/*') ?: [];
+            $files = array_filter($files, fn($f) => basename($f) !== '.htaccess' && basename($f) !== 'index.html');
+            usort($files, fn($a, $b) => filemtime($b) <=> filemtime($a));
+            $limit = min(50, max(1, (int)($args['limit'] ?? 15)));
+            $resultFiles = [];
+            foreach (array_slice($files, 0, $limit) as $f) {
+                $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+                $bName = basename($f);
+                $isImg = in_array($ext, ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg']);
+                $resultFiles[] = [
+                    'filename' => $bName,
+                    'ext' => $ext,
+                    'is_image' => $isImg,
+                    'size_kb' => round(filesize($f) / 1024, 1),
+                    'rel_path' => 'assets/uploads/ai_files/' . $bName,
+                    'url' => 'https://lopal.kz/assets/uploads/ai_files/' . $bName,
+                    'modified' => date('d.m.Y H:i', filemtime($f))
+                ];
+            }
+            return ['ok' => true, 'total' => count($resultFiles), 'files' => $resultFiles];
+
+        case 'read_uploaded_file':
+            $dir = lopal_get_ai_upload_dir();
+            $fn = basename(trim((string)($args['filename'] ?? '')));
+            if ($fn === '' || $fn === '.htaccess' || $fn === 'index.html') {
+                return ['ok' => false, 'error' => 'Не указано имя файла'];
+            }
+            $targetPath = $dir . '/' . $fn;
+            if (!file_exists($targetPath)) {
+                return ['ok' => false, 'error' => 'Файл не найден в assets/uploads/ai_files/: ' . $fn];
+            }
+            $ext = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
+            $extracted = lopal_extract_file_content($targetPath, $fn, $ext);
+            return [
+                'ok' => true,
+                'filename' => $fn,
+                'rel_path' => 'assets/uploads/ai_files/' . $fn,
+                'url' => 'https://lopal.kz/assets/uploads/ai_files/' . $fn,
+                'size_kb' => round(filesize($targetPath) / 1024, 1),
+                'content' => $extracted['text'] ?? '',
+                'is_image' => $extracted['is_image'] ?? false,
+                'dimensions' => $extracted['dimensions'] ?? null
+            ];
+
         default:
             return ['ok' => false, 'error' => 'Неизвестный инструмент: ' . $name];
     }
@@ -929,9 +1196,30 @@ if ($action === 'chat') {
     }
 
     $userMessages = $payload['messages'] ?? [];
-    if (empty($userMessages) || !is_array($userMessages)) {
-        echo json_encode(['ok' => false, 'error' => 'Пустой список сообщений'], JSON_UNESCAPED_UNICODE);
-        exit;
+    if (empty($userMessages) && !empty($payload['message'])) {
+        $userMessages = [['role' => 'user', 'content' => (string)$payload['message']]];
+    }
+
+    // Обработка загруженных файлов от администратора
+    $processedFiles = [];
+    $rawUploads = lopal_normalize_uploaded_files($_FILES['attachments'] ?? $_FILES['files'] ?? null);
+    if (!empty($rawUploads)) {
+        $uploadDir = lopal_get_ai_upload_dir();
+        foreach ($rawUploads as $u) {
+            $proc = lopal_process_single_upload($u, $uploadDir);
+            if ($proc) {
+                $processedFiles[] = $proc;
+            }
+        }
+    }
+
+    if (empty($userMessages)) {
+        if (!empty($processedFiles)) {
+            $userMessages = [['role' => 'user', 'content' => 'Пожалуйста, обработай прикрепленные файлы и выполни необходимые действия на сайте.']];
+        } else {
+            echo json_encode(['ok' => false, 'error' => 'Пустой список сообщений'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
     }
 
     $systemPrompt = "Ты — встроенный ИИ-администратор официального сайта LOPAL Kazakhstan (https://lopal.kz).\n"
@@ -958,8 +1246,13 @@ if ($action === 'chat') {
         . "5. Читать и напрямую редактировать тексты на любой HTML-странице сайта как в корне, так и в папке kz/ (list_html_pages, read_page_text, replace_page_text).\n"
         . "6. Делать откат к бэкапам (list_backups, rollback_site).\n"
         . "7. Создавать новые страницы на сайте и сразу публиковать их синхронно на RU и KZ (create_page).\n"
-        . "8. Управлять пунктами меню навигации (manage_menu) — добавлять ссылки, скрывать/показывать и удалять вкладки.\n\n"
+        . "8. Управлять пунктами меню навигации (manage_menu) — добавлять ссылки, скрывать/показывать и удалять вкладки.\n"
+        . "9. Работать с прикрепленными файлами и документами (list_uploaded_files, read_uploaded_file):\n"
+        . "   - Если пользователь прикрепил прайс-лист или таблицу (CSV, Excel, TXT, JSON): извлеки товары, характеристики, вязкость и обнови/добавь их через upsert_product, либо добавь дилеров/СТО через upsert_dealer.\n"
+        . "   - Если прикреплен текст статьи или пресс-релиза (DOCX, TXT, HTML, PDF): опубликуй как новость через upsert_news, либо размести на соответствующей странице через replace_page_text.\n"
+        . "   - Если прикреплено изображение (JPG, PNG, WebP): файл автоматически сохранен в 'assets/uploads/ai_files/...'. Используй этот относительный путь в поле 'image' товара или новости, либо как <img src=\"...\"> на странице сайта.\n\n"
         . "Правила:\n"
+        . "- Когда пользователь прикрепляет файлы и просит что-то сделать — СРАЗУ изучи содержимое прикрепленных файлов и вызови нужные инструменты (upsert_product, upsert_news, upsert_dealer, replace_page_text), применив изменения на сайте.\n"
         . "- Когда пользователь просит что-то добавить, изменить или удалить на сайте — СРАЗУ вызывай нужный инструмент (function tool), а не просто пиши текст.\n"
         . "- Когда пользователь просит создать новую страницу, вкладку или раздел (например: 'создай страницу акций', 'сделай вкладку гарантия'):\n"
         . "   1) Сгенерируй slug на латинице (например: promo, warranty, agro, faq).\n"
@@ -983,6 +1276,44 @@ if ($action === 'chat') {
             $messages[] = [
                 'role' => $m['role'],
                 'content' => (string)$m['content']
+            ];
+        }
+    }
+
+    // Если администратор прикрепил файлы к запросу — добавляем их метаданные и содержимое в контекст
+    if (!empty($processedFiles)) {
+        $filesContext = "📎 ПРИКРЕПЛЕННЫЕ ПОЛЬЗОВАТЕЛЕМ ФАЙЛЫ (" . count($processedFiles) . " шт.):\n";
+        foreach ($processedFiles as $idx => $pf) {
+            $num = $idx + 1;
+            $filesContext .= "\n[Файл #{$num}: {$pf['original_name']} | Тип: {$pf['ext']} | Размер: {$pf['size_kb']} KB]\n";
+            $filesContext .= "Путь на сервере: {$pf['rel_path']}\n";
+            $filesContext .= "URL: {$pf['url']}\n";
+            if (!empty($pf['dimensions'])) {
+                $filesContext .= "Разрешение изображения: {$pf['dimensions']} px\n";
+            }
+            if ($pf['is_image']) {
+                $filesContext .= "ТИП: ИЗОБРАЖЕНИЕ. Если нужно использовать это фото в товаре, новости или на странице, передавай путь '{$pf['rel_path']}'.\n";
+            }
+            if (!empty($pf['text_content'])) {
+                $filesContext .= "--- ТЕКСТ / СОДЕРЖИМОЕ ФАЙЛА ---\n" . $pf['text_content'] . "\n--- КОНЕЦ ФАЙЛА ---\n";
+            }
+        }
+        $filesContext .= "\nВНИМАТЕЛЬНО ИЗУЧИ ДАННЫЕ ИЗ ЭТИХ ФАЙЛОВ И ВЫПОЛНИ ЗАДАНИЕ ПОЛЬЗОВАТЕЛЯ НА ИХ ОСНОВЕ.\n";
+
+        // Добавляем контекст к последнему сообщению пользователя
+        $lastUserIdx = null;
+        for ($i = count($messages) - 1; $i >= 0; $i--) {
+            if ($messages[$i]['role'] === 'user') {
+                $lastUserIdx = $i;
+                break;
+            }
+        }
+        if ($lastUserIdx !== null) {
+            $messages[$lastUserIdx]['content'] .= "\n\n" . $filesContext;
+        } else {
+            $messages[] = [
+                'role' => 'user',
+                'content' => "Пользователь прикрепил файлы для обработки:\n" . $filesContext
             ];
         }
     }
@@ -1063,7 +1394,19 @@ if ($action === 'chat') {
         'ok' => true,
         'reply' => $finalReply,
         'actions' => $executedActions,
-        'siteChanged' => $siteChanged
+        'siteChanged' => $siteChanged,
+        'uploaded_files' => array_map(function($pf) {
+            return [
+                'name' => $pf['original_name'],
+                'saved_name' => $pf['saved_name'],
+                'url' => $pf['url'],
+                'rel_path' => $pf['rel_path'],
+                'size_kb' => $pf['size_kb'],
+                'ext' => $pf['ext'],
+                'is_image' => $pf['is_image'],
+                'dimensions' => $pf['dimensions'] ?? null
+            ];
+        }, $processedFiles)
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }

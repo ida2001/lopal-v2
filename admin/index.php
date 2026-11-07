@@ -795,6 +795,7 @@ if ($activeTab === 'mcp') {
       <!-- Быстрые команды-шаблоны -->
       <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
         <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="sendQuickAiPrompt('Покажи полную сводку по сайту: сколько сейчас новостей, товаров, дилеров и какие контакты установлены.')">📊 Сводка по сайту</button>
+        <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px; background:#F0FDF4; border-color:#86EFAC; color:#166534; font-weight:700;" onclick="triggerAiFileUpload('main')">📎 Прикрепить файл (прайс, фото, документ)</button>
         <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Опубликуй новую новость: Заголовок — ')">📰 Опубликовать новость</button>
         <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Добавь нового дилера на карту: Название — , Город и адрес — , Телефон — ')">📍 Добавить дилера на карту</button>
         <button type="button" class="btn btn-outline" style="padding:6px 12px; font-size:12px; border-radius:99px;" onclick="fillAiPrompt('Измени график работы на сайте: ')">🕒 Изменить график работы</button>
@@ -810,22 +811,29 @@ if ($activeTab === 'mcp') {
           <button type="button" onclick="stopAiVoice()" style="background:#DC2626; color:#fff; border:none; border-radius:6px; padding:3px 10px; font-size:11.5px; cursor:pointer; font-weight:700;">Остановить ⏹</button>
         </div>
 
+        <!-- Панель прикрепленных файлов перед отправкой -->
+        <div id="aiMainAttachmentsBar" style="display:none; padding:10px 18px; background:#F8FAFC; border-top:1px solid var(--border); gap:8px; flex-wrap:wrap; align-items:center;"></div>
+
         <div style="padding:14px 18px; background:#fff; border-top:1px solid var(--border);">
           <div style="display:flex; gap:10px; align-items:flex-end;">
+            <input type="file" id="aiFileInput" multiple style="display:none;" onchange="handleAiFilesSelected(this.files, 'main')">
+            <button type="button" id="aiMainAttachBtn" onclick="triggerAiFileUpload('main')" title="Прикрепить файл (фото, прайсы CSV, TXT, DOCX, PDF, JSON)" style="width:46px; height:46px; border-radius:12px; border:1px solid var(--border); background:#F1F5F9; color:#0F172A; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s;">
+              📎
+            </button>
             <button type="button" id="aiMainMicBtn" onclick="toggleAiVoice('main')" title="Голосовой ввод (русский язык)" style="width:46px; height:46px; border-radius:12px; border:1px solid var(--border); background:#F1F5F9; color:#0F172A; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s;">
               🎤
             </button>
-            <textarea id="aiMainInput" rows="2" placeholder="Напишите команду или нажмите 🎤 и скажите голосом (например: Добавь дилера в Караганде по адресу пр. Бухар-Жырау 50, телефон +7 701 111 22 33)..." style="flex:1; margin-bottom:0; resize:none; font-size:14px; line-height:1.45;" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendAiMessage('main');}"></textarea>
+            <textarea id="aiMainInput" rows="2" placeholder="Напишите команду, перетащите файл сюда или нажмите 🎤..." style="flex:1; margin-bottom:0; resize:none; font-size:14px; line-height:1.45;" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendAiMessage('main');}"></textarea>
             <button type="button" id="aiMainSendBtn" class="btn btn-green" onclick="sendAiMessage('main')" style="height:46px; padding:0 22px; flex-shrink:0;">
               Отправить ➤
             </button>
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:12px; color:var(--muted);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:12px; color:var(--muted); flex-wrap:wrap; gap:8px;">
             <label style="display:inline-flex; align-items:center; gap:6px; font-weight:500; margin:0; cursor:pointer; color:var(--muted);">
               <input type="checkbox" id="aiAutoSendAfterVoice" checked style="width:auto; margin:0;">
-              Автоматически отправлять сообщение после завершения голосовой фразы
+              Автоотправка после голоса
             </label>
-            <span>Enter — отправить · Shift+Enter — новая строка</span>
+            <span>📎 Прикрепляйте таблицы, фото, тексты (Ctrl+V или Drag&Drop) · Enter — отправить</span>
           </div>
         </div>
       </div>
@@ -1356,9 +1364,13 @@ if ($activeTab === 'mcp') {
           <button type="button" onclick="window.location.reload()" style="background:#00843D; color:#fff; border:none; border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; cursor:pointer;">🔄 Обновить страницу</button>
         </div>
         <div id="aiDrawerChatMessages" style="flex:1; overflow-y:auto; padding:14px; background:#F8FAFC; display:flex; flex-direction:column; gap:10px;"></div>
+        <!-- Панель прикрепленных файлов в плавающем виджете -->
+        <div id="aiDrawerAttachmentsBar" style="display:none; padding:6px 10px; background:#F8FAFC; border-top:1px solid #E2E8F0; gap:6px; flex-wrap:wrap; align-items:center;"></div>
         <div style="padding:10px; background:#fff; border-top:1px solid #E2E8F0; display:flex; gap:8px; align-items:center;">
+          <input type="file" id="aiDrawerFileInput" multiple style="display:none;" onchange="handleAiFilesSelected(this.files, 'drawer')">
+          <button type="button" id="aiDrawerAttachBtn" onclick="triggerAiFileUpload('drawer')" title="Прикрепить файл" style="width:40px; height:40px; border-radius:10px; border:1px solid #CBD5E1; background:#F1F5F9; font-size:18px; cursor:pointer; flex-shrink:0;">📎</button>
           <button type="button" id="aiDrawerMicBtn" onclick="toggleAiVoice('drawer')" title="Голосовой ввод" style="width:40px; height:40px; border-radius:10px; border:1px solid #CBD5E1; background:#F1F5F9; font-size:18px; cursor:pointer; flex-shrink:0;">🎤</button>
-          <input type="text" id="aiDrawerInput" placeholder="Скажите в 🎤 или напишите..." style="flex:1; margin-bottom:0; padding:9px 12px; font-size:13px;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiMessage('drawer');}">
+          <input type="text" id="aiDrawerInput" placeholder="Скажите в 🎤, прикрепите 📎 или напишите..." style="flex:1; margin-bottom:0; padding:9px 12px; font-size:13px;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiMessage('drawer');}">
           <button type="button" id="aiDrawerSendBtn" class="btn btn-green" onclick="sendAiMessage('drawer')" style="padding:9px 14px; font-size:13px; flex-shrink:0;">➤</button>
         </div>
       </div>
@@ -1736,7 +1748,7 @@ if ($activeTab === 'mcp') {
     aiChatHistory = [
       {
         role: 'assistant',
-        content: 'Здравствуйте! Я ваш AI-ассистент на базе **DeepSeek**.\n\nВы можете писать команды текстом или нажать на **🎤 микрофон** и сказать голосом, что нужно сделать на сайте:\n• добавить или изменить новость;\n• добавить дилера или СТО на карту Казахстана;\n• обновить телефоны, контакты или график работы;\n• исправить любой текст на любой из 25 страниц сайта.',
+        content: 'Здравствуйте! Я ваш AI-ассистент на базе **DeepSeek**.\n\nВы можете писать команды текстом, говорить в **🎤 микрофон** или **📎 прикреплять файлы** (прайс-листы, таблицы товаров, списки дилеров, фото канистр, тексты статей или HTML):\n• прикрепить прайс-лист (CSV, Excel, TXT) и обновить товары/цены;\n• загрузить фото и установить на товар или в новость;\n• создать новую новость или страницу из прикрепленного документа;\n• добавить дилеров или СТО из списка адресов на карту;\n• отредактировать любую страницу на русском и казахском языках.',
         actions: []
       }
     ];
@@ -1752,7 +1764,7 @@ if ($activeTab === 'mcp') {
     aiChatHistory = [
       {
         role: 'assistant',
-        content: 'Диалог очищен. Чем могу помочь по управлению сайтом lopal.kz?',
+        content: 'Диалог очищен. Чем могу помочь по управлению сайтом lopal.kz? Вы можете написать задачу или прикрепить файл 📎.',
         actions: []
       }
     ];
@@ -1764,6 +1776,7 @@ if ($activeTab === 'mcp') {
     let safe = escapeHtml(text || '');
     safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     safe = safe.replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.07);padding:2px 5px;border-radius:4px;font-size:12px;">$1</code>');
+    safe = safe.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+|[a-zA-Z0-9_\-\.\/]+\.php[^\s\)]*|[a-zA-Z0-9_\-\.\/]+\.html[^\s\)]*)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--green);font-weight:700;text-decoration:underline;">$1 ↗</a>');
     safe = safe.replace(/\n/g, '<br>');
     return safe;
   }
@@ -1783,9 +1796,92 @@ if ($activeTab === 'mcp') {
     list_html_pages: '📄 Список страниц сайта',
     read_page_text: '🔍 Чтение текста страницы',
     replace_page_text: '✏️ Замена текста на странице',
+    create_page: '📄 Создание страницы (RU+KZ)',
+    manage_menu: '🧭 Управление меню навигации',
+    list_uploaded_files: '📁 Список загруженных файлов',
+    read_uploaded_file: '📄 Чтение прикрепленного файла',
     list_backups: '📦 Проверка резервных копий',
     rollback_site: '⏪ Откат версии сайта'
   };
+
+  let aiPendingFiles = [];
+
+  function triggerAiFileUpload(source = 'main') {
+    const input = document.getElementById(source === 'main' ? 'aiFileInput' : 'aiDrawerFileInput');
+    if (input) {
+      input.value = '';
+      input.click();
+    }
+  }
+
+  function handleAiFilesSelected(fileList, source = 'main') {
+    if (!fileList || fileList.length === 0) return;
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      if (file.size > 20 * 1024 * 1024) {
+        alert('Файл ' + file.name + ' слишком большой (лимит 20 МБ)');
+        continue;
+      }
+      aiPendingFiles.push(file);
+    }
+    updateAiAttachmentsUi();
+  }
+
+  function removeAiPendingFile(index) {
+    aiPendingFiles.splice(index, 1);
+    updateAiAttachmentsUi();
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes || bytes <= 0) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function getFileIcon(filename, type) {
+    const ext = (filename.split('.').pop() || '').toLowerCase();
+    if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext) || (type && type.startsWith('image/'))) return '🖼️';
+    if (['csv', 'tsv', 'xlsx', 'xls'].includes(ext)) return '📊';
+    if (['pdf'].includes(ext)) return '📕';
+    if (['doc', 'docx'].includes(ext)) return '📘';
+    if (['json', 'xml', 'html', 'htm', 'js', 'css'].includes(ext)) return '⚙️';
+    if (['txt', 'md', 'log'].includes(ext)) return '📝';
+    return '📎';
+  }
+
+  function updateAiAttachmentsUi() {
+    const bars = [
+      document.getElementById('aiMainAttachmentsBar'),
+      document.getElementById('aiDrawerAttachmentsBar')
+    ];
+    bars.forEach(bar => {
+      if (!bar) return;
+      if (aiPendingFiles.length === 0) {
+        bar.style.display = 'none';
+        bar.innerHTML = '';
+        return;
+      }
+      bar.style.display = 'flex';
+      let h = '<div style="font-size:11.5px;font-weight:700;color:#475569;margin-right:4px;">Прикреплено (' + aiPendingFiles.length + '):</div>';
+      h += aiPendingFiles.map((f, idx) => {
+        const icon = getFileIcon(f.name, f.type);
+        const sz = formatFileSize(f.size);
+        const isImg = f.type && f.type.startsWith('image/');
+        const thumb = isImg ? `<img src="${URL.createObjectURL(f)}" style="width:20px;height:20px;object-fit:cover;border-radius:3px;">` : `<span>${icon}</span>`;
+        return `
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #CBD5E1;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:600;color:#0F172A;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+            ${thumb}
+            <span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span>
+            <span style="color:#64748B;font-size:11px;">(${sz})</span>
+            <button type="button" onclick="removeAiPendingFile(${idx})" style="background:none;border:none;color:#94A3B8;cursor:pointer;font-size:13px;padding:0 2px;line-height:1;margin-left:2px;" title="Удалить файл">✕</button>
+          </div>
+        `;
+      }).join('');
+      h += `<button type="button" onclick="aiPendingFiles=[];updateAiAttachmentsUi();" style="background:none;border:none;color:#DC2626;font-size:11.5px;cursor:pointer;padding:2px 6px;text-decoration:underline;">Очистить все</button>`;
+      bar.innerHTML = h;
+    });
+  }
 
   function renderAiContainer(containerEl) {
     if (!containerEl) return;
@@ -1807,10 +1903,37 @@ if ($activeTab === 'mcp') {
         '</div>';
       }
 
+      let filesHtml = '';
+      const displayFiles = msg.files || msg.uploaded_files;
+      if (Array.isArray(displayFiles) && displayFiles.length > 0) {
+        filesHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">' +
+          displayFiles.map(f => {
+            const icon = getFileIcon(f.name || f.filename || '', f.type || f.ext || '');
+            const sizeStr = f.size ? formatFileSize(f.size) : (f.size_kb ? f.size_kb + ' KB' : '');
+            const isImg = f.is_image || (f.type && f.type.startsWith('image/'));
+            const pUrl = f.previewUrl || f.url || (f.rel_path ? '../' + f.rel_path : null);
+            if (isImg && pUrl) {
+              return `<a href="${pUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;background:${isUser ? 'rgba(255,255,255,0.2)' : '#F1F5F9'};border-radius:8px;text-decoration:none;color:inherit;font-size:12px;font-weight:600;border:1px solid ${isUser ? 'rgba(255,255,255,0.3)' : '#CBD5E1'};">
+                <img src="${pUrl}" style="width:24px;height:24px;object-fit:cover;border-radius:4px;">
+                <span>${escapeHtml(f.name || f.filename)}</span>
+                ${sizeStr ? `<span style="opacity:0.8;font-size:11px;">(${sizeStr})</span>` : ''}
+              </a>`;
+            }
+            const href = pUrl ? `href="${pUrl}" target="_blank" rel="noopener"` : '';
+            return `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;background:${isUser ? 'rgba(255,255,255,0.2)' : '#F1F5F9'};border-radius:8px;font-size:12px;font-weight:600;border:1px solid ${isUser ? 'rgba(255,255,255,0.3)' : '#CBD5E1'};">
+              <span>${icon}</span>
+              ${href ? `<a ${href} style="color:inherit;text-decoration:underline;">${escapeHtml(f.name || f.filename)}</a>` : `<span>${escapeHtml(f.name || f.filename)}</span>`}
+              ${sizeStr ? `<span style="opacity:0.8;font-size:11px;">(${sizeStr})</span>` : ''}
+            </span>`;
+          }).join('') +
+        '</div>';
+      }
+
       html += `
         <div style="display:flex; flex-direction:column; align-items:${align};">
           <div style="max-width:85%; background:${bg}; color:${color}; border:${border}; padding:11px 15px; border-radius:14px; font-size:13.5px; line-height:1.5; box-shadow:0 2px 5px rgba(15,23,42,0.04);">
             ${actionsHtml}
+            ${filesHtml}
             <div>${formatAiText(msg.content)}</div>
           </div>
         </div>
@@ -1821,7 +1944,7 @@ if ($activeTab === 'mcp') {
       html += `
         <div style="display:flex; align-items:flex-start;">
           <div style="background:#FFFFFF; color:#475569; border:1px solid #E2E8F0; padding:10px 15px; border-radius:14px; font-size:13px; font-weight:600;">
-            ⏳ DeepSeek анализирует запрос и выполняет изменения на сайте...
+            ⏳ DeepSeek обрабатывает запрос и прикрепленные файлы...
           </div>
         </div>
       `;
@@ -1904,25 +2027,47 @@ if ($activeTab === 'mcp') {
     const inputEl = document.getElementById(source === 'main' ? 'aiMainInput' : 'aiDrawerInput');
     if (!inputEl) return;
     const text = inputEl.value.trim();
-    if (!text) return;
+    if (!text && aiPendingFiles.length === 0) return;
 
     if (aiIsRecording) stopAiVoice();
 
+    const promptText = text || 'Пожалуйста, обработай прикрепленные файлы и выполни необходимые действия на сайте.';
+    const sendingFiles = [...aiPendingFiles];
     inputEl.value = '';
-    aiChatHistory.push({ role: 'user', content: text });
+    aiPendingFiles = [];
+    updateAiAttachmentsUi();
+
+    const attachedMeta = sendingFiles.map(f => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      is_image: (f.type && f.type.startsWith('image/')),
+      previewUrl: (f.type && f.type.startsWith('image/')) ? URL.createObjectURL(f) : null
+    }));
+
+    aiChatHistory.push({
+      role: 'user',
+      content: promptText,
+      files: attachedMeta
+    });
     aiIsSending = true;
     saveAiHistory();
     renderAiMessages();
 
     try {
+      const formData = new FormData();
+      formData.append('action', 'chat');
+      formData.append('model', aiCurrentModel);
+      formData.append('messages', JSON.stringify(
+        aiChatHistory.map(m => ({ role: m.role, content: m.content }))
+      ));
+      for (let i = 0; i < sendingFiles.length; i++) {
+        formData.append('attachments[]', sendingFiles[i]);
+      }
+
       const resp = await fetch('../api/ai_agent.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'chat',
-          model: aiCurrentModel,
-          messages: aiChatHistory.map(m => ({ role: m.role, content: m.content }))
-        })
+        body: formData
       });
       const data = await resp.json();
       aiIsSending = false;
@@ -1941,7 +2086,8 @@ if ($activeTab === 'mcp') {
         aiChatHistory.push({
           role: 'assistant',
           content: data.reply || 'Выполнено!',
-          actions: data.actions || []
+          actions: data.actions || [],
+          uploaded_files: data.uploaded_files || []
         });
         if (data.siteChanged) {
           const reloadNotice = document.getElementById('aiReloadNotice');
@@ -1959,6 +2105,51 @@ if ($activeTab === 'mcp') {
 
     saveAiHistory();
     renderAiMessages();
+  }
+
+  function initAiDragAndDrop() {
+    const dropTargets = [
+      document.getElementById('aiMainChatMessages'),
+      document.getElementById('aiDrawerChatMessages'),
+      document.getElementById('aiMainInput'),
+      document.getElementById('aiDrawerInput')
+    ].filter(Boolean);
+
+    dropTargets.forEach(el => {
+      el.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.style.outline = '2px dashed #00843D';
+        el.style.outlineOffset = '-2px';
+      });
+      el.addEventListener('dragleave', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.style.outline = 'none';
+      });
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.style.outline = 'none';
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleAiFilesSelected(e.dataTransfer.files, el.id.includes('Drawer') ? 'drawer' : 'main');
+        }
+      });
+    });
+
+    window.addEventListener('paste', e => {
+      if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+        const active = document.activeElement;
+        const src = (active && active.id && active.id.includes('Drawer')) ? 'drawer' : 'main';
+        handleAiFilesSelected(e.clipboardData.files, src);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAiDragAndDrop);
+  } else {
+    initAiDragAndDrop();
   }
 
   function toggleAiDrawer(forceState) {
