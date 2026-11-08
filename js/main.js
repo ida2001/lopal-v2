@@ -732,6 +732,11 @@
       });
 
       loadLeaflet(function () {
+        pageMapEl.innerHTML = '';
+        pageMapEl.className = 'page-dealers-map-wrap';
+        if (pageMapEl._leaflet_id) {
+          try { delete pageMapEl._leaflet_id; } catch (e) { pageMapEl._leaflet_id = null; }
+        }
         pMapInstance = window.L.map('dealersPageMap').setView([48.0196, 66.9237], 5);
         window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,

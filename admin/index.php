@@ -995,11 +995,11 @@ if ($activeTab === 'mcp') {
                 </span>
               </div>
               <p style="margin:0; font-size:13px; color:#94A3B8; max-width:680px; line-height:1.5;">
-                Создано 10 страниц на казахском языке в папке <code>/kz/</code>. Публичный переключатель <strong>RU | KZ</strong> на сайте сейчас скрыт. Вы можете открыть предпросмотр, редактировать казахские страницы в конструкторе или включить версию для посетителей, когда будете готовы.
+                Созданы все 25 страниц на казахском языке в папке <code>/kz/</code>. Публичный переключатель <strong>RU | KZ</strong> активен на сайте. Вы можете редактировать любую русскую или казахскую страницу в визуальном конструкторе (кнопки <strong>✏️ RU</strong> и <strong>🇰🇿 KZ</strong> напротив каждой страницы).
               </p>
             </div>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <a href="../kz/index.html" target="_blank" class="btn btn-outline" style="border-color:#475569; color:#38BDF8; font-size:12.5px;" title="Открыть предпросмотр казахской версии">👁️ Предпросмотр /kz/ ↗</a>
+              <a href="../kz/index.html" target="_blank" class="btn btn-outline" style="border-color:#475569; color:#38BDF8; font-size:12.5px;" title="Открыть предпросмотр казахской версии">👁️ Открыть /kz/ ↗</a>
               <a href="visual_editor.php?page=kz/index.html" class="btn btn-outline" style="border-color:#475569; color:#FCD34D; font-size:12.5px;" title="Редактировать казахскую главную в конструкторе">✏️ Конструктор KZ</a>
               <button type="button" id="kzToggleBtn" class="btn <?= !empty($settings['enable_kazakh_lang']) ? 'btn-outline' : 'btn-green' ?>" onclick="toggleKzPublicStatus(<?= !empty($settings['enable_kazakh_lang']) ? 'false' : 'true' ?>)" style="font-size:12.5px;">
                 <?= !empty($settings['enable_kazakh_lang']) ? 'Скрыть с сайта (Черновик)' : '🚀 Активировать на сайте' ?>
@@ -1012,7 +1012,7 @@ if ($activeTab === 'mcp') {
           <?php foreach ($allHtmlPaths as $fPath): ?>
             <?php
               $bName = basename($fPath);
-              if ($bName === 'readme.html') continue;
+              if ($bName === 'readme.html' || $bName === '404.html') continue;
               $isCore = in_array($bName, $protectedFiles) || strpos($bName, 'product-') === 0;
               $ruTitle = $pageTitlesRu[$bName] ?? null;
               if (!$ruTitle) {
@@ -1024,8 +1024,9 @@ if ($activeTab === 'mcp') {
                 }
               }
               $modDate = date('d.m.Y H:i', filemtime($fPath));
+              $hasKzFile = file_exists(LOPAL_ROOT_DIR . '/kz/' . $bName);
             ?>
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:#FAFBFD;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:#FAFBFD;">
               <div style="min-width:0;">
                 <div style="font-weight:800; font-size:14.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   <?= htmlspecialchars($ruTitle) ?>
@@ -1034,11 +1035,14 @@ if ($activeTab === 'mcp') {
                   <code><?= htmlspecialchars($bName) ?></code> · изм. <?= $modDate ?>
                 </div>
               </div>
-              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                <a href="visual_editor.php?page=<?= urlencode($bName) ?>" class="btn btn-green" style="padding:7px 12px; font-size:12.5px;">✏️ Редактировать</a>
-                <a href="../<?= htmlspecialchars($bName) ?>" target="_blank" class="btn btn-outline" style="padding:7px 10px; font-size:12.5px;" title="Открыть страницу на сайте">↗</a>
+              <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;">
+                <a href="visual_editor.php?page=<?= urlencode($bName) ?>" class="btn btn-green" style="padding:7px 10px; font-size:12px;" title="Редактировать русскую версию">✏️ RU</a>
+                <?php if ($hasKzFile): ?>
+                  <a href="visual_editor.php?page=<?= urlencode('kz/' . $bName) ?>" class="btn btn-outline" style="padding:7px 10px; font-size:12px; border-color:#0284C7; color:#0369A1; font-weight:700;" title="Редактировать казахскую версию (kz/<?= htmlspecialchars($bName) ?>)">🇰🇿 KZ</a>
+                <?php endif; ?>
+                <a href="../<?= htmlspecialchars($bName) ?>" target="_blank" class="btn btn-outline" style="padding:7px 9px; font-size:12px;" title="Открыть страницу на сайте">↗</a>
                 <?php if (!$isCore): ?>
-                  <button type="button" class="btn btn-danger" style="padding:7px 10px; font-size:12.5px;" onclick="deleteCustomPage('<?= htmlspecialchars($bName) ?>')" title="Удалить пользовательскую страницу">🗑️</button>
+                  <button type="button" class="btn btn-danger" style="padding:7px 9px; font-size:12px;" onclick="deleteCustomPage('<?= htmlspecialchars($bName) ?>')" title="Удалить пользовательскую страницу">🗑️</button>
                 <?php endif; ?>
               </div>
             </div>

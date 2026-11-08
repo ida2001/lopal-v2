@@ -294,9 +294,14 @@ if ($action === 'restore_page_backup') {
         echo json_encode(['ok' => false, 'error' => 'Файл резервной копии не найден'], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    // Имя формата YYYYMMDD_HHMMSS_filename.html
+    // Имя формата YYYYMMDD_HHMMSS_filename.html или YYYYMMDD_HHMMSS_kz__filename.html
     if (preg_match('/^\d{8}_\d{6}_(.+\.html)$/i', $backupName, $m)) {
-        $targetPage = basename($m[1]);
+        $rawTarget = $m[1];
+        if (strpos($rawTarget, 'kz__') === 0) {
+            $targetPage = 'kz/' . basename(substr($rawTarget, 4));
+        } else {
+            $targetPage = basename($rawTarget);
+        }
         @copy($src, LOPAL_ROOT_DIR . '/' . $targetPage);
         echo json_encode(['ok' => true, 'page' => $targetPage, 'message' => 'Страница ' . $targetPage . ' восстановлена из копии!'], JSON_UNESCAPED_UNICODE);
         exit;

@@ -812,8 +812,17 @@ function lopal_apply_global_menu(): int {
  * Резервное копирование отдельной HTML-страницы перед визуальным редактированием
  */
 function lopal_backup_page_file(string $filename, string $reason = 'visual_edit'): string {
-    $filename = basename($filename);
-    $src = LOPAL_ROOT_DIR . '/' . $filename;
+    $raw = str_replace('\\', '/', trim($filename));
+    if (strpos($raw, 'kz/') === 0) {
+        $b = basename(substr($raw, 3));
+        $relPath = 'kz/' . $b;
+        $safeSlug = 'kz__' . preg_replace('/[^a-zA-Z0-9._-]/', '', $b);
+    } else {
+        $b = basename($raw);
+        $relPath = $b;
+        $safeSlug = preg_replace('/[^a-zA-Z0-9._-]/', '', $b);
+    }
+    $src = LOPAL_ROOT_DIR . '/' . $relPath;
     if (!file_exists($src)) return '';
 
     $pagesBackupDir = LOPAL_BACKUPS_DIR . '/pages';
@@ -821,7 +830,7 @@ function lopal_backup_page_file(string $filename, string $reason = 'visual_edit'
         @mkdir($pagesBackupDir, 0755, true);
     }
 
-    $stamp = date('Ymd_His') . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+    $stamp = date('Ymd_His') . '_' . $safeSlug;
     $dest = $pagesBackupDir . '/' . $stamp;
     @copy($src, $dest);
 
@@ -920,7 +929,7 @@ function lopal_create_new_page(string $slug, string $title, string $subtitle = '
         <div class="lang-switch" id="langSwitch" title="Тілді таңдау / Выбор языка">
           <span class="lang-btn is-active">RU</span>
           <span class="lang-sep">|</span>
-          <a href="kz/news.html" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
+          <a href="kz/{$filename}" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
         </div>
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
           <span></span><span></span><span></span>

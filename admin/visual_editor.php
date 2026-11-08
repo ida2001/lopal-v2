@@ -52,6 +52,7 @@ $kzPageNamesMap = [
     'kz/partners.html' => '🇰🇿 [KZ] Серіктестерге',
     'kz/contacts.html' => '🇰🇿 [KZ] Байланыс',
     'kz/about.html' => '🇰🇿 [KZ] Компания туралы',
+    'kz/media.html' => '🇰🇿 [KZ] Медиа және материалдар',
 ];
 
 $pagesList = [];
@@ -498,7 +499,7 @@ foreach ($allKzFiles as $f) {
         <span>❓</span>
         <span class="ve-label-full"> Инструкция</span>
       </button>
-      <a href="../<?= htmlspecialchars($requestedPage) ?>" target="_blank" class="ve-btn" title="Открыть страницу на сайте в новой вкладке">
+      <a href="../<?= htmlspecialchars($requestedPage) ?>" target="_blank" class="ve-btn" id="viewOnSiteBtn" title="Открыть страницу на сайте в новой вкладке">
         <span>↗</span>
         <span class="ve-label-full"> На сайте</span>
         <span class="ve-label-short"> Сайт</span>
@@ -709,12 +710,75 @@ foreach ($allKzFiles as $f) {
   <div class="ve-toast" id="veToast"></div>
 
   <script>
-  const currentPage = <?= json_encode($requestedPage) ?>;
+  let currentPage = <?= json_encode($requestedPage) ?>;
   const frame = document.getElementById('editorFrame');
   let isEditMode = true;
+  let isDirty = false;
   let selectedEl = null;
   let targetAfterSection = null;
   let mediaCallback = null;
+
+  function detectLoadedPageFromFrame() {
+    try {
+      const loc = frame.contentWindow && frame.contentWindow.location;
+      if (!loc || !loc.pathname) return currentPage;
+      const p = loc.pathname.replace(/\\/g, '/');
+      const mKz = p.match(/\/kz\/([^\/]+\.html)$/i);
+      if (mKz) return 'kz/' + mKz[1];
+      if (/\/kz\/?$/i.test(p)) return 'kz/index.html';
+      const mRu = p.match(/\/([^\/]+\.html)$/i);
+      if (mRu) return mRu[1];
+      if (/\/$/i.test(p)) return 'index.html';
+    } catch (e) {}
+    return currentPage;
+  }
+
+  function syncCurrentPageFromIframe(notifyOnSwitch = false) {
+    const detected = detectLoadedPageFromFrame();
+    if (!detected) return currentPage;
+    const changed = (detected !== currentPage);
+    currentPage = detected;
+
+    const sel = document.getElementById('pageSwitcher');
+    if (sel) {
+      let opt = Array.from(sel.options).find(o => o.value === currentPage);
+      if (!opt) {
+        opt = document.createElement('option');
+        opt.value = currentPage;
+        opt.textContent = (currentPage.indexOf('kz/') === 0 ? '🇰🇿 ' : '📄 [RU] ') + currentPage;
+        sel.appendChild(opt);
+      }
+      sel.value = currentPage;
+    }
+
+    const viewBtn = document.getElementById('viewOnSiteBtn');
+    if (viewBtn) {
+      viewBtn.setAttribute('href', '../' + currentPage);
+    }
+
+    document.title = 'Визуальный редактор: ' + currentPage + ' — LOPAL CMS';
+    try {
+      const newUrl = 'visual_editor.php?page=' + encodeURIComponent(currentPage);
+      window.history.replaceState({ page: currentPage }, '', newUrl);
+    } catch (e) {}
+
+    if (changed && notifyOnSwitch) {
+      showVeToast('📄 Открыта для редактирования: ' + currentPage);
+    }
+    return currentPage;
+  }
+
+  function resolveAssetUrlForCurrentPage(url) {
+    if (!url) return url;
+    const clean = url.trim();
+    if (currentPage.indexOf('kz/') === 0 && clean.indexOf('assets/') === 0) {
+      return '../' + clean;
+    }
+    if (currentPage.indexOf('kz/') !== 0 && clean.indexOf('../assets/') === 0) {
+      return clean.substring(3);
+    }
+    return clean;
+  }
 
   function showVeToast(msg, isError = false) {
     const t = document.getElementById('veToast');
@@ -736,7 +800,13 @@ foreach ($allKzFiles as $f) {
   }
 
   function switchPage(page) {
-    if (!page) return;
+    if (!page || page === currentPage) return;
+    if (isDirty && !confirm('У вас есть несохраненные изменения на странице «' + currentPage + '». Перейти на «' + page + '» без сохранения?')) {
+      const sel = document.getElementById('pageSwitcher');
+      if (sel) sel.value = currentPage;
+      return;
+    }
+    isDirty = false;
     window.location.href = 'visual_editor.php?page=' + encodeURIComponent(page);
   }
 
@@ -745,6 +815,10 @@ foreach ($allKzFiles as $f) {
     const doc = frame.contentDocument;
     const win = frame.contentWindow;
     if (!doc) return;
+
+    syncCurrentPageFromIframe(true);
+    isDirty = false;
+    hideContextBar();
 
     win.__LOPAL_VISUAL_EDITOR_ACTIVE = true;
 
@@ -818,6 +892,10 @@ foreach ($allKzFiles as $f) {
 
     refreshEditableElements();
 
+    doc.addEventListener('input', () => {
+      isDirty = true;
+    });
+
     // Перехват кликов внутри страницы в режиме редактирования
     doc.addEventListener('click', (e) => {
       if (!isEditMode) return;
@@ -826,9 +904,24 @@ foreach ($allKzFiles as $f) {
       if (e.target.closest('.ve-section-toolbar')) return;
 
       const mainEl = doc.querySelector('main');
-      if (!mainEl || !mainEl.contains(e.target)) return;
+      if (!mainEl || !mainEl.contains(e.target)) {
+        // Если кликнули по навигационной ссылке в шапке или подвале при наличии несохраненных правок
+        const navLink = e.target.closest('a[href]');
+        if (navLink && isDirty) {
+          const href = navLink.getAttribute('href') || '';
+          if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+            if (!confirm('У вас есть несохраненные изменения на странице «' + currentPage + '». Перейти по ссылке без сохранения?')) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
+            isDirty = false;
+          }
+        }
+        return;
+      }
 
-      // Запрещаем переход по ссылкам в режиме правки, чтобы их можно было редактировать
+      // Запрещаем переход по ссылкам в режиме правки внутри <main>, чтобы их можно было редактировать
       const link = e.target.closest('a, button');
       if (link) {
         e.preventDefault();
@@ -898,20 +991,24 @@ foreach ($allKzFiles as $f) {
     const parent = sec.parentNode;
     if (act === 'up' && sec.previousElementSibling) {
       parent.insertBefore(sec, sec.previousElementSibling);
+      isDirty = true;
       showVeToast('Секция перемещена выше');
     } else if (act === 'down' && sec.nextElementSibling) {
       parent.insertBefore(sec.nextElementSibling, sec);
+      isDirty = true;
       showVeToast('Секция перемещена ниже');
     } else if (act === 'dup') {
       const clone = sec.cloneNode(true);
       const oldBar = clone.querySelector(':scope > .ve-section-toolbar');
       if (oldBar) oldBar.remove();
       parent.insertBefore(clone, sec.nextElementSibling);
+      isDirty = true;
       refreshEditableElements();
       showVeToast('Секция продублирована');
     } else if (act === 'del') {
       if (confirm('Вы уверены, что хотите удалить эту секцию со страницы?')) {
         sec.remove();
+        isDirty = true;
         hideContextBar();
         showVeToast('Секция удалена');
       }
@@ -922,9 +1019,12 @@ foreach ($allKzFiles as $f) {
       openMediaModal((url) => {
         if (!url) {
           sec.style.backgroundImage = 'none';
+          isDirty = true;
           showVeToast('Фоновый баннер убран');
         } else {
-          sec.style.background = `linear-gradient(90deg, rgba(8, 14, 26, 0.72) 0%, rgba(8, 14, 26, 0.45) 60%, rgba(8, 14, 26, 0.25) 100%), url('${url}') center / cover no-repeat`;
+          const resolvedUrl = resolveAssetUrlForCurrentPage(url);
+          sec.style.background = `linear-gradient(90deg, rgba(8, 14, 26, 0.72) 0%, rgba(8, 14, 26, 0.45) 60%, rgba(8, 14, 26, 0.25) 100%), url('${resolvedUrl}') center / cover no-repeat`;
+          isDirty = true;
           showVeToast('Фоновый баннер секции обновлен!');
         }
       });
@@ -1031,6 +1131,7 @@ foreach ($allKzFiles as $f) {
     const linkEl = selectedEl.closest('a');
     if (linkEl) {
       linkEl.setAttribute('href', document.getElementById('ctxLinkHref').value.trim());
+      isDirty = true;
       showVeToast('Ссылка обновлена!');
     }
   }
@@ -1038,6 +1139,7 @@ foreach ($allKzFiles as $f) {
   function applyImgAlt() {
     if (selectedEl && selectedEl.tagName.toLowerCase() === 'img') {
       selectedEl.setAttribute('alt', document.getElementById('ctxImgAlt').value.trim());
+      isDirty = true;
     }
   }
 
@@ -1046,7 +1148,8 @@ foreach ($allKzFiles as $f) {
     const imgTarget = selectedEl;
     openMediaModal((url) => {
       if (url) {
-        imgTarget.setAttribute('src', url);
+        imgTarget.setAttribute('src', resolveAssetUrlForCurrentPage(url));
+        isDirty = true;
         showVeToast('Изображение успешно заменено!');
       }
     });
@@ -1054,19 +1157,21 @@ foreach ($allKzFiles as $f) {
 
   function duplicateSelectedElement() {
     if (!selectedEl) return;
-    const card = selectedEl.closest('.product-card, .tech-highlight-card, .lopal-faq-item, .quick-fact') || selectedEl;
+    const card = selectedEl.closest('.product-card, .tech-highlight-card, .distributor-hero-card, .lopal-faq-item, .quick-fact') || selectedEl;
     const clone = card.cloneNode(true);
     clone.classList.remove('ve-selected-element');
     card.parentNode.insertBefore(clone, card.nextElementSibling);
+    isDirty = true;
     refreshEditableElements();
     showVeToast('Элемент продублирован!');
   }
 
   function deleteSelectedElement() {
     if (!selectedEl) return;
-    const target = selectedEl.closest('.product-card, .tech-highlight-card, .lopal-faq-item') || selectedEl;
+    const target = selectedEl.closest('.product-card, .tech-highlight-card, .distributor-hero-card, .lopal-faq-item') || selectedEl;
     if (confirm('Удалить выбранный элемент?')) {
       target.remove();
+      isDirty = true;
       hideContextBar();
       showVeToast('Элемент удален');
     }
@@ -1360,8 +1465,12 @@ foreach ($allKzFiles as $f) {
     const mainEl = doc.querySelector('main');
     if (!mainEl) return;
 
-    const html = BLOCK_TEMPLATES[type];
+    let html = BLOCK_TEMPLATES[type];
     if (!html) return;
+
+    if (currentPage.indexOf('kz/') === 0) {
+      html = html.replace(/src="assets\//g, 'src="../assets/').replace(/url\('assets\//g, "url('../assets/");
+    }
 
     if (type === 'youtube_video') {
       const ytUrl = prompt('Вставьте ссылку на видео YouTube (или оставьте поле пустым, чтобы настроить позже):', '');
@@ -1377,6 +1486,7 @@ foreach ($allKzFiles as $f) {
       } else {
         mainEl.appendChild(newSec);
       }
+      isDirty = true;
       closeBlocksModal();
       refreshEditableElements();
       newSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1394,6 +1504,7 @@ foreach ($allKzFiles as $f) {
       mainEl.appendChild(newSection);
     }
 
+    isDirty = true;
     closeBlocksModal();
     refreshEditableElements();
     newSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1458,16 +1569,18 @@ foreach ($allKzFiles as $f) {
 
   function selectMediaUrl(url) {
     if (!url) return;
+    const resolvedUrl = resolveAssetUrlForCurrentPage(url);
     if (typeof mediaCallback === 'function') {
-      mediaCallback(url);
+      mediaCallback(resolvedUrl);
       closeMediaModal();
     } else if (selectedEl && selectedEl.tagName.toLowerCase() === 'img') {
-      selectedEl.setAttribute('src', url);
+      selectedEl.setAttribute('src', resolvedUrl);
+      isDirty = true;
       showVeToast('✅ Картинка обновлена!');
       closeMediaModal();
     } else {
-      navigator.clipboard?.writeText(url);
-      showVeToast('Ссылка скопирована: ' + url);
+      navigator.clipboard?.writeText(resolvedUrl);
+      showVeToast('Ссылка скопирована: ' + resolvedUrl);
       closeMediaModal();
     }
   }
@@ -1481,6 +1594,9 @@ foreach ($allKzFiles as $f) {
       showVeToast('Ошибка: контейнер <main> не найден', true);
       return;
     }
+
+    // Всегда синхронизируем имя текущей страницы с фактически открытым URL в iframe
+    syncCurrentPageFromIframe(false);
 
     const btn = document.getElementById('savePageBtn');
     const origHtml = btn.innerHTML;
@@ -1499,6 +1615,19 @@ foreach ($allKzFiles as $f) {
       if (el.className.trim() === '') el.removeAttribute('class');
     });
 
+    // Очищаем динамические контейнеры карты Leaflet и фильтров, чтобы они корректно инициализировались на сайте
+    const mapWrap = cloneMain.querySelector('#dealersPageMap');
+    if (mapWrap) {
+      mapWrap.className = 'page-dealers-map-wrap';
+      mapWrap.removeAttribute('style');
+      mapWrap.removeAttribute('tabindex');
+      mapWrap.innerHTML = '';
+    }
+    const cityFilter = cloneMain.querySelector('#dealersCityFilter');
+    if (cityFilter) {
+      cityFilter.innerHTML = '';
+    }
+
     try {
       const resp = await fetch('../api/page_editor.php', {
         method: 'POST',
@@ -1512,6 +1641,7 @@ foreach ($allKzFiles as $f) {
       });
       const data = await resp.json();
       if (data.ok) {
+        isDirty = false;
         showVeToast('✅ ' + (data.message || 'Страница успешно сохранена!'));
       } else {
         showVeToast('⚠️ ' + (data.error || 'Ошибка сохранения'), true);
