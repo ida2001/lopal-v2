@@ -1,5 +1,5 @@
 # ==============================================================
-# LOPAL KAZAKHSTAN (lopal.kz) — Production Security Configuration
+# LOPAL KAZAKHSTAN (lopal.kz) — Production Configuration & 301 Redirects
 # ==============================================================
 
 # 1. Запрет просмотра листинга каталогов
@@ -27,16 +27,77 @@ Options -Indexes
     </IfModule>
 </FilesMatch>
 
-# 3. Мгновенная блокировка сканеров уязвимостей WordPress и старых артефактов
+# 3. Маршрутизация, SEO-редиректы 301 и обработка старых URL
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Сброс попыток обращения к WordPress путям (wp-login, wp-admin, xmlrpc, readme.html и т.д.)
+    # Сброс попыток обращения к WordPress путям (wp-login, wp-admin, xmlrpc и т.д.)
     RewriteRule ^(wp-login\.php|wp-admin|wp-includes|wp-content|wp-config\.php|xmlrpc\.php|readme\.html|license\.txt) - [F,L,NC]
+
+    # 3.1. Канонический редирект с www.lopal.kz на lopal.kz
+    RewriteCond %{HTTP_HOST} ^www\.lopal\.kz$ [NC]
+    RewriteRule ^(.*)$ https://lopal.kz/$1 [R=301,L]
+
+    # 3.2. Точечные 301-редиректы со старых ссылок из поисковой выдачи Google
+    # Контакты (/contact/, /contact, /contacts/) -> contacts.html
+    RewriteRule ^contact/?$ /contacts.html [R=301,L,NC]
+    RewriteRule ^contacts/?$ /contacts.html [R=301,L,NC]
+    RewriteRule ^kz/contact/?$ /kz/contacts.html [R=301,L,NC]
+    RewriteRule ^kz/contacts/?$ /kz/contacts.html [R=301,L,NC]
+
+    # Новости (/news/, /news) -> news.html
+    RewriteRule ^news/?$ /news.html [R=301,L,NC]
+    RewriteRule ^kz/news/?$ /kz/news.html [R=301,L,NC]
+
+    # Точки продаж и дилеры (/sellers/, /sellers, /dealers/, /dealers) -> service-points.html
+    RewriteRule ^(sellers|dealers|service-points)/?$ /service-points.html [R=301,L,NC]
+    RewriteRule ^kz/(sellers|dealers|service-points)/?$ /kz/service-points.html [R=301,L,NC]
+
+    # Подбор масла (/selector/, /selector) -> selector.html
+    RewriteRule ^selector/?$ /selector.html [R=301,L,NC]
+    RewriteRule ^kz/selector/?$ /kz/selector.html [R=301,L,NC]
+
+    # Каталог продукции (/products/, /products, /catalog/, /catalog) -> products.html
+    RewriteRule ^(products|catalog)/?$ /products.html [R=301,L,NC]
+    RewriteRule ^kz/(products|catalog)/?$ /kz/products.html [R=301,L,NC]
+
+    # О компании (/about/, /about, /company/, /company, /about-us) -> about.html
+    RewriteRule ^(about|company|about-us)/?$ /about.html [R=301,L,NC]
+    RewriteRule ^kz/(about|company|about-us)/?$ /kz/about.html [R=301,L,NC]
+
+    # Партнерам (/partners/, /partners, /cooperation) -> partners.html
+    RewriteRule ^(partners|cooperation)/?$ /partners.html [R=301,L,NC]
+    RewriteRule ^kz/(partners|cooperation)/?$ /kz/partners.html [R=301,L,NC]
+
+    # Сертификаты и допуски (/certificates/, /certificates, /certs) -> certificates.html
+    RewriteRule ^(certificates|certs)/?$ /certificates.html [R=301,L,NC]
+    RewriteRule ^kz/(certificates|certs)/?$ /kz/certificates.html [R=301,L,NC]
+
+    # Технологии R&D (/technologies/, /technologies, /tech) -> technologies.html
+    RewriteRule ^(technologies|tech)/?$ /technologies.html [R=301,L,NC]
+    RewriteRule ^kz/(technologies|tech)/?$ /kz/technologies.html [R=301,L,NC]
+
+    # Медиа (/media/, /media) -> media.html
+    RewriteRule ^media/?$ /media.html [R=301,L,NC]
+    RewriteRule ^kz/media/?$ /kz/media.html [R=301,L,NC]
+
+    # Старые архивы и рубрики WordPress (/category/*, /tag/*, /feed/*) -> news.html
+    RewriteRule ^(category|tag|feed|author|blog)/?.*$ /news.html [R=301,L,NC]
+    RewriteRule ^kz/(category|tag|feed|author|blog)/?.*$ /kz/news.html [R=301,L,NC]
+
+    # 3.3. Универсальный редирект для любых страниц без расширения .html
+    # Например /product-atf-9800 -> /product-atf-9800.html
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+    RewriteRule ^(.+?)/?$ /$1.html [R=301,L]
 </IfModule>
 
-# 4. Базовые заголовки безопасности HTTP
+# 4. Страница ошибки 404 (фирменное оформление LOPAL)
+ErrorDocument 404 /404.html
+
+# 5. Базовые заголовки безопасности HTTP
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
@@ -44,7 +105,7 @@ Options -Indexes
     Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# 5. Управление кэшированием HTML-страниц (отключение вечного кэша для свежих версий)
+# 6. Управление кэшированием HTML-страниц
 <FilesMatch "\.(html|htm)$">
     <IfModule mod_headers.c>
         Header set Cache-Control "no-cache, no-store, must-revalidate"
