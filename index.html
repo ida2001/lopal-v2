@@ -63,12 +63,12 @@
 
       <!-- Мобильное меню -->
       <div class="header-actions">
-        <!-- Переключатель языка (скрыт по умолчанию классом is-dormant, доступен по ссылке предпросмотра) -->
-        <div class="lang-switch is-dormant" id="langSwitch" title="Тілді таңдау / Выбор языка">
-          <a href="index.html" class="lang-btn is-active">RU</a>
+        <div class="lang-switch" id="langSwitch" title="Тілді таңдау / Выбор языка">
+          <span class="lang-btn is-active">RU</span>
           <span class="lang-sep">|</span>
-          <a href="kz/index.html" class="lang-btn">KZ</a>
+          <a href="kz/index.html" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
         </div>
+        <!-- Переключатель языка (скрыт по умолчанию классом is-dormant, доступен по ссылке предпросмотра) -->
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
           <span></span><span></span><span></span>
         </button>
@@ -753,9 +753,7 @@
   </footer>
 
   <script src="js/main.js?v=23"></script>
-  <script>
-    if (window.location.search.includes('preview_kz=1') || window.location.search.includes('preview=1')) {
-      document.querySelectorAll('.lang-switch.is-dormant').forEach(function(el){ el.classList.remove('is-dormant'); });
+  <script>);
     }
   </script>
 </body>

@@ -863,5 +863,33 @@
       }
     });
 
+    /* ------------------------------------------------------------
+       9. Языковой переключатель RU | KZ (проверка и авто-монтаж)
+       ------------------------------------------------------------ */
+    (function ensureLanguageSwitcher() {
+      var langSwitch = document.getElementById('langSwitch');
+      var headerActions = document.querySelector('.header-actions, .selector-topbar-actions');
+      if (!langSwitch && headerActions) {
+        var isKz = isKazakhPage();
+        var page = window.location.pathname.split('/').pop() || 'index.html';
+        if (page.indexOf('.html') === -1) page = 'index.html';
+        
+        var sw = document.createElement('div');
+        sw.className = 'lang-switch';
+        sw.id = 'langSwitch';
+        sw.title = 'Тілді таңдау / Выбор языка';
+        if (isKz) {
+          sw.innerHTML = '<a href="../' + page + '" class="lang-btn" title="Орысша нұсқа (RU)">RU</a>' +
+                         '<span class="lang-sep">|</span>' +
+                         '<span class="lang-btn is-active">KZ</span>';
+        } else {
+          sw.innerHTML = '<span class="lang-btn is-active">RU</span>' +
+                         '<span class="lang-sep">|</span>' +
+                         '<a href="kz/' + page + '" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>';
+        }
+        headerActions.insertBefore(sw, headerActions.firstChild);
+      }
+    })();
+
   });
 })();

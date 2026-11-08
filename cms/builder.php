@@ -141,6 +141,11 @@ HTML;
       </nav>
 
       <div class="header-actions">
+        <div class="lang-switch" id="langSwitch" title="Тілді таңдау / Выбор языка">
+          <span class="lang-btn is-active">RU</span>
+          <span class="lang-sep">|</span>
+          <a href="kz/news.html" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
+        </div>
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
           <span></span><span></span><span></span>
         </button>
@@ -912,6 +917,11 @@ function lopal_create_new_page(string $slug, string $title, string $subtitle = '
       </nav>
 
       <div class="header-actions">
+        <div class="lang-switch" id="langSwitch" title="Тілді таңдау / Выбор языка">
+          <span class="lang-btn is-active">RU</span>
+          <span class="lang-sep">|</span>
+          <a href="kz/news.html" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
+        </div>
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
           <span></span><span></span><span></span>
         </button>
