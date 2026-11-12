@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Кабинет Дилера — LOPAL Казахстан | ТОО «Topmaq oil»</title>
+  <meta name="description" content="Личный кабинет официального дилера и партнера LOPAL в Республике Казахстан. Раздел находится в активной разработке.">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=25">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://lopal.kz/dealer.html">
+  <style>
+    .stub-hero {
+      min-height: calc(100vh - 90px - 340px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 80px;
+      position: relative;
+      background: radial-gradient(circle at 50% 20%, rgba(0, 132, 61, 0.08) 0%, rgba(244, 246, 249, 1) 70%);
+    }
+    .stub-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 28px;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08), 0 4px 16px rgba(0, 132, 61, 0.06);
+      padding: clamp(36px, 5vw, 56px) clamp(28px, 5vw, 48px);
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .stub-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00843D, #C5A059, #00843D);
+    }
+    .stub-logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding: 12px 24px;
+      background: #F8FAFC;
+      border-radius: 99px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .stub-logo-wrap img {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+    }
+    .stub-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 99px;
+      background: rgba(197, 160, 89, 0.14);
+      border: 1px solid rgba(197, 160, 89, 0.35);
+      color: #926C21;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .stub-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #C5A059;
+      box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.25);
+      animation: stubPulse 2s infinite ease-in-out;
+    }
+    @keyframes stubPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+    .stub-title {
+      font-size: clamp(28px, 4.5vw, 38px);
+      font-weight: 900;
+      color: var(--ink-primary);
+      line-height: 1.2;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+    .stub-title span {
+      color: var(--lopal-green);
+    }
+    .stub-desc {
+      font-size: 15.5px;
+      color: var(--ink-secondary);
+      line-height: 1.65;
+      margin-bottom: 28px;
+      max-width: 520px;
+      margin-inline: auto;
+    }
+    .stub-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 32px;
+      background: #F8FAFC;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    @media (max-width: 540px) {
+      .stub-features { grid-template-columns: 1fr; }
+    }
+    .stub-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+    .stub-feature-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(0, 132, 61, 0.1);
+      color: var(--lopal-green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .stub-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Шапка сайта -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="index.html" class="brand-combo" aria-label="Lopal Kazakhstan — На главную">
+        <img class="brand-lopal-img" src="assets/branding/lopal-logo.png" alt="Lopal Tech 龙蟠科技" height="34">
+        <span class="brand-divider"></span>
+        <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="32">
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="Главное меню">
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="products.html">Каталог</a></li>
+          <li><a href="selector.html">Подбор масла</a></li>
+          <li><a href="technologies.html">Технологии</a></li>
+          <li><a href="certificates.html">Допуски OEM</a></li>
+          <li><a href="service-points.html">Точки продаж</a></li>
+          <li><a href="news.html">Новости</a></li>
+          <li><a href="partners.html">Партнёрам</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switch" id="langSwitch" title="Тілді таңдау / Выбор языка">
+          <span class="lang-btn is-active">RU</span>
+          <span class="lang-sep">|</span>
+          <a href="kz/dealer.html" class="lang-btn" title="Қазақша нұсқа (KZ)">KZ</a>
+        </div>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Открыть меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="stub-hero">
+      <div class="stub-card">
+        <div class="stub-logo-wrap">
+          <img src="assets/branding/lopal-logo.png" alt="Lopal Tech" height="38">
+          <span style="width:1px; height:24px; background:#CBD5E1;"></span>
+          <img src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="32" style="border-radius:6px;">
+        </div>
+
+        <div class="stub-badge">
+          <span class="stub-badge-dot"></span>
+          <span>Скоро! Раздел в разработке</span>
+        </div>
+
+        <h1 class="stub-title">Кабинет <span>Дилера</span></h1>
+
+        <p class="stub-desc">
+          Мы разрабатываем единый онлайн-портал для авторизованных дилеров, автопарков и оптовых партнеров LOPAL в Республике Казахстан.
+        </p>
+
+        <div class="stub-features">
+          <div class="stub-feature-item">
+            <span class="stub-feature-icon">📊</span>
+            <span>Оптовые прайс-листы B2B</span>
+          </div>
+          <div class="stub-feature-item">
+            <span class="stub-feature-icon">📦</span>
+            <span>Онлайн-заказ и остатки на складе</span>
+          </div>
+          <div class="stub-feature-item">
+            <span class="stub-feature-icon">📜</span>
+            <span>Паспорта качества TDS / MSDS</span>
+          </div>
+          <div class="stub-feature-item">
+            <span class="stub-feature-icon">🎁</span>
+            <span>Маркетинговая поддержка и мерч</span>
+          </div>
+        </div>
+
+        <div class="stub-actions">
+          <a href="https://wa.me/77075236525?text=Здравствуйте,%20хочу%20получить%20дилерский%20доступ%20или%20прайс-лист%20Lopal" target="_blank" rel="noopener" class="btn btn-primary">
+            <span>💬 Запросить дилерский доступ в WhatsApp</span>
+          </a>
+          <a href="partners.html" class="btn btn-outline">
+            <span>Условия сотрудничества →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Подвал сайта -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="brand-combo" style="margin-bottom: 16px;">
+            <img class="brand-lopal-img" src="assets/branding/lopal-logo-white.png" alt="Lopal" height="34">
+            <span class="brand-divider"></span>
+            <img class="brand-topmaq-img brand-topmaq-dark" src="assets/branding/topmaq-logo-dark.jpg" alt="ТОО Topmaq oil" height="30">
+          </div>
+          <p class="footer-desc">
+            ТОО «Topmaq oil» — официальный дистрибьютор и генеральный представитель Jiangsu Lopal New Material Tech. Co., Ltd. в Республике Казахстан. 
+            Поставки оригинальных смазочных материалов, технических жидкостей и автохимии.
+          </p>
+          <div style="font-size: 13.5px; color: #CBD5E1; line-height: 1.8;">
+            <div>🏢 <strong>Юр. лицо:</strong> ТОО «Topmaq oil» (TOPMAQ OIL)</div>
+            <div>📍 <strong>Адрес:</strong> Казахстан, г. Алматы, ул. Сокпакбаева, 67а</div>
+            <div>📞 <strong>Телефон:</strong> <a href="tel:+77075236525" style="color:var(--topmaq-gold);">+7 (707) 523-65-25</a></div>
+            <div>✉️ <strong>Email:</strong> <a href="mailto:info@lopal.kz" style="color:var(--topmaq-gold);">info@lopal.kz</a></div>
+            <div>📸 <strong>Instagram:</strong> <a href="https://instagram.com/lopal.kz" target="_blank" rel="noopener" style="color:#38BDF8;">@lopal.kz</a></div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Продукция</h4>
+          <ul class="footer-links">
+            <li><a href="products.html">Легковые масла API SQ / SP</a></li>
+            <li><a href="products.html">Линейка для гибридов (NEV)</a></li>
+            <li><a href="products.html">Редукторные жидкости EV</a></li>
+            <li><a href="products.html">Дизельные масла CK-4</a></li>
+            <li><a href="products.html">Трансмиссионные жидкости ATF/CVT/DCT</a></li>
+            <li><a href="products.html">Батарейный антифриз Coolion SE01</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Сервисы и R&D</h4>
+          <ul class="footer-links">
+            <li><a href="selector.html">Подбор масла онлайн</a></li>
+            <li><a href="technologies.html">Технологии и тесты</a></li>
+            <li><a href="certificates.html">Сертификаты и OEM-допуски</a></li>
+            <li><a href="service-points.html">Пункты замены масла и СТО</a></li>
+            <li><a href="about.html">О корпорации Lopal Tech</a></li>
+            <li><a href="partners.html">Дилерам и оптовикам</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Прямой контакт</h4>
+          <p style="font-size: 13px; margin-bottom: 14px; color: #94A3B8;">
+            Задайте вопрос специалисту или запросите коммерческое предложение для вашего предприятия.
+          </p>
+          <a href="https://wa.me/77075236525?text=Здравствуйте,%20хочу%20узнать%20подробнее%20о%20продукции%20Lopal" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 10px;">
+            Написать в WhatsApp
+          </a>
+          <button class="btn btn-outline btn-sm" data-open-selector style="width: 100%; font-size: 12.5px; background: rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.15); margin-bottom: 12px;">
+            Каталог подбора масла
+          </button>
+          <a href="dealer.html" class="btn-dealer-cabinet" title="Личный кабинет официального дилера LOPAL">
+            <span class="btn-dealer-icon">💼</span>
+            <span class="btn-dealer-text">
+              <strong>Кабинет Дилера</strong>
+              <small>B2B Портал партнеров</small>
+            </span>
+            <span class="btn-dealer-badge">Скоро</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 Lopal Kazakhstan · ТОО «Topmaq oil» (TOPMAQ OIL). Все права защищены.
+        </div>
+        <div class="footer-developer">
+          Разработано в <a href="https://ai-studio-api-nz5z.onrender.com/" target="_blank" rel="noopener">AI-Studio-Mark</a>
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <a href="dealer.html" style="color:var(--topmaq-gold); font-weight:600;">💼 Кабинет Дилера</a>
+          <a href="contacts.html">Контакты</a>
+          <a href="partners.html">Сотрудничество</a>
+          <a href="selector.html">Lopal Oil Selector</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=25"></script>
+</body>
+</html>

@@ -1373,6 +1373,102 @@ html[lang="kk"] .hero h1 {
 }
 
 /* ============================================================
+   Фирменная кнопка "Кабинет Дилера" в подвале сайта
+   ============================================================ */
+.btn-dealer-cabinet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md, 16px);
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.16) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-dealer-cabinet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+
+.btn-dealer-cabinet:hover::before {
+  left: 150%;
+}
+
+.btn-dealer-cabinet:hover {
+  transform: translateY(-2px);
+  border-color: #E5A93C;
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.28) 0%, rgba(15, 23, 42, 0.8) 100%);
+  box-shadow: 0 8px 24px rgba(197, 160, 89, 0.22), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-dealer-icon {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(197, 160, 89, 0.2);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btn-dealer-cabinet:hover .btn-dealer-icon {
+  transform: scale(1.08);
+}
+
+.btn-dealer-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.btn-dealer-text strong {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.01em;
+}
+
+.btn-dealer-text small {
+  font-size: 11px;
+  color: #CBD5E1;
+  font-weight: 500;
+}
+
+.btn-dealer-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #C5A059, #926C21);
+  color: #0F172A;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+/* ============================================================
 /* ============================================================
    Страницы детального описания продуктов (product-*.html) и Медиа
    ============================================================ */
