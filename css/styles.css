@@ -2180,12 +2180,17 @@ html[lang="kk"] .hero h1 {
 /* ============================================================
    Баннер Kaspi.kz (RU / KZ / Mobile)
    ============================================================ */
+.section-head:has(+ .kaspi-banner) {
+  margin-bottom: 18px;
+}
+
 .kaspi-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   width: 100%;
+  margin-top: -12px;
   padding: 16px 24px;
   margin-bottom: 32px;
   border-radius: 16px;
