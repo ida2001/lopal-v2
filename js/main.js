@@ -506,6 +506,19 @@
         : ('Где купить продукцию LOPAL — Карта дилеров и ПЗМ (' + DEALERS_DATA.length + ' точек в РК)');
       var allPointsBtnText = isKz ? 'Барлық сату нүктелері →' : 'Все точки продаж →';
       var closeBtnAria = isKz ? 'Картаны жабу' : 'Закрыть карту';
+      var kaspiLogoSrc = (isKz ? '../' : '') + 'assets/branding/kaspi-logo.png';
+      var kaspiTitle = isKz ? 'LOPAL Kaspi Дүкенде' : 'LOPAL на Kaspi.kz';
+      var kaspiSub = isKz ? '0-0-12 бөліп төлеу · ҚР жеткізу' : 'Рассрочка 0-0-12 · Доставка по РК';
+      var kaspiCta = isKz ? 'Сатып алу ↗' : 'Купить ↗';
+      var kaspiBannerHtml =
+        '<a href="https://kaspi.kz/shop/search/?text=lopal" target="_blank" rel="noopener noreferrer" class="kaspi-modal-banner">' +
+          '<span class="kaspi-modal-logo"><img src="' + kaspiLogoSrc + '" alt="Kaspi.kz"></span>' +
+          '<span class="kaspi-modal-copy">' +
+            '<strong>' + kaspiTitle + '</strong>' +
+            '<small>' + kaspiSub + '</small>' +
+          '</span>' +
+          '<span class="kaspi-modal-cta">' + kaspiCta + '</span>' +
+        '</a>';
 
       var filterPillsHtml =
         '<div style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;position:sticky;top:0;z-index:5;">' +
@@ -540,10 +553,11 @@
 
       overlay.innerHTML =
         '<div class="selector-modal" style="width: min(1140px, 100%); height: min(780px, 90vh);">' +
-          '<div class="selector-modal-header">' +
+          '<div class="selector-modal-header dealers-modal-header">' +
             '<div class="selector-modal-title">' +
               '<span>' + modalTitleText + '</span>' +
             '</div>' +
+            kaspiBannerHtml +
             '<div class="selector-modal-actions">' +
               '<a href="service-points.html" class="btn btn-sm btn-outline" style="font-size: 12.5px;">' + allPointsBtnText + '</a>' +
               '<button class="modal-close-btn" data-close-dealers type="button" aria-label="' + closeBtnAria + '">✕</button>' +
