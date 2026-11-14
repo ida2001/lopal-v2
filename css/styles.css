@@ -2249,12 +2249,12 @@ html[lang="kk"] .hero h1 {
 .kaspi-banner-copy {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
   min-width: 0;
 }
 
 .kaspi-banner-title {
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 800;
   color: #FFFFFF;
   line-height: 1.25;
@@ -2262,8 +2262,8 @@ html[lang="kk"] .hero h1 {
 }
 
 .kaspi-banner-sub {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.95);
   font-weight: 500;
   line-height: 1.35;
 }
@@ -2275,8 +2275,8 @@ html[lang="kk"] .hero h1 {
   background: #FFFFFF;
   color: #F14635;
   font-weight: 800;
-  font-size: 14px;
-  padding: 11px 20px;
+  font-size: 15px;
+  padding: 12px 22px;
   border-radius: 12px;
   white-space: nowrap;
   flex-shrink: 0;
@@ -2293,30 +2293,32 @@ html[lang="kk"] .hero h1 {
   .kaspi-banner {
     flex-direction: column;
     align-items: stretch;
-    padding: 16px 18px;
-    gap: 14px;
+    padding: 18px 20px;
+    gap: 16px;
     margin-bottom: 24px;
   }
   .kaspi-banner-left {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
   }
   .kaspi-logo-pill {
-    padding: 7px 14px;
+    padding: 8px 16px;
   }
   .kaspi-logo-pill img {
-    height: 44px;
+    height: 48px;
   }
   .kaspi-banner-title {
-    font-size: 15.5px;
+    font-size: 17.5px;
   }
   .kaspi-banner-sub {
-    font-size: 12.5px;
+    font-size: 13.5px;
   }
   .kaspi-banner-cta {
     justify-content: center;
     width: 100%;
+    font-size: 15px;
+    padding: 12px 20px;
   }
 }
 
