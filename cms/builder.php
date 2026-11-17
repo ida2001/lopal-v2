@@ -275,7 +275,7 @@ HTML;
       <div class="footer-bottom">
         <div>© 2026 Lopal Kazakhstan · {$company}. Все права защищены.</div>
         <div class="footer-developer">
-          Разработано в <a href="https://ai-studio-api-nz5z.onrender.com/" target="_blank" rel="noopener">AI-Studio-Mark</a>
+          Разработано в <a href="https://nuvix.link/" target="_blank" rel="noopener">AI-Studio-NUVIX</a>
         </div>
         <div style="display: flex; gap: 20px;">
           <a href="news.html">Новости</a>
@@ -1047,7 +1047,7 @@ function lopal_create_new_page(string $slug, string $title, string $subtitle = '
       <div class="footer-bottom">
         <div>© 2026 Lopal Kazakhstan · {$company}. Все права защищены.</div>
         <div class="footer-developer">
-          Разработано в <a href="https://ai-studio-api-nz5z.onrender.com/" target="_blank" rel="noopener">AI-Studio-Mark</a>
+          Разработано в <a href="https://nuvix.link/" target="_blank" rel="noopener">AI-Studio-NUVIX</a>
         </div>
         <div style="display: flex; gap: 20px;">
           <a href="news.html">Новости</a>
