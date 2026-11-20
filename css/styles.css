@@ -2536,3 +2536,321 @@ html[lang="kk"] .hero h1 {
   }
 }
 
+
+/* ============================================================
+   Кнопка меню Вариант 3 (Охлаждение ЦОД NEW) + Страница ЦОД
+   ============================================================ */
+.site-nav ul {
+  gap: 1px;
+}
+.site-nav a {
+  padding: 6px 8.5px;
+  font-size: 12px;
+}
+html[lang="kk"] .site-nav a {
+  padding: 6px 7.5px;
+  font-size: 11.5px;
+}
+.site-nav a.nav-dc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #00843D, #059669);
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 5px 10px;
+  box-shadow: 0 2px 8px rgba(0, 132, 61, 0.25);
+  white-space: nowrap;
+}
+.site-nav a.nav-dc-pill:hover,
+.site-nav a.nav-dc-pill.is-active {
+  background: linear-gradient(135deg, #006B31, #047857);
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+}
+.nav-dc-badge {
+  background: #FACC15;
+  color: #0F172A;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+@media (max-width: 1360px) {
+  .site-nav a,
+  html[lang="kk"] .site-nav a {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+  .site-nav a.nav-dc-pill {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 1280px) {
+  .site-nav a,
+  html[lang="kk"] .site-nav a {
+    padding: 5px 5px;
+    font-size: 10.5px;
+  }
+  .site-nav a.nav-dc-pill {
+    padding: 4px 7px;
+    font-size: 10.5px;
+  }
+  .nav-dc-badge {
+    font-size: 8.5px;
+    padding: 1px 4px;
+  }
+}
+@media (max-width: 1120px) {
+  .site-nav a.nav-dc-pill {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px !important;
+    font-size: 15px !important;
+    margin: 4px 0;
+  }
+  .nav-dc-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+  }
+}
+
+/* Страница Охлаждающие жидкости для ЦОД */
+.dc-page-hero {
+  background: radial-gradient(circle at 82% 22%, rgba(5, 150, 105, 0.28), transparent 45%),
+              linear-gradient(135deg, #06101E 0%, #072F24 55%, #0B1528 100%);
+  color: #FFFFFF;
+  padding: 118px 0 60px;
+}
+.dc-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.38);
+  color: #34D399;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 99px;
+  margin-bottom: 18px;
+}
+.dc-page-hero h1 {
+  font-size: clamp(28px, 3.8vw, 46px);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin: 0 0 16px;
+  max-width: 920px;
+}
+.dc-page-hero p.dc-lead {
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: #CBD5E1;
+  max-width: 820px;
+  margin: 0 0 26px;
+}
+.dc-hero-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+.dc-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.dc-kpi-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 18px 20px;
+  backdrop-filter: blur(8px);
+}
+.dc-kpi-card strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 900;
+  color: #34D399;
+  margin-bottom: 4px;
+}
+.dc-kpi-card span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #E2E8F0;
+}
+.dc-section {
+  padding: 64px 0;
+}
+.dc-section-alt {
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+}
+.dc-sec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.dc-sec-header h2 {
+  font-size: clamp(22px, 2.7vw, 32px);
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 8px;
+}
+.dc-sec-header p {
+  font-size: 15.5px;
+  color: #475569;
+  margin: 0;
+  max-width: 720px;
+}
+.dc-sec-pill {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #00843D;
+  background: rgba(0, 132, 61, 0.1);
+  border: 1px solid rgba(0, 132, 61, 0.25);
+  padding: 6px 14px;
+  border-radius: 99px;
+}
+.dc-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.dc-prod-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dc-prod-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
+}
+.dc-prod-visual {
+  height: 230px;
+  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.dc-prod-visual img {
+  max-height: 196px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.dc-prod-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.dc-prod-type {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #00843D;
+  background: rgba(0, 132, 61, 0.1);
+  padding: 4px 10px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+}
+.dc-prod-type.is-immersion {
+  color: #1D4ED8;
+  background: rgba(37, 99, 235, 0.1);
+}
+.dc-prod-body h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 6px;
+}
+.dc-prod-sub {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 14px;
+}
+.dc-prod-list {
+  margin: 0 0 20px;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #334155;
+  flex: 1;
+}
+.dc-prod-list li {
+  margin-bottom: 6px;
+}
+.dc-prod-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+.dc-prod-actions a {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  padding: 10px 12px;
+}
+.dc-lab-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 28px;
+  align-items: center;
+}
+.dc-lab-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 24px;
+}
+.dc-cert-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.dc-cert-badges span {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0F172A;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+@media (max-width: 1024px) {
+  .dc-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dc-prod-grid {
+    grid-template-columns: 1fr;
+  }
+  .dc-lab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .dc-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
